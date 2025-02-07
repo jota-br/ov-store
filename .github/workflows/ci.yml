@@ -1,4 +1,4 @@
-name: Java CI without Maven or Gradle
+name: Java CI with Maven
 
 on:
   push:
@@ -24,19 +24,19 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Compile Java Code
-        run: javac -d out src/**/*.java
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
-      - name: Run JUnit 5 Tests
-        run: |
-          # Download JUnit 5 jar files (replace with actual URLs and paths)
-          wget -P lib https://path-to-junit-jupiter-api-5.8.1.jar
-          wget -P lib https://path-to-junit-jupiter-engine-5.8.1.jar
-          wget -P lib https://path-to-apiguardian-api-1.1.2.jar
-          wget -P lib https://path-to-opentest4j-1.2.0.jar
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
 
-          # Run tests
-          java -cp "lib/*:out" org.junit.platform.console.ConsoleLauncher --scan-class-path
+      - name: Run tests with Maven
+        run: mvn test
 
       - name: Push to main if build and tests pass
         if: github.ref == 'refs/heads/dev'
