@@ -10,9 +10,9 @@ class SqlBuilderTest {
 
     @Test
     void buildDml() {
-        assertEquals("SELECT c FROM User c WHERE c.username = ? AND c.email = ?",
+        assertEquals("SELECT c FROM User c WHERE c.username = ?1 AND c.email = ?2",
                 SqlBuilder.buildDml(User.class, SqlBuilder.SqlCrudType.SELECT, "username", "email"));
-        assertEquals("SELECT c FROM User c WHERE c.username = ?",
+        assertEquals("SELECT c FROM User c WHERE c.username = ?1",
                 SqlBuilder.buildDml(User.class, SqlBuilder.SqlCrudType.SELECT, "username"));
     }
 }

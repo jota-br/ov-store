@@ -14,18 +14,23 @@ jobs:
     name: Build and Test
     runs-on: ubuntu-latest
 
+    env:
+      DB_URL: jdbc:mariadb://localhost:3306/ov_store
+      DB_USERNAME: root
+      DB_PASSWORD: root
+
     services:
       mariadb:
         image: mariadb:latest
         env:
-          MARIADB_DB: ov_store
-          MARIADB_USER: test_user
-          MARIADB_PASSWORD: test_password
-          MARIADB_ROOT_PASSWORD: root_password
+          MYSQL_DATABASE: ov_store
+          MYSQL_USER: root
+          MYSQL_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: root
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h localhost -u root -p root_password" 
+          --health-cmd="mysqladmin ping -h localhost -u root -proot" 
           --health-interval=10s 
           --health-timeout=5s 
           --health-retries=5
@@ -51,20 +56,30 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
-      - name: Start MariaDB
+      - name: Wait for MariaDB to initialize
         run: |
-          sleep 30 # wait for the database to be ready
-          sudo apt-get install -y mariadb-client
-          mysql -h localhost -u root -p root_password -e "CREATE DATABASE ov_store;"
+          for i in {1..10}; do
+            if mysqladmin ping -h 127.0.0.1 -u root -proot --silent; then
+              echo "MariaDB is up!"
+              break
+            fi
+            echo "Waiting for MariaDB..."
+            sleep 6
+          done
+
+      - name: Install MariaDB client
+        run: sudo apt-get install -y mariadb-client
+
+      - name: Confirm MariaDB is running
+        run: mysqladmin ping -h 127.0.0.1 -u root -proot
 
       - name: Run Database Migrations
         run: mvn flyway:migrate
 
+      - name: Set up Environment
+        run: echo "Environment variables set."
+
       - name: Run tests with Maven
-        env:
-          DB_URL: jdbc:mariadb://localhost:3306/ov_store
-          DB_USERNAME: test_user
-          DB_PASSWORD: test_password
         run: mvn test
 
       - name: Push to main if build and tests pass
