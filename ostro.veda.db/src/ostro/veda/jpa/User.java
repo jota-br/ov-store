@@ -1,6 +1,7 @@
 package ostro.veda.jpa;
 
 import jakarta.persistence.*;
+import ostro.veda.dto.UserDTO;
 
 @Entity
 @Table(name = "users")
@@ -39,6 +40,17 @@ public class User {
     public User() {
     }
 
+    public User(String username, String salt, String hash, String email, String firstName, String lastName, String phone, boolean isActive) {
+        this.username = username;
+        this.salt = salt;
+        this.hash = hash;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phone = phone;
+        this.isActive = isActive;
+    }
+
     public int getUserId() {
         return userId;
     }
@@ -73,5 +85,10 @@ public class User {
 
     public boolean isActive() {
         return isActive;
+    }
+
+    public UserDTO transformToDto() {
+        return new UserDTO(this.getUserId(), this.getUsername(), this.getSalt(), this.getHash(), this.getEmail(), this.getFirstName(), this.getLastName(),
+                this.getPhone(), this.isActive());
     }
 }

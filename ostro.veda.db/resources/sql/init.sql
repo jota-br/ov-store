@@ -280,7 +280,7 @@ Create Table If Not Exists wishlists (
   Constraint Foreign Key (user_id) References users (user_id) On Delete Cascade On Update Cascade
 );
 
-Create Table If Not Exists Wishlist_items (
+Create Table If Not Exists wishlist_items (
   wishlist_id Int Not Null,
   product_id Int Not Null,
   added_at Timestamp Default Current_Timestamp,

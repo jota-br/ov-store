@@ -9,16 +9,20 @@ class UserServiceTest {
 
     @Test
     void processData() {
-        assertNull(UserService.processData("user$123", "", "", "", "", ""));
-        assertNull(UserService.processData("short", "", "", "", "", ""));
-        assertNull(UserService.processData("user name", "", "", "", "", ""));
-        assertNull(UserService.processData("user!name", "", "", "", "", ""));
-        assertNull(UserService.processData("*user_123", "", "", "", "", ""));
+        assertNull(UserService.processData("user$123", "ValidPassword",
+                "valid@email.com", "ValidName", "ValidLastName", "5511000000000"));
+        assertNull(UserService.processData("validUserName", "invalid#!password78",
+                "valid@email.com", "ValidName", "ValidLastName", "5511000000000"));
+        assertNull(UserService.processData("validUserName", "ValidPassword",
+                "invalidemail.com", "ValidName", "ValidLastName", "5511000000000"));
+        assertNull(UserService.processData("validUserName", "ValidPassword",
+                "valid@email.com", "Vi", "ValidLastName", "5511000000000"));
+        assertNull(UserService.processData("validUserName", "ValidPassword",
+                "valid@email.com", "Val", "El", "5511000000000"));
+        assertNull(UserService.processData("validUserName", "ValidPassword",
+                "valid@email.com", "Val", "Hummer", "55111"));
 
-        assertNotNull(UserService.processData("user_1234", "", "", "", "", ""));
-        assertNotNull(UserService.processData("Admin-User", "", "", "", "", ""));
-        assertNotNull(UserService.processData("Alpha@Beta", "", "", "", "", ""));
-        assertNotNull(UserService.processData("User_42@x", "", "", "", "", ""));
-        assertNotNull(UserService.processData("secure-99", "", "", "", "", ""));
+        assertNotNull(UserService.processData("user_12345", "fdkjrEewe9@w",
+                "ema8889_il@google.com", "John", "Vesnki", "5511000000000"));
     }
 }
