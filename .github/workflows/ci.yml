@@ -69,17 +69,17 @@ jobs:
       - name: Confirm MariaDB is running
         run: mysqladmin ping -h 127.0.0.1 -P 3306 -u root -proot
 
-      - name: Run Database Migrations
-        env:
-          DB_URL: ${{ env.DB_URL }}
-          DB_USERNAME: ${{ env.DB_USERNAME }}
-          DB_PASSWORD: ${{ env.DB_PASSWORD }}
-        run: |
-          mvn org.flywaydb:flyway-maven-plugin:8.0.0:migrate \
-            -Dflyway.url=$DB_URL \
-            -Dflyway.user=$DB_USERNAME \
-            -Dflyway.password=$DB_PASSWORD \
-            -Dflyway.locations=filesystem:${{ github.workspace }}/src/main/resources/db/migration
+#      - name: Run Database Migrations
+#        env:
+#          DB_URL: ${{ env.DB_URL }}
+#          DB_USERNAME: ${{ env.DB_USERNAME }}
+#          DB_PASSWORD: ${{ env.DB_PASSWORD }}
+#        run: |
+#          mvn org.flywaydb:flyway-maven-plugin:8.0.0:migrate \
+#            -Dflyway.url=$DB_URL \
+#            -Dflyway.user=$DB_USERNAME \
+#            -Dflyway.password=$DB_PASSWORD \
+#            -Dflyway.locations=filesystem:${{ github.workspace }}/src/main/resources/db/migration
 
       - name: Run tests with Maven
         env:
