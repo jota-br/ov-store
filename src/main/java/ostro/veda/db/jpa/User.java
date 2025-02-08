@@ -1,7 +1,7 @@
-package main.java.ostro.veda.db.jpa;
+package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
-import main.java.ostro.veda.common.dto.UserDTO;
+import ostro.veda.common.dto.UserDTO;
 
 @Entity
 @Table(name = "users")

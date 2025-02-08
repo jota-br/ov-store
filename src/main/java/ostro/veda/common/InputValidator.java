@@ -1,4 +1,4 @@
-package main.java.ostro.veda.common;
+package ostro.veda.common;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

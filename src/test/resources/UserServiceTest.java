@@ -1,4 +1,6 @@
-import main.java.ostro.veda.service.UserService;
+package test.resources;
+
+import ostro.veda.service.UserService;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;

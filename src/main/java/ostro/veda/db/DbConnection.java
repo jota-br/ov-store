@@ -1,4 +1,4 @@
-package main.java.ostro.veda.db;
+package ostro.veda.db;
 
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;

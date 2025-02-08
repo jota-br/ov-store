@@ -1,10 +1,10 @@
-package main.java.ostro.veda.db;
+package ostro.veda.db;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import main.java.ostro.veda.common.dto.UserDTO;
-import main.java.ostro.veda.db.helpers.SessionDml;
-import main.java.ostro.veda.db.jpa.User;
+import ostro.veda.common.dto.UserDTO;
+import ostro.veda.db.helpers.SessionDml;
+import ostro.veda.db.jpa.User;
 
 public class UserRepository {
 

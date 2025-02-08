@@ -1,8 +1,8 @@
-package main.java.ostro.veda.service;
+package ostro.veda.service;
 
-import main.java.ostro.veda.common.InputValidator;
-import main.java.ostro.veda.common.dto.UserDTO;
-import main.java.ostro.veda.db.UserRepository;
+import ostro.veda.common.InputValidator;
+import ostro.veda.common.dto.UserDTO;
+import ostro.veda.db.UserRepository;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

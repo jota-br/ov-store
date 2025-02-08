@@ -1,4 +1,4 @@
-package main.java.ostro.veda.common.dto;
+package ostro.veda.common.dto;
 
 public class UserDTO {
 
