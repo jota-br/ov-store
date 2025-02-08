@@ -32,7 +32,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          path: ${{ github.workspace }}
+          path: .
+
+      - name: Print working directory
+        run: pwd
+
+      - name: List top-level files
+        run: ls -la
+
+      - name: List contents of src directory
+        run: ls -la src/
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -49,7 +58,6 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Build with Maven
-        working-directory: .
         run: mvn -B package --file pom.xml
 
       - name: Install MariaDB client
@@ -70,7 +78,6 @@ jobs:
         run: mysqladmin ping -h 127.0.0.1 -P 3306 -u root -proot
 
       - name: Run Database Migrations
-        working-directory: ov-store
         env:
           DB_URL: ${{ env.DB_URL }}
           DB_USERNAME: ${{ env.DB_USERNAME }}
@@ -80,10 +87,9 @@ jobs:
             -Dflyway.url=$DB_URL \
             -Dflyway.user=$DB_USERNAME \
             -Dflyway.password=$DB_PASSWORD \
-            -Dflyway.locations=filesystem:${{ github.workspace }}/src/main/resources/db/migration
+            -Dflyway.locations=filesystem:src/main/resources/db/migration
 
       - name: Run tests with Maven
-        working-directory: ov-store
         env:
           DB_URL: ${{ env.DB_URL }}
           DB_USERNAME: ${{ env.DB_USERNAME }}
@@ -93,15 +99,6 @@ jobs:
             -Ddb.url=$DB_URL \
             -Ddb.username=$DB_USERNAME \
             -Ddb.password=$DB_PASSWORD
-
-      - name: Print Working Directory
-        run: pwd
-
-      - name: List Files
-        run: ls -la
-
-      - name: List Contents of ov-store Directory
-        run: ls -la ov-store
 
       - name: Push to main if build and tests pass
         if: github.ref == 'refs/heads/dev'
