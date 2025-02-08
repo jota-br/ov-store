@@ -24,8 +24,6 @@ jobs:
         image: mariadb:latest
         env:
           MYSQL_DATABASE: ov_store
-          MYSQL_USER: root
-          MYSQL_PASSWORD: root
           MYSQL_ROOT_PASSWORD: root
         ports:
           - 3306:3306
