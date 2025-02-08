@@ -25,7 +25,7 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h localhost -u test_user" 
+          --health-cmd="mysqladmin ping -h localhost -u root -p root_password" 
           --health-interval=10s 
           --health-timeout=5s 
           --health-retries=5
@@ -53,16 +53,16 @@ jobs:
 
       - name: Start MariaDB
         run: |
-          sleep 15 # wait for the database to be ready
+          sleep 30 # wait for the database to be ready
           sudo apt-get install -y mariadb-client
-          mysql -h localhost -u test_user -p test_password -e "CREATE DATABASE ov_store;"
+          mysql -h localhost -u root -p root_password -e "CREATE DATABASE ov_store;"
 
       - name: Run Database Migrations
         run: mvn flyway:migrate
 
       - name: Run tests with Maven
         env:
-          DB_URL: jdbc:mariadb://localhost:3306/test_db
+          DB_URL: jdbc:mariadb://localhost:3306/ov_store
           DB_USERNAME: test_user
           DB_PASSWORD: test_password
         run: mvn test
