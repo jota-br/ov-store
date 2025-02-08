@@ -18,7 +18,7 @@ jobs:
       mariadb:
         image: mariadb:latest
         env:
-          MARIADB_DB: test_db
+          MARIADB_DB: ov_store
           MARIADB_USER: test_user
           MARIADB_PASSWORD: test_password
           MARIADB_ROOT_PASSWORD: root_password
@@ -55,7 +55,7 @@ jobs:
         run: |
           sleep 15 # wait for the database to be ready
           sudo apt-get install -y mariadb-client
-          mysql -h localhost -u test_user -p test_password -e "CREATE DATABASE test_db;"
+          mysql -h localhost -u test_user -p test_password -e "CREATE DATABASE ov_store;"
 
       - name: Run Database Migrations
         run: mvn flyway:migrate
