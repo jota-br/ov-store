@@ -1,4 +1,4 @@
-name: Java CI with Maven
+name: Java CI with Maven and Hibernate
 
 on:
   push:
@@ -13,6 +13,22 @@ jobs:
   build:
     name: Build and Test
     runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:latest
+        env:
+          MARIADB_DB: test_db
+          MARIADB_USER: test_user
+          MARIADB_PASSWORD: test_password
+          MARIADB_ROOT_PASSWORD: root_password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -u ${{ secrets.MARIADB_USER }}" 
+          --health-interval=10s 
+          --health-timeout=5s 
+          --health-retries=5
 
     steps:
       - name: Checkout code
@@ -35,7 +51,20 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
+      - name: Start MariaDB
+        run: |
+          sleep 15 # wait for the database to be ready
+          sudo apt-get install -y mariadb-client
+          mysql -h localhost -u test_user -ptest_password -e "CREATE DATABASE test_db;"
+
+      - name: Run Database Migrations
+        run: mvn flyway:migrate
+
       - name: Run tests with Maven
+        env:
+          DB_URL: jdbc:mariadb://localhost:3306/test_db
+          DB_USERNAME: test_user
+          DB_PASSWORD: test_password
         run: mvn test
 
       - name: Push to main if build and tests pass
