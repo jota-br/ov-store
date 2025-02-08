@@ -21,7 +21,7 @@ jobs:
 
     services:
       mariadb:
-        image: mariadb:10.5  # Use a stable version
+        image: mariadb:10.5
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: ov_store
@@ -31,6 +31,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          path: .
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -45,9 +47,6 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-
-      - name: Set working directory
-        run: cd ${{ github.workspace }}
 
       - name: Build with Maven
         run: mvn -B package --file pom.xml
@@ -69,17 +68,17 @@ jobs:
       - name: Confirm MariaDB is running
         run: mysqladmin ping -h 127.0.0.1 -P 3306 -u root -proot
 
-#      - name: Run Database Migrations
-#        env:
-#          DB_URL: ${{ env.DB_URL }}
-#          DB_USERNAME: ${{ env.DB_USERNAME }}
-#          DB_PASSWORD: ${{ env.DB_PASSWORD }}
-#        run: |
-#          mvn org.flywaydb:flyway-maven-plugin:8.0.0:migrate \
-#            -Dflyway.url=$DB_URL \
-#            -Dflyway.user=$DB_USERNAME \
-#            -Dflyway.password=$DB_PASSWORD \
-#            -Dflyway.locations=filesystem:${{ github.workspace }}/src/main/resources/db/migration
+      - name: Run Database Migrations
+        env:
+          DB_URL: ${{ env.DB_URL }}
+          DB_USERNAME: ${{ env.DB_USERNAME }}
+          DB_PASSWORD: ${{ env.DB_PASSWORD }}
+        run: |
+          mvn org.flywaydb:flyway-maven-plugin:8.0.0:migrate \
+            -Dflyway.url=$DB_URL \
+            -Dflyway.user=$DB_USERNAME \
+            -Dflyway.password=$DB_PASSWORD \
+            -Dflyway.locations=filesystem:src/main/resources/db/migration
 
       - name: Run tests with Maven
         env:
