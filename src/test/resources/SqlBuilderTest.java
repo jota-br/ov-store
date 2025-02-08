@@ -1,5 +1,3 @@
-package test;
-
 import main.java.ostro.veda.db.helpers.SqlBuilder;
 import main.java.ostro.veda.db.jpa.User;
 import org.junit.Test;

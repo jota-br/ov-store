@@ -1,5 +1,3 @@
-package test;
-
 import main.java.ostro.veda.service.UserService;
 import org.junit.Test;
 
