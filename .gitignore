@@ -2,6 +2,8 @@
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+.idea/
+*.iml
 
 ### Eclipse ###
 .apt_generated
@@ -29,3 +31,4 @@ bin/
 .DS_Store
 /lib/
 /ostro.veda.db/src/META-INF/
+/target/
