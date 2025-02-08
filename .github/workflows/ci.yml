@@ -74,14 +74,23 @@ jobs:
           DB_URL: ${{ env.DB_URL }}
           DB_USERNAME: ${{ env.DB_USERNAME }}
           DB_PASSWORD: ${{ env.DB_PASSWORD }}
-        run: mvn org.flywaydb:flyway-maven-plugin:8.0.0:migrate -Dflyway.locations=filesystem:${{ github.workspace }}/src/main/resources/db/migration
+        run: |
+          mvn org.flywaydb:flyway-maven-plugin:8.0.0:migrate \
+            -Dflyway.url=$DB_URL \
+            -Dflyway.user=$DB_USERNAME \
+            -Dflyway.password=$DB_PASSWORD \
+            -Dflyway.locations=filesystem:${{ github.workspace }}/src/main/resources/db/migration
 
       - name: Run tests with Maven
         env:
           DB_URL: ${{ env.DB_URL }}
           DB_USERNAME: ${{ env.DB_USERNAME }}
           DB_PASSWORD: ${{ env.DB_PASSWORD }}
-        run: mvn test
+        run: |
+          mvn test \
+            -Ddb.url=$DB_URL \
+            -Ddb.username=$DB_USERNAME \
+            -Ddb.password=$DB_PASSWORD
 
       - name: Push to main if build and tests pass
         if: github.ref == 'refs/heads/dev'
