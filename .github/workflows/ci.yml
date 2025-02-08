@@ -46,6 +46,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: Set working directory
+        run: cd ${{ github.workspace }}
+
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
@@ -71,7 +74,7 @@ jobs:
           DB_URL: ${{ env.DB_URL }}
           DB_USERNAME: ${{ env.DB_USERNAME }}
           DB_PASSWORD: ${{ env.DB_PASSWORD }}
-        run: mvn org.flywaydb:flyway-maven-plugin:8.0.0:migrate
+        run: mvn org.flywaydb:flyway-maven-plugin:8.0.0:migrate -Dflyway.locations=filesystem:${{ github.workspace }}/src/main/resources/db/migration
 
       - name: Run tests with Maven
         env:
