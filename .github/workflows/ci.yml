@@ -100,6 +100,9 @@ jobs:
             -Ddb.username=$DB_USERNAME \
             -Ddb.password=$DB_PASSWORD
 
+      - name: List local branches
+        run: git branch --all
+
       - name: Push to main if build and tests pass
         if: github.ref == 'refs/heads/dev'
         env:
