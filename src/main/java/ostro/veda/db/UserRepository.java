@@ -1,10 +1,12 @@
 package ostro.veda.db;
 
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import ostro.veda.common.dto.UserDTO;
 import ostro.veda.db.helpers.SessionDml;
 import ostro.veda.db.jpa.User;
+
+import java.util.List;
+import java.util.Map;
 
 public class UserRepository {
 
@@ -12,13 +14,13 @@ public class UserRepository {
                                   String firstName, String lastName, String phone) {
 
         Session session = DbConnection.getOpenSession();
-        User user = SessionDml.findByUsername(session, User.class, "username", username);
-        if (user != null) {
+        List<User> result = SessionDml.findByFields(session, User.class, Map.of("username", username));
+        if (result != null && !result.isEmpty()) {
             return null;
         }
 
-        user = new User(username, salt, hash, email, firstName, lastName, phone, false);
-        boolean isInserted = executePersist(session, user);
+        User user = new User(username, salt, hash, email, firstName, lastName, phone);
+        boolean isInserted = SessionDml.executePersist(session, user);
         if (!isInserted) {
             return null;
         }
@@ -27,20 +29,5 @@ public class UserRepository {
         DbConnection.closeSession(session);
 
         return dto;
-    }
-
-    private static boolean executePersist(Session session, User user) {
-        Transaction transaction = null;
-        try {
-            transaction = session.getTransaction();
-            transaction.begin();
-            session.persist(user);
-            transaction.commit();
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            DbConnection.transactionRollBack(transaction);
-        }
-        return false;
     }
 }

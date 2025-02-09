@@ -19,24 +19,17 @@ public class UserService {
         int firstNameMinLength = 3;
         int lastNameMinLength = 3;
 
-        String usernameCheck = InputValidator.stringChecker(username, false, usernameMinLength);
-        String passwordCheck = InputValidator.stringChecker(password, false, passwordMinLength);
+        String usernameCheck = InputValidator.stringChecker(username, false, false, usernameMinLength);
+        String passwordCheck = InputValidator.stringChecker(password, false, false, passwordMinLength);
         String emailCheck = InputValidator.emailChecker(email);
-        String firstNameCheck = InputValidator.stringChecker(firstName, true, firstNameMinLength);
-        String lastNameCheck = InputValidator.stringChecker(lastName, true, lastNameMinLength);
+        String firstNameCheck = InputValidator.stringChecker(firstName, true, false, firstNameMinLength);
+        String lastNameCheck = InputValidator.stringChecker(lastName, true, false, lastNameMinLength);
         String phoneCheck = InputValidator.phoneChecker("+" + phone);
 
-        if (usernameCheck == null) {
-            return null;
-        } else if (passwordCheck == null) {
-            return null;
-        } else if (emailCheck == null) {
-            return null;
-        } else if (firstNameCheck == null && !firstName.isEmpty()) {
-            return null;
-        } else if (lastNameCheck == null && !lastName.isEmpty()) {
-            return null;
-        } else if (phoneCheck == null && !phone.isEmpty()) {
+        if (usernameCheck == null || passwordCheck == null || emailCheck == null ||
+                (firstNameCheck == null && !firstName.isEmpty()) ||
+                (lastNameCheck == null && !lastName.isEmpty()) ||
+                (phoneCheck == null && !phone.isEmpty())) {
             return null;
         }
 

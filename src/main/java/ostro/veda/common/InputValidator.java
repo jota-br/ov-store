@@ -4,8 +4,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class InputValidator {
-    public static String stringChecker(String input, boolean sanitize, int minimumLength) {
-        Pattern validPattern = Pattern.compile("^[a-zA-Z0-9@_-]+$");
+    public static String stringChecker(String input, boolean sanitize, boolean spaceAccepted, int minimumLength) {
+
+        String regex = "^[a-zA-Z0-9@_-]+$";
+        if (spaceAccepted) {
+            regex = "^[\\sa-zA-Z0-9@_-]+$";
+        }
+
+        Pattern validPattern = Pattern.compile(regex);
         Matcher matcher = validPattern.matcher(input);
 
         if (!matcher.matches() || minimumLength > input.length()) {

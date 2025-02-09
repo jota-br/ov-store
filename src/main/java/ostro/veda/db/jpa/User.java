@@ -1,7 +1,11 @@
 package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import ostro.veda.common.dto.UserDTO;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
@@ -34,13 +38,21 @@ public class User {
     @Column(name = "phone", length = 15) // E.164 format // +5547123456789 // +DDI DDD Number
     private String phone;
 
-    @Column(name = "is_active", columnDefinition = "Boolean Default false")
+    @Column(name = "is_active")
     private boolean isActive;
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     public User() {
     }
 
-    public User(String username, String salt, String hash, String email, String firstName, String lastName, String phone, boolean isActive) {
+    public User(String username, String salt, String hash, String email, String firstName, String lastName, String phone) {
         this.username = username;
         this.salt = salt;
         this.hash = hash;
@@ -48,7 +60,6 @@ public class User {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
-        this.isActive = isActive;
     }
 
     public int getUserId() {
