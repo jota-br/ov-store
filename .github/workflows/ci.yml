@@ -115,4 +115,3 @@ jobs:
           git checkout master || git checkout -b master
           git rebase dev
           git push origin master
-
