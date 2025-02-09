@@ -110,8 +110,8 @@ jobs:
         run: |
           git config --global user.email "ojcroveda@gmail.com"
           git config --global user.name "jota-br"
-          git remote set-url origin https://x-access-token:${GH_PAT}@github.com/jota-br/ov-store
+          git remote set-url origin https://x-access-token:${GH_PAT}@github.com/jota-br/ov-store.git
           git fetch origin
           git checkout master
-          git reset --hard origin/dev  # Force reset master to match dev
-          git push origin master --force  # Force push the changes to master
+          git reset --hard origin/dev 
+          git push origin master --force
