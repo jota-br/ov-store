@@ -110,8 +110,7 @@ jobs:
         run: |
           git config --global user.email "ojcroveda@gmail.com"
           git config --global user.name "jota-br"
-          git config --global http.https://github.com/.extraheader "Authorization: Basic $(echo -n x-access-token:${GH_PAT} | base64)"
-          git fetch origin
-          git checkout master
-          git reset --hard origin/dev
-          git push origin master --force
+          git remote set-url origin https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}.git
+          git checkout main
+          git merge dev
+          git push origin main
