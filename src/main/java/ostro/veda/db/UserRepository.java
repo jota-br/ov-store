@@ -3,6 +3,7 @@ package ostro.veda.db;
 import org.hibernate.Session;
 import ostro.veda.common.dto.UserDTO;
 import ostro.veda.db.helpers.SessionDml;
+import ostro.veda.db.jpa.Role;
 import ostro.veda.db.jpa.User;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.Map;
 public class UserRepository {
 
     public static UserDTO addUser(String username, String salt, String hash, String email,
-                                  String firstName, String lastName, String phone) {
+                                  String firstName, String lastName, String phone, boolean isActive) {
 
         Session session = DbConnection.getOpenSession();
         List<User> result = SessionDml.findByFields(session, User.class, Map.of("username", username));
@@ -19,7 +20,9 @@ public class UserRepository {
             return null;
         }
 
-        User user = new User(username, salt, hash, email, firstName, lastName, phone);
+        Role role = session.find(Role.class, 20); // default user role (Guest/User) ID 20
+
+        User user = new User(username, salt, hash, email, firstName, lastName, phone, isActive, role);
         boolean isInserted = SessionDml.executePersist(session, user);
         if (!isInserted) {
             return null;

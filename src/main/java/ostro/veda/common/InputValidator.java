@@ -40,6 +40,17 @@ public class InputValidator {
         return input.trim();
     }
 
+    public static String imageUrlCheck(String input) {
+        Pattern validPattern = Pattern.compile("^(https?://)?([\\w\\-]+\\.)+\\w+(/[\\w\\-.,@?^=%&:/~+#]*)?\\.(png)(\\?.*)?$");
+        Matcher matcher = validPattern.matcher(input);
+
+        if (!matcher.matches()) {
+            return null;
+        }
+
+        return input.trim();
+    }
+
     public static String phoneChecker(String input) {
         Pattern validPattern = Pattern.compile("\\+\\d{6,14}");
         Matcher matcher = validPattern.matcher(input);

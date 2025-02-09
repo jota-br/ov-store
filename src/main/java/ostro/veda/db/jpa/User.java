@@ -41,6 +41,10 @@ public class User {
     @Column(name = "is_active")
     private boolean isActive;
 
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id", referencedColumnName = "role_id", nullable = false)
+    private Role role;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -52,7 +56,7 @@ public class User {
     public User() {
     }
 
-    public User(String username, String salt, String hash, String email, String firstName, String lastName, String phone) {
+    public User(String username, String salt, String hash, String email, String firstName, String lastName, String phone, boolean isActive, Role role) {
         this.username = username;
         this.salt = salt;
         this.hash = hash;
@@ -60,6 +64,8 @@ public class User {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
+        this.isActive = isActive;
+        this.role = role;
     }
 
     public int getUserId() {
@@ -98,8 +104,20 @@ public class User {
         return isActive;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
     public UserDTO transformToDto() {
         return new UserDTO(this.getUserId(), this.getUsername(), this.getSalt(), this.getHash(), this.getEmail(), this.getFirstName(), this.getLastName(),
-                this.getPhone(), this.isActive());
+                this.getPhone(), this.isActive(), this.getRole(), this.getCreatedAt(), this.getUpdatedAt());
     }
 }

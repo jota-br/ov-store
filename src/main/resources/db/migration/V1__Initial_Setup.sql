@@ -158,9 +158,15 @@ Create Table If Not Exists products (
 
 Create Table If Not Exists product_images (
   product_image_id Int Primary Key Auto_Increment,
-  product_id Int Not Null,
   image_url Varchar(255) Not Null,
-  is_main Boolean Default false,
+  is_main Boolean Default false
+);
+
+Create Table If Not Exists products_images (
+  product_image_id Int,
+  product_id Int,
+  Primary Key (product_image_id, product_id),
+  Constraint Foreign Key (product_image_id) References product_images (product_image_id) On Delete Cascade On Update Cascade,
   Constraint Foreign Key (product_id) References products (product_id) On Delete Cascade On Update Cascade
 );
 

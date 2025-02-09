@@ -12,7 +12,7 @@ import java.util.Base64;
 public class UserService {
 
     public static UserDTO processData(String username, String password, String email,
-                                      String firstName, String lastName, String phone) {
+                                      String firstName, String lastName, String phone, boolean isActive) {
 
         int usernameMinLength = 8;
         int passwordMinLength = 8;
@@ -37,7 +37,7 @@ public class UserService {
         String encodedSalt = Base64.getEncoder().encodeToString(salt);
         String hash = getHash(password, salt);
 
-        return UserRepository.addUser(username, encodedSalt, hash, email, firstName, lastName, phone);
+        return UserRepository.addUser(username, encodedSalt, hash, email, firstName, lastName, phone, isActive);
     }
 
     private static byte[] getSalt() {
