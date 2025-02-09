@@ -115,4 +115,3 @@ jobs:
           git checkout master || git checkout -b master
           git reset --hard origin/dev  # Force reset master to match dev
           git push origin master --force  # Force push the changes to master
-
