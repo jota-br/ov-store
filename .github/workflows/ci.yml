@@ -102,8 +102,8 @@ jobs:
 
       - name: List local branches
         run: git branch --all
-          
-      - name: Push to master if build and tests pass
+
+      - name: Push to main if build and tests pass
         if: github.ref == 'refs/heads/dev'
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
@@ -113,6 +113,6 @@ jobs:
           git remote set-url origin https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}.git
           git fetch origin
           git checkout master || git checkout -b master
-          git reset --hard origin/dev
-          git push origin master --force
+          git merge dev --allow-unrelated-histories
+          git push origin master
 
