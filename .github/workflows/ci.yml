@@ -115,3 +115,4 @@ jobs:
           git checkout master || git checkout -b master
           git merge dev
           git push origin master
+
