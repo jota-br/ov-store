@@ -27,7 +27,6 @@ Create Table If Not Exists cities (
 Create Table If Not Exists zip_codes (
   zip_code_id Int Primary Key Auto_Increment,
   zip_code Varchar(50) Not Null,
-  city_id Int Not Null,
   created_at Timestamp Default Current_Timestamp,
   Constraint Foreign Key (city_id) References cities (city_id) On Delete Cascade On Update Cascade
 );
@@ -69,6 +68,23 @@ Create Table If Not Exists users (
   Constraint Foreign Key (user_role_id) References roles (role_id) On Delete Cascade On Update Cascade
 );
 
+-- addresses
+Create Table If Not Exists customer_addresses (
+  address_id Int Primary Key Auto_Increment,
+  user_id Int Not Null,
+  street_address Varchar(255) Not Null,
+  address_number Varchar(50) Not Null,
+  address_type Varchar(50) Not Null,  -- 'billing', 'shipping', 'home', 'work'
+  city Varchar(255) Not Null,
+  state Varchar(255),
+  zip_code Varchar(50) Not Null,
+  country Varchar(255) Not Null,
+  created_at Timestamp Default Current_Timestamp,
+  updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp,
+  Constraint Foreign Key (user_id) References users (user_id) On Delete Cascade On Update Cascade
+);
+
+-- addresses
 Create Table If Not Exists addresses (
   address_id Int Primary Key Auto_Increment,
   user_id Int Not Null,
