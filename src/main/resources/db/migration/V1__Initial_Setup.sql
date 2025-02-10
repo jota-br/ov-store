@@ -2,7 +2,8 @@
 Create Table If Not Exists countries (
   country_id Int Primary Key Auto_Increment,
   name Varchar(255) Not Null,
-  created_at Timestamp Default Current_Timestamp
+  created_at Timestamp Default Current_Timestamp,
+  updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp,
 );
 
 -- state table
@@ -11,6 +12,7 @@ Create Table If Not Exists states (
   name Varchar(255) Not Null,
   country_id Int Not Null,
   created_at Timestamp Default Current_Timestamp,
+  updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp,
   Constraint Foreign Key (country_id) References countries (country_id) On Delete Cascade On Update Cascade
 );
 
@@ -28,7 +30,7 @@ Create Table If Not Exists zip_codes (
   zip_code_id Int Primary Key Auto_Increment,
   zip_code Varchar(50) Not Null,
   created_at Timestamp Default Current_Timestamp,
-  Constraint Foreign Key (city_id) References cities (city_id) On Delete Cascade On Update Cascade
+  updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp
 );
 
 -- street table
