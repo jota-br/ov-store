@@ -3,7 +3,7 @@ Create Table If Not Exists countries (
   country_id Int Primary Key Auto_Increment,
   name Varchar(255) Not Null,
   created_at Timestamp Default Current_Timestamp,
-  updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp,
+  updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp
 );
 
 -- state table
