@@ -66,6 +66,14 @@ public class Category {
         return updatedAt;
     }
 
+    public Category updateCategory(Category updatedData) {
+        this.name = updatedData.getName();
+        this.description = getDescription();
+        this.isActive = updatedData.isActive();
+
+        return this;
+    }
+
     public CategoryDTO transformToDto() {
         return new CategoryDTO(this.getCategoryId(), this.getName(), this.getDescription(), this.isActive(), this.getCreatedAt(), this.getUpdatedAt());
     }

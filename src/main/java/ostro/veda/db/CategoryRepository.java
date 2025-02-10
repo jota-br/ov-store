@@ -31,4 +31,27 @@ public class CategoryRepository {
 
         return dto;
     }
+
+    public static CategoryDTO updateCategory(int categoryId, String name, String description, boolean isActive) {
+
+        Session session = DbConnection.getOpenSession();
+
+        Category category = session.get(Category.class, categoryId);
+
+        if (category == null) {
+            return addCategory(name, description, isActive);
+        }
+
+        category.updateCategory(new Category(name, description, isActive));
+
+        boolean isInserted = SessionDml.executeMerge(session, category);
+        if (!isInserted) {
+            return null;
+        }
+
+        CategoryDTO dto = category.transformToDto();
+        DbConnection.closeSession(session);
+
+        return dto;
+    }
 }

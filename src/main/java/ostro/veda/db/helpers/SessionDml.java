@@ -49,4 +49,24 @@ public class SessionDml {
         }
         return false;
     }
+
+    public static <T> boolean executeMerge(Session session, T entity) {
+
+        if (entity == null) {
+            return false;
+        }
+
+        Transaction transaction = null;
+        try {
+            transaction = session.getTransaction();
+            transaction.begin();
+            session.merge(entity);
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            DbConnection.transactionRollBack(transaction);
+        }
+        return false;
+    }
 }

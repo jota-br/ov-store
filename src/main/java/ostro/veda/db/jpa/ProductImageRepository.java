@@ -29,4 +29,27 @@ public class ProductImageRepository {
 
         return dto;
     }
+
+    public static ProductImageDTO updateImage(int productImageId, String url, boolean isMain) {
+
+        Session session = DbConnection.getOpenSession();
+
+        ProductImage productImage = session.find(ProductImage.class, productImageId);
+
+        if (productImage == null) {
+            return addImage(url, isMain);
+        }
+
+        productImage.updateProductImage(new ProductImage(url, isMain));
+
+        boolean isInserted = SessionDml.executeMerge(session, productImage);
+        if (!isInserted) {
+            return null;
+        }
+
+        ProductImageDTO dto = productImage.transformToDto();
+        DbConnection.closeSession(session);
+
+        return dto;
+    }
 }

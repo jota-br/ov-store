@@ -2,6 +2,7 @@ package test.resources;
 
 import org.hibernate.Session;
 import org.junit.Test;
+import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.dto.ProductImageDTO;
 import ostro.veda.db.DbConnection;
@@ -23,7 +24,9 @@ public class SessionDmlTest {
                 LocalDateTime.now(), LocalDateTime.now()));
         List<ProductImageDTO > images = List.of(new ProductImageDTO(1, "http://sub.example.co.uk/images/photo.png", true));
 
-        ProductService.processData("Ultra Chair", "valid description", 45.99, 15, true, categories, images);
+        ProductService.processData(null,"Ultra Chair", "valid description", 45.99, 15, true,
+                categories, images, ProcessDataType.ADD);
+
         Session session = DbConnection.getOpenSession();
         assertNotNull(SessionDml.findByFields(session, Product.class,
                 Map.of(

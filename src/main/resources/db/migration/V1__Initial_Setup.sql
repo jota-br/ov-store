@@ -43,6 +43,15 @@ Create Table If Not Exists streets (
   Constraint Foreign Key (city_id) References cities (city_id) On Delete Cascade On Update Cascade
 );
 
+-- roles table
+Create Table If Not Exists roles (
+  role_id Int Primary Key Auto_Increment,
+  name Varchar(50) Not Null Unique,
+  description Varchar(155) Not Null,
+  created_at Timestamp Default Current_Timestamp,
+  updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp
+);
+
 -- users table
 Create Table If Not Exists users (
   user_id Int Primary Key Auto_Increment,
@@ -54,8 +63,10 @@ Create Table If Not Exists users (
   last_name Varchar(255),
   phone Varchar(15), -- E.164 format
   is_active Boolean Default false,
+  user_role_id int Default 20,
   created_at Timestamp Default Current_Timestamp,
-  updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp
+  updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp,
+  Constraint Foreign Key (user_role_id) References roles (role_id) On Delete Cascade On Update Cascade
 );
 
 Create Table If Not Exists addresses (
@@ -68,14 +79,6 @@ Create Table If Not Exists addresses (
   updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp,
   Constraint Foreign Key (user_id) References users (user_id) On Delete Cascade On Update Cascade,
   Constraint Foreign Key (street_id) References streets (street_id) On Delete Cascade On Update Cascade
-);
-
--- roles table
-Create Table If Not Exists roles (
-  role_id Int Primary Key Auto_Increment,
-  name Varchar(50) Not Null Unique,
-  description Varchar(155) Not Null,
-  created_at Timestamp Default Current_Timestamp
 );
 
 -- permissions table
@@ -94,16 +97,6 @@ Create Table If Not Exists role_permissions (
   Primary Key (role_id, permission_id),
   Constraint Foreign Key (role_id) References roles (role_id) On Delete Cascade On Update Cascade,
   Constraint Foreign Key (permission_id) References permissions (permission_id) On Delete Cascade On Update Cascade
-);
-
--- N to N table for user roles
-Create Table If Not Exists user_roles (
-  user_id Int Not Null,
-  role_id Int Not Null,
-  created_at Timestamp Default Current_Timestamp,
-  Primary Key (user_id, role_id),
-  Constraint Foreign Key (user_id) References users (user_id) On Delete Cascade On Update Cascade,
-  Constraint Foreign Key (role_id) References roles (role_id) On Delete Cascade On Update Cascade
 );
 
 Create Table If Not Exists user_audit (

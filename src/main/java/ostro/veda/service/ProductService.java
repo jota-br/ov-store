@@ -1,17 +1,19 @@
 package ostro.veda.service;
 
 import ostro.veda.common.InputValidator;
+import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.dto.ProductImageDTO;
 import ostro.veda.db.ProductRepository;
 
 import java.util.List;
+import java.util.Map;
 
 public class ProductService {
 
-    public static ProductDTO processData(String name, String description, double price, int stock, boolean isActive,
-                                         List<CategoryDTO> categories, List<ProductImageDTO> images) {
+    public static ProductDTO processData(Map<EntityType, Integer> entityAndId, String name, String description, double price, int stock, boolean isActive,
+                                         List<CategoryDTO> categories, List<ProductImageDTO> images, ProcessDataType dmlType) {
 
         int nameMinLength = 5;
 
@@ -22,6 +24,14 @@ public class ProductService {
             return null;
         }
 
-        return ProductRepository.addProduct(name, description, price, stock, isActive, categories, images);
+        switch (dmlType) {
+            case ADD -> {
+                return ProductRepository.addProduct(name, description, price, stock, isActive, categories, images);
+            }
+            case UPDATE -> {
+                return ProductRepository.updateProduct(entityAndId, name, description, price, stock, isActive, categories, images);
+            }
+        }
+        return null;
     }
 }

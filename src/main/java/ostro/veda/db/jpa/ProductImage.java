@@ -38,6 +38,13 @@ public class ProductImage {
         return isMain;
     }
 
+    public ProductImage updateProductImage(ProductImage updatedData) {
+        this.imageUrl = updatedData.getImageUrl();
+        this.isMain = updatedData.isMain();
+
+        return this;
+    }
+
     public ProductImageDTO transformToDto() {
         return new ProductImageDTO(this.getProductImageId(), this.getImageUrl(), this.isMain());
     }

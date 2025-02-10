@@ -120,6 +120,18 @@ public class Product {
         return updatedAt;
     }
 
+    public Product updateProduct(Product updatedData) {
+        this.name = updatedData.getName();
+        this.description = updatedData.getDescription();
+        this.price = updatedData.getPrice();
+        this.stock = updatedData.getStock();
+        this.isActive = updatedData.isActive();
+        this.categories = updatedData.getCategories();
+        this.images = updatedData.getImages();
+
+        return this;
+    }
+
     public ProductDTO transformToDto() {
         List<ProductImageDTO> images = new ArrayList<>();
         for (ProductImage pi : this.getImages()) {

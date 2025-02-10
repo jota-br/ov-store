@@ -41,8 +41,8 @@ public class User {
     @Column(name = "is_active")
     private boolean isActive;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id", referencedColumnName = "role_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_role_id", referencedColumnName = "role_id", nullable = true)
     private Role role;
 
     @CreationTimestamp
