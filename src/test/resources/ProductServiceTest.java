@@ -2,8 +2,16 @@ package test.resources;
 
 import org.junit.Test;
 import ostro.veda.common.ProcessDataType;
+import ostro.veda.db.CategoryRepository;
+import ostro.veda.db.ProductImageRepository;
+import ostro.veda.db.ProductRepository;
+import ostro.veda.db.helpers.EntityManagerHelper;
+import ostro.veda.service.CategoryService;
 import ostro.veda.service.EntityType;
+import ostro.veda.service.ProductImageService;
+import ostro.veda.service.ProductService;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
@@ -14,30 +22,42 @@ public class ProductServiceTest {
     @Test
     public void processData() {
         /*
-            Map<String, Map<String, Boolean>> categories = k:name = k:description v:isActive
             Map<String, Boolean> images = k:Url v:isMain
          */
 
-        Map<String, Map<String, Boolean>> categories = Map.of("Furniture", Map.of("High quality handmade", true));
+        List<String> categories = List.of("Furniture", "High quality handmade");
         Map<String, Boolean> images = Map.of("http://sub.example.co.uk/images/photo.png", true);
 
-        assertNull(CommonService.productProcessData("four", "valid description",
-                45.99, 15, false, categories, images, ProcessDataType.ADD, null));
-        assertNull(CommonService.productProcessData("Mega Box", "valid description",
-                -1, 15, true, categories, images, ProcessDataType.ADD, null));
-        assertNull(CommonService.productProcessData("Ultra Coin", "valid description",
-                0.0, -1, false, categories, images, ProcessDataType.ADD, null));
+        EntityManagerHelper entityManagerHelper = new EntityManagerHelper();
+        try (ProductRepository productRepository = new ProductRepository(entityManagerHelper);
+             CategoryRepository categoryRepository = new CategoryRepository(entityManagerHelper);
+             ProductImageRepository productImageRepository = new ProductImageRepository(entityManagerHelper)) {
+
+            CategoryService categoryService = new CategoryService(categoryRepository);
+            ProductImageService productImageService = new ProductImageService(productImageRepository);
+            ProductService productService = new ProductService(categoryService, productImageService, productRepository);
+
+            assertNull(productService.processData("four", "valid description",
+                    45.99, 15, false, categories, images, ProcessDataType.ADD, null));
+            assertNull(productService.processData("Mega Box", "valid description",
+                    -1, 15, true, categories, images, ProcessDataType.ADD, null));
+            assertNull(productService.processData("Ultra Coin", "valid description",
+                    0.0, -1, false, categories, images, ProcessDataType.ADD, null));
 
 
-        assertNotNull(CommonService.productProcessData("Ultra Chair", "valid description",
-                45.99, 15, false, categories, images, ProcessDataType.ADD, null));
+            assertNotNull(productService.processData("Ultra Chair", "valid description",
+                    45.99, 15, false, categories, images, ProcessDataType.ADD, null));
 
-        categories = Map.of(
-                "Furniture", Map.of("High quality handmade", true),
-                "Woodcraft", Map.of("Artisans work", true)
-        );
-        assertNotNull(CommonService.productProcessData("New Ultra Chair", "New valid description",
-                49.99, 50, true, categories, images, ProcessDataType.UPDATE,
-                Map.of(EntityType.PRODUCT, 1)));
+            categories = List.of(
+                    "Furniture", "High quality handmade", "Woodcraft", "Artisans work"
+            );
+            assertNotNull(productService.processData("New Ultra Chair", "New valid description",
+                    49.99, 50, true, categories, images, ProcessDataType.UPDATE,
+                    Map.of(EntityType.PRODUCT, 1)));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

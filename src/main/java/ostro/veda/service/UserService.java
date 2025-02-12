@@ -31,11 +31,11 @@ public class UserService {
             int firstNameMinLength = 3;
             int lastNameMinLength = 3;
 
-            String usernameCheck = InputValidator.stringChecker(username, false, false, usernameMinLength);
-            String passwordCheck = InputValidator.stringChecker(password, false, false, passwordMinLength);
+            String usernameCheck = InputValidator.stringChecker(username, false, false, false, usernameMinLength);
+            String passwordCheck = InputValidator.stringChecker(password, false, false, false, passwordMinLength);
             String emailCheck = InputValidator.emailChecker(email);
-            String firstNameCheck = InputValidator.stringChecker(firstName, true, false, firstNameMinLength);
-            String lastNameCheck = InputValidator.stringChecker(lastName, true, false, lastNameMinLength);
+            String firstNameCheck = InputValidator.stringChecker(firstName, true, false, true, firstNameMinLength);
+            String lastNameCheck = InputValidator.stringChecker(lastName, true, false, true, lastNameMinLength);
             String phoneCheck = InputValidator.phoneChecker("+" + phone);
 
             if (usernameCheck == null || passwordCheck == null || emailCheck == null ||
@@ -50,8 +50,7 @@ public class UserService {
                     firstName, lastName, phone, isActive, dmlType);
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            userRepository.closeEm();
+            return null;
         }
     }
 

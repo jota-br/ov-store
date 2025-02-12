@@ -1,5 +1,8 @@
 package test.resources;
 
+import ostro.veda.common.ProcessDataType;
+import ostro.veda.db.UserRepository;
+import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.service.UserService;
 import org.junit.Test;
 
@@ -10,20 +13,31 @@ public class UserServiceTest {
 
     @Test
     public void processData() {
-        assertNull(UserService.processData("user$123", "ValidPassword",
-                "valid@email.com", "ValidName", "ValidLastName", "5511000000000", true));
-        assertNull(UserService.processData("validUserName", "invalid#!password78",
-                "valid@email.com", "ValidName", "ValidLastName", "5511000000000", true));
-        assertNull(UserService.processData("validUserName", "ValidPassword",
-                "invalidemail.com", "ValidName", "ValidLastName", "5511000000000", true));
-        assertNull(UserService.processData("validUserName", "ValidPassword",
-                "valid@email.com", "Vi", "ValidLastName", "5511000000000", true));
-        assertNull(UserService.processData("validUserName", "ValidPassword",
-                "valid@email.com", "Val", "El", "5511000000000", false));
-        assertNull(UserService.processData("validUserName", "ValidPassword",
-                "valid@email.com", "Val", "Hummer", "55111", false));
+        EntityManagerHelper entityManagerHelper = new EntityManagerHelper();
+        try (UserRepository userRepository = new UserRepository(entityManagerHelper)) {
 
-        assertNotNull(UserService.processData("user_123456", "fdkjrEewe9@w",
-                "ema88890_il@google.com", "John", "Vesnki", "5511000000000", true));
+            UserService userService = new UserService(userRepository);
+
+            // invalid username
+            assertNull(userService.processData("user$123", "ValidPassword",
+                    "valid@email.com", "ValidName", "ValidLastName", "5511000000000", true, ProcessDataType.ADD));
+
+            // invalid password
+            assertNull(userService.processData("validUserName", "invalid#!password78",
+                    "valid@email.com", "ValidName", "ValidLastName", "5511000000000", true, ProcessDataType.ADD));
+
+            // invalid email
+            assertNull(userService.processData("validUserName", "ValidPassword",
+                    "invalidemail.com", "ValidName", "ValidLastName", "5511000000000", true, ProcessDataType.ADD));
+
+            // invalid phone
+            assertNull(userService.processData("validUserName", "ValidPassword",
+                    "valid@email.com", "Val", "Hummer", "55111", false, ProcessDataType.ADD));
+
+            assertNotNull(userService.processData("user_123456", "fdkjrEewe9@w",
+                    "ema88890_il@google.com", "John", "Vesnki", "5511000000000", true, ProcessDataType.ADD));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

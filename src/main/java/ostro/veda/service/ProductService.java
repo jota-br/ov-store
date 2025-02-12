@@ -50,8 +50,8 @@ public class ProductService {
 
             int nameMinLength = 5;
 
-            String nameCheck = InputValidator.stringChecker(nameProduct, true, true, nameMinLength);
-            String descriptionCheck = InputValidator.stringChecker(descriptionProduct, true, true, -1);
+            String nameCheck = InputValidator.stringChecker(nameProduct, true, true, false, nameMinLength);
+            String descriptionCheck = InputValidator.stringChecker(descriptionProduct, true, true, true, -1);
 
             if (nameCheck == null || descriptionCheck == null || priceProduct < 0.0 || stockProduct < 0) {
                 return null;
@@ -62,8 +62,6 @@ public class ProductService {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
-        } finally {
-            productRepository.closeEm();
         }
     }
 

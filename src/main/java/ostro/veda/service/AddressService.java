@@ -24,13 +24,13 @@ public class AddressService {
             // implement Google Map API latter
 //        int minimumTemporaryLength = 3;
 
-            String streetAddressCheck = InputValidator.stringChecker(streetAddress, false, true, 1);
-            String addressNumberCheck = InputValidator.stringChecker(addressNumber, false, true, 1);
-            String addressTypeCheck = InputValidator.stringChecker(addressType, false, true, 1);
-            String cityCheck = InputValidator.stringChecker(city, false, true, 1);
-            String stateCheck = InputValidator.stringChecker(state, false, true, 1);
-            String zip_codeCheck = InputValidator.stringChecker(zip_code, false, true, 1);
-            String countryCheck = InputValidator.stringChecker(country, false, true, 1);
+            String streetAddressCheck = InputValidator.stringChecker(streetAddress, false, true, false, 1);
+            String addressNumberCheck = InputValidator.stringChecker(addressNumber, false, true, false, 1);
+            String addressTypeCheck = InputValidator.stringChecker(addressType, false, true, false, 1);
+            String cityCheck = InputValidator.stringChecker(city, false, true, false, 1);
+            String stateCheck = InputValidator.stringChecker(state, false, true, false, 1);
+            String zip_codeCheck = InputValidator.stringChecker(zip_code, false, true, false, 1);
+            String countryCheck = InputValidator.stringChecker(country, false, true, false, 1);
 
             if (streetAddressCheck == null || addressNumberCheck == null || addressTypeCheck == null ||
                     cityCheck == null || stateCheck == null || zip_codeCheck == null || countryCheck == null) {
@@ -42,8 +42,6 @@ public class AddressService {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
-        } finally {
-            this.addressRepository.closeEm();
         }
     }
 

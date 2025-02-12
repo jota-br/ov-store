@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class InputValidator {
-    public static String stringChecker(String input, boolean sanitize, boolean spaceAccepted, int minimumLength) {
+    public static String stringChecker(String input, boolean sanitize, boolean spaceAccepted, boolean canBeBull, int minimumLength) {
 
         String regex = "^[a-zA-Z0-9@_-]+$";
         if (spaceAccepted) {
@@ -15,6 +15,9 @@ public class InputValidator {
         Matcher matcher = validPattern.matcher(input);
 
         if (!matcher.matches() || minimumLength > input.length()) {
+            if (canBeBull) {
+                return "";
+            }
             return null;
         }
 

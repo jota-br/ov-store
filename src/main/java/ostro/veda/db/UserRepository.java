@@ -10,7 +10,8 @@ import java.util.Map;
 
 public class UserRepository extends Repository {
 
-    public UserRepository(EntityManagerHelper entityManagerHelper, EntityManagerHelper entityManagerHelper1) {
+
+    public UserRepository(EntityManagerHelper entityManagerHelper) {
         super(entityManagerHelper);
     }
 

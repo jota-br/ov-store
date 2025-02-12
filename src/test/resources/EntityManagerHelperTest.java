@@ -1,43 +1,64 @@
 package test.resources;
 
-import jakarta.persistence.EntityManager;
-import org.hibernate.Session;
 import org.junit.Test;
 import ostro.veda.common.ProcessDataType;
-import ostro.veda.common.dto.CategoryDTO;
-import ostro.veda.common.dto.ProductImageDTO;
-import ostro.veda.db.helpers.JPAUtil;
+import ostro.veda.common.dto.ProductDTO;
+import ostro.veda.db.CategoryRepository;
+import ostro.veda.db.ProductImageRepository;
+import ostro.veda.db.ProductRepository;
 import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.db.jpa.Product;
+import ostro.veda.service.CategoryService;
+import ostro.veda.service.ProductImageService;
 import ostro.veda.service.ProductService;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class EntityManagerHelperTest {
 
     @Test
     public void findByFields() {
-        List<CategoryDTO> categories = List.of(new CategoryDTO(1, "name of category", "this is the description", true,
-                LocalDateTime.now(), LocalDateTime.now()));
-        List<ProductImageDTO > images = List.of(new ProductImageDTO(1, "http://sub.example.co.uk/images/photo.png", true));
 
-        ProductService productService = new ProductService();
-        productService.processData(null,"Ultra Chair", "valid description", 45.99, 15, true,
-                categories, images, ProcessDataType.ADD);
-
-        EntityManager em = JPAUtil.getEm();
         EntityManagerHelper entityManagerHelper = new EntityManagerHelper();
-        assertNotNull(entityManagerHelper.findByFields(em, Product.class,
-                Map.of(
-                        "name", "Ultra Chair",
-                        "description", "valid description",
-                        "price", "45.99",
-                        "stock", "15"
-                )));
-        JPAUtil.closeEntityManager(em);
+        try (ProductRepository productRepository = new ProductRepository(entityManagerHelper);
+             CategoryRepository categoryRepository = new CategoryRepository(entityManagerHelper);
+             ProductImageRepository productImageRepository = new ProductImageRepository(entityManagerHelper)) {
+
+            CategoryService categoryService = new CategoryService(categoryRepository);
+            ProductImageService productImageService = new ProductImageService(productImageRepository);
+            ProductService productService = new ProductService(categoryService, productImageService, productRepository);
+
+            List<String> categories = List.of("Furniture");
+            Map<String, Boolean> images = Map.of("http://sub.example.co.uk/images/photo.png", true);
+
+            String name = "Ultra Chair Classic";
+            String description = "Valid Product Description";
+            double price = 45.99;
+            int stock = 15;
+
+            ProductDTO productDTO = productService.processData(name, description, price, stock, true,
+                    categories, images, ProcessDataType.ADD, null);
+
+            List<Product> product = entityManagerHelper.findByFields(productRepository.getEm(), Product.class,
+                    Map.of(
+                            "name", name,
+                            "description", description,
+                            "price", String.valueOf(price),
+                            "stock", String.valueOf(stock)
+                    ));
+
+            assertNotNull(product);
+            assertNotNull(productDTO);
+            assertEquals(productDTO.getName(), product.get(0).getName());
+            assertEquals(productDTO.getDescription(), product.get(0).getDescription());
+            assertEquals(productDTO.getPrice(), product.get(0).getPrice(), 0);
+            assertEquals(productDTO.getStock(), product.get(0).getStock());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

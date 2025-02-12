@@ -32,8 +32,6 @@ public class ProductImageService {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
-        } finally {
-            this.productImageRepository.closeEm();
         }
     }
 

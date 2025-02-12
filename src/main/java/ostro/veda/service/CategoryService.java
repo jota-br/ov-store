@@ -25,8 +25,8 @@ public class CategoryService {
 
             int nameMinLength = 5;
 
-            String nameCheck = InputValidator.stringChecker(name, true, true, nameMinLength);
-            String descriptionCheck = InputValidator.stringChecker(description, true, true,-1);
+            String nameCheck = InputValidator.stringChecker(name, true, true, false, nameMinLength);
+            String descriptionCheck = InputValidator.stringChecker(description, true, true, true, -1);
 
             if (nameCheck == null || descriptionCheck == null) {
                 return null;
@@ -35,8 +35,7 @@ public class CategoryService {
             return performDmlAction(entityAndId, name, description, isActive, dmlType);
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            categoryRepository.closeEm();
+            return null;
         }
     }
 
