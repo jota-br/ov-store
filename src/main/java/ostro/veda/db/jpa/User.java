@@ -6,6 +6,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import ostro.veda.common.dto.UserDTO;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -42,8 +43,12 @@ public class User {
     private boolean isActive;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_role_id", referencedColumnName = "role_id", nullable = true)
+    @JoinColumn(name = "user_role_id", referencedColumnName = "role_id")
     private Role role;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id", referencedColumnName = "user_id")
+    private List<Address> addresses;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -56,7 +61,8 @@ public class User {
     public User() {
     }
 
-    public User(String username, String salt, String hash, String email, String firstName, String lastName, String phone, boolean isActive, Role role) {
+    public User(String username, String salt, String hash, String email, String firstName,
+                String lastName, String phone, boolean isActive, Role role) {
         this.username = username;
         this.salt = salt;
         this.hash = hash;
@@ -66,6 +72,20 @@ public class User {
         this.phone = phone;
         this.isActive = isActive;
         this.role = role;
+    }
+
+    public User(String username, String salt, String hash, String email, String firstName,
+                String lastName, String phone, boolean isActive, Role role, List<Address> addresses) {
+        this.username = username;
+        this.salt = salt;
+        this.hash = hash;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phone = phone;
+        this.isActive = isActive;
+        this.role = role;
+        this.addresses = addresses;
     }
 
     public int getUserId() {
@@ -108,6 +128,10 @@ public class User {
         return role;
     }
 
+    public List<Address> getAddresses() {
+        return addresses;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -118,6 +142,6 @@ public class User {
 
     public UserDTO transformToDto() {
         return new UserDTO(this.getUserId(), this.getUsername(), this.getSalt(), this.getHash(), this.getEmail(), this.getFirstName(), this.getLastName(),
-                this.getPhone(), this.isActive(), this.getRole(), this.getCreatedAt(), this.getUpdatedAt());
+                this.getPhone(), this.isActive(), this.getRole(), this.getAddresses(), this.getCreatedAt(), this.getUpdatedAt());
     }
 }

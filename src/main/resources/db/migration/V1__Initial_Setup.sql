@@ -1,49 +1,3 @@
--- country table
-Create Table If Not Exists countries (
-  country_id Int Primary Key Auto_Increment,
-  name Varchar(255) Not Null,
-  created_at Timestamp Default Current_Timestamp,
-  updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp
-);
-
--- state table
-Create Table If Not Exists states (
-  state_id Int Primary Key Auto_Increment,
-  name Varchar(255) Not Null,
-  country_id Int Not Null,
-  created_at Timestamp Default Current_Timestamp,
-  updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp,
-  Constraint Foreign Key (country_id) References countries (country_id) On Delete Cascade On Update Cascade
-);
-
--- cities table
-Create Table If Not Exists cities (
-  city_id Int Primary Key Auto_Increment,
-  name Varchar(255) Not Null,
-  state_id Int Not Null,
-  created_at Timestamp Default Current_Timestamp,
-  Constraint Foreign Key (state_id) References states (state_id) On Delete Cascade On Update Cascade
-);
-
--- zip code tables
-Create Table If Not Exists zip_codes (
-  zip_code_id Int Primary Key Auto_Increment,
-  zip_code Varchar(50) Not Null,
-  created_at Timestamp Default Current_Timestamp,
-  updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp
-);
-
--- street table
-Create Table If Not Exists streets (
-  street_id Int Primary Key Auto_Increment,
-  name Varchar(255) Not Null,
-  zip_code_id Int Not Null,
-  city_id Int Not Null,
-  created_at Timestamp Default Current_Timestamp,
-  Constraint Foreign Key (zip_code_id) References zip_codes (zip_code_id) On Delete Cascade On Update Cascade,
-  Constraint Foreign Key (city_id) References cities (city_id) On Delete Cascade On Update Cascade
-);
-
 -- roles table
 Create Table If Not Exists roles (
   role_id Int Primary Key Auto_Increment,
@@ -71,7 +25,7 @@ Create Table If Not Exists users (
 );
 
 -- addresses
-Create Table If Not Exists customer_addresses (
+Create Table If Not Exists addresses (
   address_id Int Primary Key Auto_Increment,
   user_id Int Not Null,
   street_address Varchar(255) Not Null,
@@ -81,22 +35,10 @@ Create Table If Not Exists customer_addresses (
   state Varchar(255),
   zip_code Varchar(50) Not Null,
   country Varchar(255) Not Null,
+  is_active Boolean Default true,
   created_at Timestamp Default Current_Timestamp,
   updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp,
   Constraint Foreign Key (user_id) References users (user_id) On Delete Cascade On Update Cascade
-);
-
--- addresses
-Create Table If Not Exists addresses (
-  address_id Int Primary Key Auto_Increment,
-  user_id Int Not Null,
-  street_id Int Not Null,
-  address_number Varchar(50),
-  address_type Varchar(50) Not Null,  -- 'billing', 'shipping', 'home', 'work'
-  created_at Timestamp Default Current_Timestamp,
-  updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp,
-  Constraint Foreign Key (user_id) References users (user_id) On Delete Cascade On Update Cascade,
-  Constraint Foreign Key (street_id) References streets (street_id) On Delete Cascade On Update Cascade
 );
 
 -- permissions table

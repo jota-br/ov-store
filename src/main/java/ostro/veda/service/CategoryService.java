@@ -9,26 +9,50 @@ import java.util.Map;
 
 public class CategoryService {
 
-    public static CategoryDTO processData(Map<EntityType, Integer> entityAndId, String name, String description, boolean isActive, ProcessDataType dmlType) {
+    private final CategoryRepository categoryRepository;
 
-        int nameMinLength = 5;
+    public CategoryService(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
 
-        String nameCheck = InputValidator.stringChecker(name, true, true, nameMinLength);
-        String descriptionCheck = InputValidator.stringChecker(description, true, true,-1);
+    public CategoryDTO processData(Map<EntityType, Integer> entityAndId, String name, String description,
+                                   boolean isActive, ProcessDataType dmlType) {
 
-        if (nameCheck == null || descriptionCheck == null) {
-            return null;
+        try {
+            if (dmlType == null) {
+                return null;
+            }
+
+            int nameMinLength = 5;
+
+            String nameCheck = InputValidator.stringChecker(name, true, true, nameMinLength);
+            String descriptionCheck = InputValidator.stringChecker(description, true, true,-1);
+
+            if (nameCheck == null || descriptionCheck == null) {
+                return null;
+            }
+
+            return performDmlAction(entityAndId, name, description, isActive, dmlType);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            categoryRepository.closeEm();
         }
+    }
 
+    private CategoryDTO performDmlAction(Map<EntityType, Integer> entityAndId, String name, String description,
+                                        boolean isActive, ProcessDataType dmlType) {
         switch(dmlType) {
             case ADD -> {
-                return CategoryRepository.addCategory(name, description, isActive);
+                return this.categoryRepository.addCategory(name, description, isActive);
             }
             case UPDATE -> {
                 int id = entityAndId.getOrDefault(EntityType.CATEGORY, -1);
-                return CategoryRepository.updateCategory(id, name, description, isActive);
+                return this.categoryRepository.updateCategory(id, name, description, isActive);
+            }
+            default -> {
+                return null;
             }
         }
-        return null;
     }
 }

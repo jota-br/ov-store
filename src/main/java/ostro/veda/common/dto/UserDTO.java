@@ -1,8 +1,10 @@
 package ostro.veda.common.dto;
 
+import ostro.veda.db.jpa.Address;
 import ostro.veda.db.jpa.Role;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class UserDTO {
 
@@ -16,11 +18,13 @@ public class UserDTO {
     private final String phone;
     private final boolean isActive;
     private final Role role;
+    private List<Address> addresses;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public UserDTO(int userId, String username, String salt, String hash, String email,
-                   String firstName, String lastName, String phone, boolean isActive, Role role, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public UserDTO(int userId, String username, String salt, String hash, String email, String firstName,
+                   String lastName, String phone, boolean isActive, Role role, List<Address> addresses,
+                   LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.userId = userId;
         this.username = username;
         this.salt = salt;
@@ -31,6 +35,7 @@ public class UserDTO {
         this.phone = phone;
         this.isActive = isActive;
         this.role = role;
+        this.addresses = addresses;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -73,6 +78,10 @@ public class UserDTO {
 
     public Role getRole() {
         return role;
+    }
+
+    public List<Address> getAddresses() {
+        return addresses;
     }
 
     public LocalDateTime getCreatedAt() {

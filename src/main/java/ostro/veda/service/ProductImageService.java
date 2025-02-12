@@ -3,29 +3,54 @@ package ostro.veda.service;
 import ostro.veda.common.InputValidator;
 import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.ProductImageDTO;
-import ostro.veda.db.jpa.ProductImageRepository;
+import ostro.veda.db.ProductImageRepository;
 
 import java.util.Map;
 
 public class ProductImageService {
 
-    public static ProductImageDTO processData(Map<EntityType, Integer> entityAndId, String url, boolean isMain, ProcessDataType dmlType) {
+    private final ProductImageRepository productImageRepository;
 
-        String urlCheck = InputValidator.imageUrlCheck(url);
+    public ProductImageService(ProductImageRepository productImageRepository) {
+        this.productImageRepository = productImageRepository;
+    }
 
-        if (urlCheck == null) {
+    public ProductImageDTO processData(Map<EntityType, Integer> entityAndId, String url,
+                                       boolean isMain, ProcessDataType dmlType) {
+        try {
+            if (dmlType == null) {
+                return null;
+            }
+            String urlCheck = InputValidator.imageUrlCheck(url);
+
+            if (urlCheck == null) {
+                return null;
+            }
+
+            return performDmlAction(entityAndId, url, isMain, dmlType);
+
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
+        } finally {
+            this.productImageRepository.closeEm();
         }
+    }
 
+    private ProductImageDTO performDmlAction(Map<EntityType, Integer> entityAndId, String url,
+                                             boolean isMain, ProcessDataType dmlType) {
         switch (dmlType) {
             case ADD -> {
-                return ProductImageRepository.addImage(url, isMain);
+                return this.productImageRepository.addImage(url, isMain);
             }
             case UPDATE -> {
                 int id = entityAndId.getOrDefault(EntityType.PRODUCT_IMAGE, -1);
-                return ProductImageRepository.updateImage(id, url, isMain);
+                return this.productImageRepository.updateImage(id, url, isMain);
+            }
+
+            default -> {
+                return null;
             }
         }
-        return null;
     }
 }

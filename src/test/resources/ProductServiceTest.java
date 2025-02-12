@@ -2,7 +2,6 @@ package test.resources;
 
 import org.junit.Test;
 import ostro.veda.common.ProcessDataType;
-import ostro.veda.service.CommonService;
 import ostro.veda.service.EntityType;
 
 import java.util.Map;

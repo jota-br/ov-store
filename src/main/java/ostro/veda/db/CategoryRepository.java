@@ -1,19 +1,21 @@
 package ostro.veda.db;
 
-import org.hibernate.Session;
 import ostro.veda.common.dto.CategoryDTO;
-import ostro.veda.db.helpers.SessionDml;
+import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.db.jpa.Category;
 
 import java.util.List;
 import java.util.Map;
 
-public class CategoryRepository {
+public class CategoryRepository extends Repository {
 
-    public static CategoryDTO addCategory(String name, String description, boolean isActive) {
+    public CategoryRepository(EntityManagerHelper entityManagerHelper) {
+        super(entityManagerHelper);
+    }
 
-        Session session = DbConnection.getOpenSession();
-        List<Category> result = SessionDml.findByFields(session, Category.class, Map.of("name", name));
+    public CategoryDTO addCategory(String name, String description, boolean isActive) {
+
+        List<Category> result = this.entityManagerHelper.findByFields(this.em, Category.class, Map.of("name", name));
         Category category = null;
         if (result != null && !result.isEmpty()) {
             category = result.get(0);
@@ -21,22 +23,17 @@ public class CategoryRepository {
             category = new Category(name, description, isActive);
         }
 
-        boolean isInserted = SessionDml.executePersist(session, category);
+        boolean isInserted = this.entityManagerHelper.executePersist(this.em, category);
         if (!isInserted) {
             return null;
         }
 
-        CategoryDTO dto = category.transformToDto();
-        DbConnection.closeSession(session);
-
-        return dto;
+        return category.transformToDto();
     }
 
-    public static CategoryDTO updateCategory(int categoryId, String name, String description, boolean isActive) {
+    public CategoryDTO updateCategory(int categoryId, String name, String description, boolean isActive) {
 
-        Session session = DbConnection.getOpenSession();
-
-        Category category = session.get(Category.class, categoryId);
+        Category category = this.em.find(Category.class, categoryId);
 
         if (category == null) {
             return addCategory(name, description, isActive);
@@ -44,14 +41,11 @@ public class CategoryRepository {
 
         category.updateCategory(new Category(name, description, isActive));
 
-        boolean isInserted = SessionDml.executeMerge(session, category);
+        boolean isInserted = this.entityManagerHelper.executeMerge(this.em, category);
         if (!isInserted) {
             return null;
         }
 
-        CategoryDTO dto = category.transformToDto();
-        DbConnection.closeSession(session);
-
-        return dto;
+        return category.transformToDto();
     }
 }
