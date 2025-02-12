@@ -29,14 +29,37 @@ public class AddressRepository extends Repository {
         Address address = null;
         if (result != null && !result.isEmpty()) {
             address = result.get(0);
+        } else {
+            address = new Address(streetAddress, addressNumber,
+                    addressType, city, state, zip_code, country, isActive);
         }
 
-        AddressDTO dto = null;
-        if (address != null) {
-            dto = address.transformToDto();
-        } else {
-            dto = new AddressDTO(-1, streetAddress, addressNumber, addressType, city, state, zip_code, country, isActive, null, null);
+        boolean isInserted = this.entityManagerHelper.executePersist(this.em, address);
+        if (!isInserted) {
+            return null;
         }
-        return dto;
+
+        return address.transformToDto();
+    }
+
+    public AddressDTO updateAddress(int addressId, String streetAddress, String addressNumber, String addressType, String city,
+                                     String state, String zip_code, String country, boolean isActive) {
+
+        Address address = this.em.find(Address.class, addressId);
+
+        if (address == null) {
+            return addAddress(streetAddress, addressNumber,
+                    addressType, city, state, zip_code, country, isActive);
+        }
+
+        address.updateAddress(new Address(streetAddress, addressNumber,
+                addressType, city, state, zip_code, country, isActive));
+
+        boolean isInserted = this.entityManagerHelper.executeMerge(this.em, address);
+        if (!isInserted) {
+            return null;
+        }
+
+        return address.transformToDto();
     }
 }

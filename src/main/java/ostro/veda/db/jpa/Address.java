@@ -31,8 +31,8 @@ public class Address {
     @Column(name = "state", nullable = false)
     private String state;
 
-    @Column(name = "zip_code", nullable = false, length = 50)
-    private String zip_code;
+    @Column(name = "zipCode", nullable = false, length = 50)
+    private String zipCode;
 
     @Column(name = "country", nullable = false)
     private String country;
@@ -51,13 +51,13 @@ public class Address {
     public Address() {
     }
 
-    public Address(String streetAddress, String addressNumber, String addressType, String city, String state, String zip_code, String country, boolean isActive) {
+    public Address(String streetAddress, String addressNumber, String addressType, String city, String state, String zipCode, String country, boolean isActive) {
         this.streetAddress = streetAddress;
         this.addressNumber = addressNumber;
         this.addressType = addressType;
         this.city = city;
         this.state = state;
-        this.zip_code = zip_code;
+        this.zipCode = zipCode;
         this.country = country;
         this.isActive = isActive;
     }
@@ -86,8 +86,8 @@ public class Address {
         return state;
     }
 
-    public String getZip_code() {
-        return zip_code;
+    public String getZipCode() {
+        return zipCode;
     }
 
     public String getCountry() {
@@ -106,8 +106,21 @@ public class Address {
         return updatedAt;
     }
 
+    public Address updateAddress(Address updatedData) {
+        this.streetAddress = updatedData.getStreetAddress();
+        this.addressNumber = updatedData.getAddressNumber();
+        this.addressType = updatedData.getAddressType();
+        this.city = updatedData.getCity();
+        this.state = updatedData.getState();
+        this.zipCode = updatedData.getZipCode();
+        this.country = updatedData.getCountry();
+        this.isActive = updatedData.isActive();
+
+        return this;
+    }
+
     public AddressDTO transformToDto() {
         return new AddressDTO(this.getAddressId(), this.getStreetAddress(), this.getAddressNumber(), this.getAddressType(),
-                this.getCity(), this.getState(), this.getZip_code(), this.getCountry(), this.isActive(), this.getCreatedAt(), this.getUpdatedAt());
+                this.getCity(), this.getState(), this.getZipCode(), this.getCountry(), this.isActive(), this.getCreatedAt(), this.getUpdatedAt());
     }
 }

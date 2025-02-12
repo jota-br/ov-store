@@ -25,18 +25,18 @@ public class ProductService {
     }
 
     public ProductDTO processData(String nameProduct, String descriptionProduct, double priceProduct, int stockProduct, boolean isActiveProduct,
-                                  List<String> categories, Map<String, Boolean> images, ProcessDataType dmlType,
+                                  List<String> categories, Map<String, Boolean> images, ProcessDataType processDataType,
                                   Map<EntityType, Integer> entityAndId) {
 //        Map<String, Boolean> images = k:Url v:isMain
 
         try {
-            if (dmlType == null) {
+            if (processDataType == null) {
                 return null;
             }
 
             List<CategoryDTO> categoriesList = new ArrayList<>();
             for (String string : categories) {
-                CategoryDTO category = this.categoryService.processData(entityAndId, string, "", isActiveProduct, dmlType);
+                CategoryDTO category = this.categoryService.processData(entityAndId, string, "", isActiveProduct, processDataType);
                 categoriesList.add(category);
             }
 
@@ -44,7 +44,7 @@ public class ProductService {
             for (Map.Entry<String, Boolean> entry : images.entrySet()) {
                 String url = entry.getKey();
                 boolean isMain = entry.getValue();
-                ProductImageDTO productImageDTO = this.productImageService.processData(entityAndId, url, isMain, dmlType);
+                ProductImageDTO productImageDTO = this.productImageService.processData(entityAndId, url, isMain, processDataType);
                 imagesList.add(productImageDTO);
             }
 
@@ -58,7 +58,7 @@ public class ProductService {
             }
 
             return performDmlAction(entityAndId, nameProduct, descriptionProduct, priceProduct, stockProduct, isActiveProduct,
-                    categoriesList, imagesList, dmlType);
+                    categoriesList, imagesList, processDataType);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -67,8 +67,8 @@ public class ProductService {
 
     private ProductDTO performDmlAction(Map<EntityType, Integer> entityAndId, String name, String description,
                                         double price, int stock, boolean isActive, List<CategoryDTO> categories,
-                                        List<ProductImageDTO> images, ProcessDataType dmlType) {
-        switch (dmlType) {
+                                        List<ProductImageDTO> images, ProcessDataType processDataType) {
+        switch (processDataType) {
             case ADD -> {
                 return this.productRepository.addProduct(name, description, price, stock, isActive, categories, images);
             }

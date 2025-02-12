@@ -16,9 +16,9 @@ public class ProductImageService {
     }
 
     public ProductImageDTO processData(Map<EntityType, Integer> entityAndId, String url,
-                                       boolean isMain, ProcessDataType dmlType) {
+                                       boolean isMain, ProcessDataType processDataType) {
         try {
-            if (dmlType == null) {
+            if (processDataType == null) {
                 return null;
             }
             String urlCheck = InputValidator.imageUrlCheck(url);
@@ -27,7 +27,7 @@ public class ProductImageService {
                 return null;
             }
 
-            return performDmlAction(entityAndId, url, isMain, dmlType);
+            return performDmlAction(entityAndId, url, isMain, processDataType);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -36,8 +36,8 @@ public class ProductImageService {
     }
 
     private ProductImageDTO performDmlAction(Map<EntityType, Integer> entityAndId, String url,
-                                             boolean isMain, ProcessDataType dmlType) {
-        switch (dmlType) {
+                                             boolean isMain, ProcessDataType processDataType) {
+        switch (processDataType) {
             case ADD -> {
                 return this.productImageRepository.addImage(url, isMain);
             }

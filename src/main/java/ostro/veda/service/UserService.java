@@ -19,10 +19,10 @@ public class UserService {
     }
 
     public UserDTO processData(String username, String password, String email,
-                               String firstName, String lastName, String phone, boolean isActive, ProcessDataType dmlType) {
+                               String firstName, String lastName, String phone, boolean isActive, ProcessDataType processDataType) {
 
         try {
-            if (dmlType == null) {
+            if (processDataType == null) {
                 return null;
             }
 
@@ -47,7 +47,7 @@ public class UserService {
 
 
             return performDmlAction(username, password, email,
-                    firstName, lastName, phone, isActive, dmlType);
+                    firstName, lastName, phone, isActive, processDataType);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -55,8 +55,8 @@ public class UserService {
     }
 
     private UserDTO performDmlAction(String username, String password, String email,
-                                     String firstName, String lastName, String phone, boolean isActive, ProcessDataType dmlType) {
-        switch (dmlType) {
+                                     String firstName, String lastName, String phone, boolean isActive, ProcessDataType processDataType) {
+        switch (processDataType) {
             case ADD -> {
 
                 byte[] salt = getSalt();

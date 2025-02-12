@@ -4,8 +4,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.mariadb.jdbc.MariaDbDataSource;
 
 import java.sql.Connection;
@@ -58,17 +56,6 @@ public class JPAUtil {
     public static void transactionRollBack(EntityTransaction transaction) {
         if (transaction != null && transaction.isActive()) {
             transaction.rollback();
-        }
-    }
-
-    public static Session getSession() {
-        SessionFactory sessionFactory = getEmf().unwrap(SessionFactory.class);
-        return sessionFactory.openSession();
-    }
-
-    public static void closeSession(Session session) {
-        if (session != null && session.isOpen()) {
-            session.close();
         }
     }
 

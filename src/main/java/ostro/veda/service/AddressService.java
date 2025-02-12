@@ -13,11 +13,11 @@ public class AddressService {
         this.addressRepository = addressRepository;
     }
 
-    public AddressDTO processData(String streetAddress, String addressNumber, String addressType, String city,
-                                         String state, String zip_code, String country, boolean isActive, ProcessDataType dmlType) {
+    public AddressDTO processData(int addressId, String streetAddress, String addressNumber, String addressType, String city,
+                                         String state, String zip_code, String country, boolean isActive, ProcessDataType processDataType) {
 
         try {
-            if (dmlType == null) {
+            if (processDataType == null) {
                 return null;
             }
 
@@ -37,19 +37,24 @@ public class AddressService {
                 return null;
             }
 
-            return performDmlAction(streetAddress, addressNumber, addressType, city,
-                    state, zip_code, country, isActive, dmlType);
+            return performDmlAction(addressId, streetAddress, addressNumber, addressType, city,
+                    state, zip_code, country, isActive, processDataType);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    private AddressDTO performDmlAction(String streetAddress, String addressNumber, String addressType, String city,
-                                        String state, String zip_code, String country, boolean isActive, ProcessDataType dmlType) {
-        switch (dmlType) {
+    private AddressDTO performDmlAction(int addressId, String streetAddress, String addressNumber, String addressType, String city,
+                                        String state, String zip_code, String country, boolean isActive, ProcessDataType processDataType) {
+        switch (processDataType) {
             case ADD -> {
                 AddressDTO addressDTO = this.addressRepository.addAddress(streetAddress, addressNumber, addressType, city, state, zip_code, country, isActive);
+                this.addressRepository.closeEm();
+                return addressDTO;
+            }
+            case UPDATE -> {
+                AddressDTO addressDTO = this.addressRepository.updateAddress(addressId, streetAddress, addressNumber, addressType, city, state, zip_code, country, isActive);
                 this.addressRepository.closeEm();
                 return addressDTO;
             }

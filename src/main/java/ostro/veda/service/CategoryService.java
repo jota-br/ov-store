@@ -16,10 +16,10 @@ public class CategoryService {
     }
 
     public CategoryDTO processData(Map<EntityType, Integer> entityAndId, String name, String description,
-                                   boolean isActive, ProcessDataType dmlType) {
+                                   boolean isActive, ProcessDataType processDataType) {
 
         try {
-            if (dmlType == null) {
+            if (processDataType == null) {
                 return null;
             }
 
@@ -32,7 +32,7 @@ public class CategoryService {
                 return null;
             }
 
-            return performDmlAction(entityAndId, name, description, isActive, dmlType);
+            return performDmlAction(entityAndId, name, description, isActive, processDataType);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -40,8 +40,8 @@ public class CategoryService {
     }
 
     private CategoryDTO performDmlAction(Map<EntityType, Integer> entityAndId, String name, String description,
-                                        boolean isActive, ProcessDataType dmlType) {
-        switch(dmlType) {
+                                        boolean isActive, ProcessDataType processDataType) {
+        switch(processDataType) {
             case ADD -> {
                 return this.categoryRepository.addCategory(name, description, isActive);
             }
