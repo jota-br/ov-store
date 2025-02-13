@@ -3,11 +3,11 @@ name: Java CI with Maven and Hibernate
 on:
   push:
     branches:
-      - main
+      - master
       - dev
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   build:
@@ -103,7 +103,7 @@ jobs:
       - name: List local branches
         run: git branch --all
 
-      - name: Push to main if build and tests pass
+      - name: Push to master if build and tests pass
         if: github.ref == 'refs/heads/dev'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
