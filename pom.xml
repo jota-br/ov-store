@@ -5,7 +5,7 @@
 
     <groupId>ostro.veda</groupId>
     <artifactId>ov-store</artifactId>
-    <version>0.6.1</version>
+    <version>0.6.2</version>
     <packaging>jar</packaging>
 
     <name>Ostro Veda Store</name>
