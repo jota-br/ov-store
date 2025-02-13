@@ -140,6 +140,20 @@ public class User {
         return updatedAt;
     }
 
+    public User updateUser(User updatedData) {
+        this.username = updatedData.getUsername();
+        this.salt = updatedData.getSalt();
+        this.hash = updatedData.getHash();
+        this.email = updatedData.getEmail();
+        this.firstName = updatedData.getFirstName();
+        this.lastName = updatedData.getLastName();
+        this.phone = updatedData.getPhone();
+        this.isActive = updatedData.isActive();
+        this.role = updatedData.getRole();
+
+        return this;
+    }
+
     public UserDTO transformToDto() {
         return new UserDTO(this.getUserId(), this.getUsername(), this.getSalt(), this.getHash(), this.getEmail(), this.getFirstName(), this.getLastName(),
                 this.getPhone(), this.isActive(), this.getRole(), this.getAddresses(), this.getCreatedAt(), this.getUpdatedAt());

@@ -18,7 +18,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public UserDTO processData(String username, String password, String email,
+    public UserDTO processData(int userId, String username, String password, String email,
                                String firstName, String lastName, String phone, boolean isActive, ProcessDataType processDataType) {
 
         try {
@@ -46,7 +46,7 @@ public class UserService {
             }
 
 
-            return performDmlAction(username, password, email,
+            return performDmlAction(userId, username, password, email,
                     firstName, lastName, phone, isActive, processDataType);
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,7 +54,7 @@ public class UserService {
         }
     }
 
-    private UserDTO performDmlAction(String username, String password, String email,
+    private UserDTO performDmlAction(int userId, String username, String password, String email,
                                      String firstName, String lastName, String phone, boolean isActive, ProcessDataType processDataType) {
         switch (processDataType) {
             case ADD -> {
@@ -65,10 +65,22 @@ public class UserService {
 
                 return userRepository.addUser(username, encodedSalt, hash, email, firstName, lastName, phone, isActive);
             }
+            case UPDATE -> {
+
+                byte[] salt = getSalt();
+                String encodedSalt = getEncodedSalt(salt);
+                String hash = getHash(password, salt);
+
+                return userRepository.updateUser(userId, username, encodedSalt, hash, email, firstName, lastName, phone, isActive);
+            }
             default -> {
                 return null;
             }
         }
+    }
+
+    private String getEncodedSalt(byte[] salt) {
+        return Base64.getEncoder().encodeToString(salt);
     }
 
     private byte[] getSalt() {

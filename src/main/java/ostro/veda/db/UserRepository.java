@@ -32,4 +32,23 @@ public class UserRepository extends Repository {
 
         return user.transformToDto();
     }
+
+    public UserDTO updateUser(int userId, String username, String salt, String hash, String email,
+                              String firstName, String lastName, String phone, boolean isActive) {
+
+        User user = this.em.find(User.class, userId);
+
+        if (user == null) {
+            return addUser(username, salt, hash, email, firstName, lastName, phone, isActive);
+        }
+
+        user.updateUser(new User(username, salt, hash, email, firstName, lastName, phone, isActive, user.getRole()));
+
+        boolean isInserted = this.entityManagerHelper.executeMerge(this.em, user);
+        if (!isInserted) {
+            return null;
+        }
+
+        return user.transformToDto();
+    }
 }
