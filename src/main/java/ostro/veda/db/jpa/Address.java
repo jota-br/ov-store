@@ -16,6 +16,9 @@ public class Address {
     @Column(name = "address_id")
     private int addressId;
 
+    @Column(name = "user_id")
+    private int userId;
+
     @Column(name = "street_address", nullable = false)
     private String streetAddress;
 
@@ -31,7 +34,7 @@ public class Address {
     @Column(name = "state", nullable = false)
     private String state;
 
-    @Column(name = "zipCode", nullable = false, length = 50)
+    @Column(name = "zip_code", nullable = false, length = 50)
     private String zipCode;
 
     @Column(name = "country", nullable = false)
@@ -51,7 +54,9 @@ public class Address {
     public Address() {
     }
 
-    public Address(String streetAddress, String addressNumber, String addressType, String city, String state, String zipCode, String country, boolean isActive) {
+    public Address(int userId, String streetAddress, String addressNumber, String addressType,
+                   String city, String state, String zipCode, String country, boolean isActive) {
+        this.userId = userId;
         this.streetAddress = streetAddress;
         this.addressNumber = addressNumber;
         this.addressType = addressType;
@@ -64,6 +69,10 @@ public class Address {
 
     public int getAddressId() {
         return addressId;
+    }
+
+    public int getUserId() {
+        return userId;
     }
 
     public String getStreetAddress() {
@@ -115,12 +124,13 @@ public class Address {
         this.zipCode = updatedData.getZipCode();
         this.country = updatedData.getCountry();
         this.isActive = updatedData.isActive();
+        this.userId = updatedData.getUserId();
 
         return this;
     }
 
     public AddressDTO transformToDto() {
-        return new AddressDTO(this.getAddressId(), this.getStreetAddress(), this.getAddressNumber(), this.getAddressType(),
+        return new AddressDTO(this.getAddressId(), this.getUserId(), this.getStreetAddress(), this.getAddressNumber(), this.getAddressType(),
                 this.getCity(), this.getState(), this.getZipCode(), this.getCountry(), this.isActive(), this.getCreatedAt(), this.getUpdatedAt());
     }
 }

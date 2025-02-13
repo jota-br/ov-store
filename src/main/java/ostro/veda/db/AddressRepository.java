@@ -13,8 +13,8 @@ public class AddressRepository extends Repository {
         super(entityManagerHelper);
     }
 
-    public AddressDTO addAddress(String streetAddress, String addressNumber, String addressType, String city,
-                                 String state, String zip_code, String country, boolean isActive) {
+    public AddressDTO addAddress(int userId, String streetAddress, String addressNumber, String addressType, String city,
+                                 String state, String zipCode, String country, boolean isActive) {
 
         List<Address> result = this.entityManagerHelper.findByFields(this.em, Address.class, Map.of(
                 "streetAddress", streetAddress,
@@ -22,16 +22,15 @@ public class AddressRepository extends Repository {
                 "addressType", addressType,
                 "city", city,
                 "state", state,
-                "zip_code", zip_code,
-                "country", country,
-                "isActive", "true"
+                "zipCode", zipCode,
+                "country", country
         ));
         Address address = null;
         if (result != null && !result.isEmpty()) {
             address = result.get(0);
         } else {
-            address = new Address(streetAddress, addressNumber,
-                    addressType, city, state, zip_code, country, isActive);
+            address = new Address(userId, streetAddress, addressNumber,
+                    addressType, city, state, zipCode, country, isActive);
         }
 
         boolean isInserted = this.entityManagerHelper.executePersist(this.em, address);
@@ -42,18 +41,18 @@ public class AddressRepository extends Repository {
         return address.transformToDto();
     }
 
-    public AddressDTO updateAddress(int addressId, String streetAddress, String addressNumber, String addressType, String city,
-                                     String state, String zip_code, String country, boolean isActive) {
+    public AddressDTO updateAddress(int addressId, int userId, String streetAddress, String addressNumber, String addressType, String city,
+                                     String state, String zipCode, String country, boolean isActive) {
 
         Address address = this.em.find(Address.class, addressId);
 
         if (address == null) {
-            return addAddress(streetAddress, addressNumber,
-                    addressType, city, state, zip_code, country, isActive);
+            return addAddress(userId, streetAddress, addressNumber,
+                    addressType, city, state, zipCode, country, isActive);
         }
 
-        address.updateAddress(new Address(streetAddress, addressNumber,
-                addressType, city, state, zip_code, country, isActive));
+        address.updateAddress(new Address(userId, streetAddress, addressNumber,
+                addressType, city, state, zipCode, country, isActive));
 
         boolean isInserted = this.entityManagerHelper.executeMerge(this.em, address);
         if (!isInserted) {

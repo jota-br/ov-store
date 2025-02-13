@@ -14,7 +14,7 @@ public class AddressService {
     }
 
     public AddressDTO processData(int addressId, String streetAddress, String addressNumber, String addressType, String city,
-                                         String state, String zip_code, String country, boolean isActive, ProcessDataType processDataType) {
+                                         String state, String zipCode, String country, boolean isActive, ProcessDataType processDataType) {
 
         try {
             if (processDataType == null) {
@@ -29,16 +29,16 @@ public class AddressService {
             String addressTypeCheck = InputValidator.stringChecker(addressType, false, true, false, 1);
             String cityCheck = InputValidator.stringChecker(city, false, true, false, 1);
             String stateCheck = InputValidator.stringChecker(state, false, true, false, 1);
-            String zip_codeCheck = InputValidator.stringChecker(zip_code, false, true, false, 1);
+            String zipCodeCheck = InputValidator.stringChecker(zipCode, false, true, false, 1);
             String countryCheck = InputValidator.stringChecker(country, false, true, false, 1);
 
             if (streetAddressCheck == null || addressNumberCheck == null || addressTypeCheck == null ||
-                    cityCheck == null || stateCheck == null || zip_codeCheck == null || countryCheck == null) {
+                    cityCheck == null || stateCheck == null || zipCodeCheck == null || countryCheck == null) {
                 return null;
             }
 
             return performDmlAction(addressId, streetAddress, addressNumber, addressType, city,
-                    state, zip_code, country, isActive, processDataType);
+                    state, zipCode, country, isActive, processDataType);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -46,15 +46,18 @@ public class AddressService {
     }
 
     private AddressDTO performDmlAction(int addressId, String streetAddress, String addressNumber, String addressType, String city,
-                                        String state, String zip_code, String country, boolean isActive, ProcessDataType processDataType) {
+                                        String state, String zipCode, String country, boolean isActive, ProcessDataType processDataType) {
         switch (processDataType) {
             case ADD -> {
-                AddressDTO addressDTO = this.addressRepository.addAddress(streetAddress, addressNumber, addressType, city, state, zip_code, country, isActive);
+                AddressDTO addressDTO = this.addressRepository.addAddress(1, streetAddress, addressNumber, addressType, city, state, zipCode, country, isActive);
                 this.addressRepository.closeEm();
                 return addressDTO;
             }
             case UPDATE -> {
-                AddressDTO addressDTO = this.addressRepository.updateAddress(addressId, streetAddress, addressNumber, addressType, city, state, zip_code, country, isActive);
+                if (addressId < 1) {
+                    return null;
+                }
+                AddressDTO addressDTO = this.addressRepository.updateAddress(1, addressId, streetAddress, addressNumber, addressType, city, state, zipCode, country, isActive);
                 this.addressRepository.closeEm();
                 return addressDTO;
             }

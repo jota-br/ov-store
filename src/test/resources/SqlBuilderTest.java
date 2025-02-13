@@ -1,8 +1,8 @@
 package test.resources;
 
+import org.junit.Test;
 import ostro.veda.db.helpers.SqlBuilder;
 import ostro.veda.db.jpa.User;
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 

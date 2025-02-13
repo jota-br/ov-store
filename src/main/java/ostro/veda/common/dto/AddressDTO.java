@@ -5,26 +5,28 @@ import java.time.LocalDateTime;
 public class AddressDTO {
 
     private final int addressId;
+    private final int userId;
     private final String streetAddress;
     private final String addressNumber;
     private final String addressType;
     private final String city;
     private final String state;
-    private final String zip_code;
+    private final String zipCode;
     private final String country;
     private final boolean isActive;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public AddressDTO(int addressId, String streetAddress, String addressNumber, String addressType,
-                      String city, String state, String zip_code, String country, boolean isActive, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public AddressDTO(int addressId, int userId, String streetAddress, String addressNumber, String addressType,
+                      String city, String state, String zipCode, String country, boolean isActive, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.addressId = addressId;
+        this.userId = userId;
         this.streetAddress = streetAddress;
         this.addressNumber = addressNumber;
         this.addressType = addressType;
         this.city = city;
         this.state = state;
-        this.zip_code = zip_code;
+        this.zipCode = zipCode;
         this.country = country;
         this.isActive = isActive;
         this.createdAt = createdAt;
@@ -33,6 +35,10 @@ public class AddressDTO {
 
     public int getAddressId() {
         return addressId;
+    }
+
+    public int getUserId() {
+        return userId;
     }
 
     public String getStreetAddress() {
@@ -55,8 +61,8 @@ public class AddressDTO {
         return state;
     }
 
-    public String getZip_code() {
-        return zip_code;
+    public String getZipCode() {
+        return zipCode;
     }
 
     public String getCountry() {
