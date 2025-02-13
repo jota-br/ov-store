@@ -14,7 +14,7 @@ public class EntityManagerHelper {
         String[] columns = columnsAndValues.keySet().toArray(new String[0]);
         String[] values = columnsAndValues.values().toArray(new String[0]);
 
-        String dml = SqlBuilder.buildDml(entityClass, SqlBuilder.SqlCrudType.SELECT, columns);
+        String dml = SqlBuilder.buildDml(entityClass, SqlBuilder.CrudType.SELECT, columns);
         TypedQuery<T> query = em.createQuery(dml, entityClass);
 
         for (int i = 0; i < values.length; i++) {

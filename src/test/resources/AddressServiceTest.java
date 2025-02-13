@@ -25,7 +25,7 @@ public class AddressServiceTest {
             int id = -1;
             String street = "XV de Novembro";
             String addressNumber = "10900";
-            String addressType = "home";
+            String addressType = "Home";
             String city = "Joinville";
             String state = "Santa Catarina";
             String zipCode = "00000000";
@@ -50,7 +50,7 @@ public class AddressServiceTest {
 
             String street = "New Street";
             String addressNumber = "999";
-            String addressType = "work";
+            String addressType = "Work";
             String city = "New York";
             String state = "New York";
             String zipCode = "11111111";

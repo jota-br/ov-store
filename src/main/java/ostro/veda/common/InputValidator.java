@@ -1,5 +1,7 @@
 package ostro.veda.common;
 
+import ostro.veda.db.helpers.AddressType;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,5 +65,14 @@ public class InputValidator {
         }
 
         return input;
+    }
+
+    public static AddressType checkAddressType(String input) {
+        for (AddressType addressType : AddressType.values()) {
+            if (addressType.getValue().equalsIgnoreCase(input)) {
+                return addressType;
+            }
+        }
+        return null;
     }
 }

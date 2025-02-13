@@ -2,25 +2,25 @@ package ostro.veda.db.helpers;
 
 public class SqlBuilder {
 
-    public static enum SqlCrudType {
+    public static enum CrudType {
 
         SELECT("SELECT"),
         INSERT("INSERT INTO"),
         UPDATE("UPDATE"),
         DELETE("DELETE");
 
-        private final String dml;
+        private final String crud;
 
-        SqlCrudType(String dml) {
-            this.dml = dml;
+        CrudType(String crud) {
+            this.crud = crud;
         }
 
-        public String getDml() {
-            return this.dml;
+        public String getCrud() {
+            return this.crud;
         }
     }
 
-    public static enum SqlKeywords {
+    private static enum SqlKeywords {
 
         FROM("FROM"),
         WHERE("WHERE"),
@@ -42,24 +42,24 @@ public class SqlBuilder {
         }
     }
 
-    public static <T> String buildDml(Class<T> entityClass, SqlCrudType dml, String... columns) {
+    public static <T> String buildDml(Class<T> entityClass, CrudType dml, String... columns) {
 
         switch (dml) {
             case SELECT -> {
                 return buildSelect(entityClass, dml, columns);
             }
-//            case INSERT -> buildInsert(entityClass, dml, columns);
-//            case UPDATE -> buildUpdate(entityClass, dml, columns);
-//            case DELETE -> buildDelete(entityClass, dml, columns);
+//            case INSERT -> buildInsert(entityClass, crud, columns);
+//            case UPDATE -> buildUpdate(entityClass, crud, columns);
+//            case DELETE -> buildDelete(entityClass, crud, columns);
         }
         return null;
     }
 
-    private static <T> String buildSelect(Class<T> entityClass, SqlCrudType dml, String... columns) {
+    private static <T> String buildSelect(Class<T> entityClass, CrudType dml, String... columns) {
         var ec = entityClass.getSimpleName();
 
         StringBuilder sb = new StringBuilder();
-        sb.append(dml.getDml()).append(" c "); // SELECT c
+        sb.append(dml.getCrud()).append(" c "); // SELECT c
         sb.append(SqlKeywords.FROM.getKeyword()).append(" ").append(ec).append(" c "); // FROM ec c
 
         int size = columns.length;

@@ -4,6 +4,7 @@ import ostro.veda.common.InputValidator;
 import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.db.AddressRepository;
+import ostro.veda.db.helpers.AddressType;
 
 public class AddressService {
 
@@ -31,13 +32,15 @@ public class AddressService {
             String stateCheck = InputValidator.stringChecker(state, false, true, false, 1);
             String zipCodeCheck = InputValidator.stringChecker(zipCode, false, true, false, 1);
             String countryCheck = InputValidator.stringChecker(country, false, true, false, 1);
+            AddressType addressTypeVerified = InputValidator.checkAddressType(addressType);
 
             if (streetAddressCheck == null || addressNumberCheck == null || addressTypeCheck == null ||
-                    cityCheck == null || stateCheck == null || zipCodeCheck == null || countryCheck == null) {
+                    cityCheck == null || stateCheck == null || zipCodeCheck == null || countryCheck == null ||
+                    addressTypeVerified == null) {
                 return null;
             }
 
-            return performDmlAction(addressId, streetAddress, addressNumber, addressType, city,
+            return performDmlAction(addressId, streetAddress, addressNumber, addressTypeVerified.getValue(), city,
                     state, zipCode, country, isActive, processDataType);
         } catch (Exception e) {
             e.printStackTrace();
