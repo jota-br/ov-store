@@ -1,6 +1,7 @@
 package ostro.veda.db;
 
 import ostro.veda.common.dto.CategoryDTO;
+import ostro.veda.db.helpers.columns.CategoryColumns;
 import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.db.jpa.Category;
 
@@ -15,7 +16,8 @@ public class CategoryRepository extends Repository {
 
     public CategoryDTO addCategory(String name, String description, boolean isActive) {
 
-        List<Category> result = this.entityManagerHelper.findByFields(this.em, Category.class, Map.of("name", name));
+        List<Category> result = this.entityManagerHelper.findByFields(this.em, Category.class,
+                Map.of(CategoryColumns.NAME.getColumnName(), name));
         Category category = null;
         if (result != null && !result.isEmpty()) {
             category = result.get(0);

@@ -7,6 +7,7 @@ import ostro.veda.db.CategoryRepository;
 import ostro.veda.db.ProductImageRepository;
 import ostro.veda.db.ProductRepository;
 import ostro.veda.db.helpers.EntityManagerHelper;
+import ostro.veda.db.helpers.columns.ProductColumns;
 import ostro.veda.db.jpa.Product;
 import ostro.veda.service.CategoryService;
 import ostro.veda.service.ProductImageService;
@@ -45,10 +46,10 @@ public class EntityManagerHelperTest {
 
             List<Product> product = entityManagerHelper.findByFields(productRepository.getEm(), Product.class,
                     Map.of(
-                            "name", name,
-                            "description", description,
-                            "price", String.valueOf(price),
-                            "stock", String.valueOf(stock)
+                            ProductColumns.NAME.getColumnName(), name,
+                            ProductColumns.DESCRIPTION.getColumnName(), description,
+                            ProductColumns.PRICE.getColumnName(), String.valueOf(price),
+                            ProductColumns.STOCK.getColumnName(), String.valueOf(stock)
                     ));
 
             assertNotNull(product);

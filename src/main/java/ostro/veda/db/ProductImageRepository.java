@@ -2,6 +2,7 @@ package ostro.veda.db;
 
 import ostro.veda.common.dto.ProductImageDTO;
 import ostro.veda.db.helpers.EntityManagerHelper;
+import ostro.veda.db.helpers.columns.ProductImageColumns;
 import ostro.veda.db.jpa.ProductImage;
 
 import java.util.List;
@@ -15,7 +16,8 @@ public class ProductImageRepository extends Repository {
 
     public ProductImageDTO addImage(String url, boolean isMain) {
 
-        List<ProductImage> result = this.entityManagerHelper.findByFields(this.em, ProductImage.class, Map.of("imageUrl", url));
+        List<ProductImage> result = this.entityManagerHelper.findByFields(this.em, ProductImage.class,
+                Map.of(ProductImageColumns.IMAGE_URL.getColumnName(), url));
         ProductImage productImage = null;
         if (result != null && !result.isEmpty()) {
             productImage = result.get(0);

@@ -2,6 +2,7 @@ package ostro.veda.db;
 
 import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.db.helpers.EntityManagerHelper;
+import ostro.veda.db.helpers.columns.AddressColumns;
 import ostro.veda.db.jpa.Address;
 
 import java.util.List;
@@ -17,17 +18,21 @@ public class AddressRepository extends Repository {
                                  String state, String zipCode, String country, boolean isActive) {
 
         List<Address> result = this.entityManagerHelper.findByFields(this.em, Address.class, Map.of(
-                "streetAddress", streetAddress,
-                "addressNumber", addressNumber,
-                "addressType", addressType,
-                "city", city,
-                "state", state,
-                "zipCode", zipCode,
-                "country", country
+                AddressColumns.STREET_ADDRESS.getColumnName(), streetAddress,
+                AddressColumns.ADDRESS_NUMBER.getColumnName(), addressNumber,
+                AddressColumns.ADDRESS_TYPE.getColumnName(), addressType,
+                AddressColumns.CITY.getColumnName(), city,
+                AddressColumns.STATE.getColumnName(), state,
+                AddressColumns.ZIPCODE.getColumnName(), zipCode,
+                AddressColumns.COUNTRY.getColumnName(), country
         ));
         Address address = null;
         if (result != null && !result.isEmpty()) {
             address = result.get(0);
+
+            if (address.getUserId() == userId) {
+                return null;
+            }
         } else {
             address = new Address(userId, streetAddress, addressNumber,
                     addressType, city, state, zipCode, country, isActive);

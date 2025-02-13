@@ -2,6 +2,7 @@ package ostro.veda.db;
 
 import ostro.veda.common.dto.UserDTO;
 import ostro.veda.db.helpers.EntityManagerHelper;
+import ostro.veda.db.helpers.columns.UserColumns;
 import ostro.veda.db.jpa.Role;
 import ostro.veda.db.jpa.User;
 
@@ -18,7 +19,8 @@ public class UserRepository extends Repository {
     public UserDTO addUser(String username, String salt, String hash, String email,
                            String firstName, String lastName, String phone, boolean isActive) {
 
-        List<User> result = this.entityManagerHelper.findByFields(this.em, User.class, Map.of("username", username));
+        List<User> result = this.entityManagerHelper.findByFields(this.em, User.class,
+                Map.of(UserColumns.USERNAME.getColumnName(), username));
         if (result != null && !result.isEmpty()) {
             return null;
         }

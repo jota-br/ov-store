@@ -4,6 +4,7 @@ import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.dto.ProductImageDTO;
 import ostro.veda.db.helpers.EntityManagerHelper;
+import ostro.veda.db.helpers.columns.ProductColumns;
 import ostro.veda.db.jpa.Category;
 import ostro.veda.db.jpa.Product;
 import ostro.veda.db.jpa.ProductImage;
@@ -23,7 +24,8 @@ public class ProductRepository extends Repository {
     public ProductDTO addProduct(String name, String description, double price, int stock, boolean isActive,
                                  List<CategoryDTO> categories, List<ProductImageDTO> images) {
 
-        List<Product> result = this.entityManagerHelper.findByFields(this.em, Product.class, Map.of("name", name));
+        List<Product> result = this.entityManagerHelper.findByFields(this.em, Product.class,
+                Map.of(ProductColumns.NAME.getColumnName(), name));
         if (result != null && !result.isEmpty()) {
             return null;
         }
