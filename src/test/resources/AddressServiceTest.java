@@ -1,12 +1,12 @@
 package test.resources;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class AddressServiceTest {
+public class AddressServiceTest {
 
     @Test
-    void processData() {
+    public void processData() {
+
+
     }
 }
