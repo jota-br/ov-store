@@ -4,7 +4,6 @@ import ostro.veda.common.InputValidator;
 import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.db.AddressRepository;
-import ostro.veda.db.helpers.AddressType;
 
 public class AddressService {
 
@@ -22,25 +21,36 @@ public class AddressService {
                 return null;
             }
 
-            // implement Google Map API latter
-//        int minimumTemporaryLength = 3;
+            // implement Google Map API (Geocoding)
 
-            String streetAddressCheck = InputValidator.stringChecker(streetAddress, false, true, false, 1);
-            String addressNumberCheck = InputValidator.stringChecker(addressNumber, false, true, false, 1);
-            String addressTypeCheck = InputValidator.stringChecker(addressType, false, true, false, 1);
             String cityCheck = InputValidator.stringChecker(city, false, true, false, 1);
             String stateCheck = InputValidator.stringChecker(state, false, true, false, 1);
             String zipCodeCheck = InputValidator.stringChecker(zipCode, false, true, false, 1);
             String countryCheck = InputValidator.stringChecker(country, false, true, false, 1);
-            AddressType addressTypeVerified = InputValidator.checkAddressType(addressType);
 
-            if (streetAddressCheck == null || addressNumberCheck == null || addressTypeCheck == null ||
-                    cityCheck == null || stateCheck == null || zipCodeCheck == null || countryCheck == null ||
-                    addressTypeVerified == null) {
+            if (
+                    !InputValidator.hasValidAddressNumber(streetAddress) ||
+                    !InputValidator.hasValidAddressNumber(addressNumber) ||
+                    !InputValidator.hasValidAddressType(addressType) ||
+                    cityCheck == null ||
+                    stateCheck == null ||
+                    zipCodeCheck == null ||
+                    countryCheck == null
+            ) {
                 return null;
             }
 
-            return performDmlAction(addressId, streetAddress, addressNumber, addressTypeVerified.getValue(), city,
+            streetAddress = InputValidator.stringSanitize(streetAddress);
+            addressNumber = InputValidator.stringSanitize(addressNumber);
+
+            if (
+                    !InputValidator.lengthChecker(streetAddress, 1, streetAddress.length()) ||
+                    !InputValidator.lengthChecker(addressNumber, 1, addressNumber.length())
+            ) {
+                return null;
+            }
+
+            return performDmlAction(addressId, streetAddress, addressNumber, addressType, city,
                     state, zipCode, country, isActive, processDataType);
         } catch (Exception e) {
             e.printStackTrace();
