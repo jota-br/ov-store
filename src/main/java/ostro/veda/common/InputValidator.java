@@ -40,7 +40,7 @@ public class InputValidator {
     }
 
     public static boolean hasValidPassword(String input) {
-        Pattern validPattern = Pattern.compile("^[A-Za-z0-9!@#\\$%\\^&\\*\\(\\)_\\+\\-\\=\\{\\}\\[\\]:;\"'<>\\,\\.?/|\\\\]{8,20}$");
+        Pattern validPattern = Pattern.compile("^[A-Za-z0-9!@#$%^&*()_+\\-={}\\[\\]:;\"'<>,.?/|\\\\]{8,20}$");
         Matcher matcher = validPattern.matcher(input);
 
         return matcher.matches();
@@ -85,7 +85,7 @@ public class InputValidator {
     }
 
     public static boolean hasValidDescription(String input) {
-        Pattern validPattern = Pattern.compile("^[a-zA-Z\\s\\p{Punct}]{0,510}$");
+        Pattern validPattern = Pattern.compile("^[a-zA-Z\\s\\p{Punct}\n]{0,510}$");
         Matcher matcher = validPattern.matcher(input);
         return matcher.matches();
     }
@@ -97,40 +97,7 @@ public class InputValidator {
     }
 
     public static String encodeUrl(String input) {
-        Map<String, String> encodingMap = new HashMap<>();
-        encodingMap.put(" ", "%20");
-        encodingMap.put("!", "%21");
-        encodingMap.put("\"", "%22");
-        encodingMap.put("#", "%23");
-        encodingMap.put("$", "%24");
-        encodingMap.put("%", "%25");
-        encodingMap.put("&", "%26");
-        encodingMap.put("'", "%27");
-        encodingMap.put("(", "%28");
-        encodingMap.put(")", "%29");
-        encodingMap.put("*", "%2A");
-        encodingMap.put("+", "%2B");
-        encodingMap.put(",", "%2C");
-        encodingMap.put("-", "%2D");
-        encodingMap.put(".", "%2E");
-        encodingMap.put("/", "%2F");
-        encodingMap.put(":", "%3A");
-        encodingMap.put(";", "%3B");
-        encodingMap.put("<", "%3C");
-        encodingMap.put("=", "%3D");
-        encodingMap.put(">", "%3E");
-        encodingMap.put("?", "%3F");
-        encodingMap.put("@", "%40");
-        encodingMap.put("[", "%5B");
-        encodingMap.put("\\", "%5C");
-        encodingMap.put("]", "%5D");
-        encodingMap.put("^", "%5E");
-        encodingMap.put("_", "%5F");
-        encodingMap.put("`", "%60");
-        encodingMap.put("{", "%7B");
-        encodingMap.put("|", "%7C");
-        encodingMap.put("}", "%7D");
-        encodingMap.put("~", "%7E");
+        Map<Character, String> encodingMap = getEncodeMap();
 
         StringBuilder sb = new StringBuilder();
         for (char c : input.toCharArray()) {
@@ -139,8 +106,46 @@ public class InputValidator {
         return sb.toString();
     }
 
+    public static Map<Character, String> getEncodeMap() {
+        Map<Character, String> encodingMap = new HashMap<>();
+        encodingMap.put(' ', "%20");
+        encodingMap.put('!', "%21");
+        encodingMap.put('\"', "%22");
+        encodingMap.put('#', "%23");
+        encodingMap.put('$', "%24");
+        encodingMap.put('%', "%25");
+        encodingMap.put('&', "%26");
+        encodingMap.put('\'', "%27");
+        encodingMap.put('(', "%28");
+        encodingMap.put(')', "%29");
+        encodingMap.put('*', "%2A");
+        encodingMap.put('+', "%2B");
+        encodingMap.put(',', "%2C");
+        encodingMap.put('-', "%2D");
+//        encodingMap.put('.', "%2E");
+        encodingMap.put(';', "%3B");
+        encodingMap.put('<', "%3C");
+//        encodingMap.put('=', "%3D");
+        encodingMap.put('>', "%3E");
+//        encodingMap.put('?', "%3F");
+        encodingMap.put('@', "%40");
+        encodingMap.put('[', "%5B");
+        encodingMap.put('\\', "%5C");
+        encodingMap.put(']', "%5D");
+        encodingMap.put('^', "%5E");
+        encodingMap.put('_', "%5F");
+        encodingMap.put('`', "%60");
+        encodingMap.put('{', "%7B");
+        encodingMap.put('|', "%7C");
+        encodingMap.put('}', "%7D");
+        encodingMap.put('~', "%7E");
+        // encodingMap.put('/', "%2F");
+        // encodingMap.put(':', "%3A");
+        return encodingMap;
+    }
+
     public static boolean hasValidEmail(String input) {
-        Pattern validPattern = Pattern.compile("^(?:[a-zA-Z0-9_'^&amp;/+-])+(?:\\.[a-zA-Z0-9_'^&amp;/+-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,255}$");
+        Pattern validPattern = Pattern.compile("^(?=.{2,255}$)(?:[a-zA-Z0-9_'^&amp;/+-])+(?:\\.[a-zA-Z0-9_'^&amp;/+-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]+$");
         Matcher matcher = validPattern.matcher(input);
         return matcher.matches();
     }
@@ -158,7 +163,7 @@ public class InputValidator {
     }
 
     public static boolean hasValidAddressNumber(String input) {
-        Pattern validPattern = Pattern.compile("^[0-9A-Za-z\\s#\\-]{1,50}$");
+        Pattern validPattern = Pattern.compile("^[0-9A-Za-z\\s#\\-/]{1,50}$");
         Matcher matcher = validPattern.matcher(input);
         return matcher.matches();
     }
@@ -173,75 +178,8 @@ public class InputValidator {
     }
 
     public static boolean hasValidPersonName(String input) {
-        Pattern validPattern = Pattern.compile("^[A-Za-zéüñçöå\\-'\\s]{0,255}$");
+        Pattern validPattern = Pattern.compile("^[A-Za-záéíóúüñçöäåèàìòùêâîôûëïÿÁÉÍÓÚÜÑÇÖÄÅÈÀÌÒÙÊÂÎÔÛËÏŸ\\-'\\s]{0,255}$");
         Matcher matcher = validPattern.matcher(input);
         return matcher.matches();
-//        Map<Character, Boolean> validCharacters = new HashMap<>();
-//        validCharacters.put('A', true);
-//        validCharacters.put('B', true);
-//        validCharacters.put('C', true);
-//        validCharacters.put('D', true);
-//        validCharacters.put('E', true);
-//        validCharacters.put('F', true);
-//        validCharacters.put('G', true);
-//        validCharacters.put('H', true);
-//        validCharacters.put('I', true);
-//        validCharacters.put('J', true);
-//        validCharacters.put('K', true);
-//        validCharacters.put('L', true);
-//        validCharacters.put('M', true);
-//        validCharacters.put('N', true);
-//        validCharacters.put('O', true);
-//        validCharacters.put('P', true);
-//        validCharacters.put('Q', true);
-//        validCharacters.put('R', true);
-//        validCharacters.put('S', true);
-//        validCharacters.put('T', true);
-//        validCharacters.put('U', true);
-//        validCharacters.put('V', true);
-//        validCharacters.put('W', true);
-//        validCharacters.put('X', true);
-//        validCharacters.put('Y', true);
-//        validCharacters.put('Z', true);
-//        validCharacters.put('a', true);
-//        validCharacters.put('b', true);
-//        validCharacters.put('c', true);
-//        validCharacters.put('d', true);
-//        validCharacters.put('e', true);
-//        validCharacters.put('f', true);
-//        validCharacters.put('g', true);
-//        validCharacters.put('h', true);
-//        validCharacters.put('i', true);
-//        validCharacters.put('j', true);
-//        validCharacters.put('k', true);
-//        validCharacters.put('l', true);
-//        validCharacters.put('m', true);
-//        validCharacters.put('n', true);
-//        validCharacters.put('o', true);
-//        validCharacters.put('p', true);
-//        validCharacters.put('q', true);
-//        validCharacters.put('r', true);
-//        validCharacters.put('s', true);
-//        validCharacters.put('t', true);
-//        validCharacters.put('u', true);
-//        validCharacters.put('v', true);
-//        validCharacters.put('w', true);
-//        validCharacters.put('x', true);
-//        validCharacters.put('y', true);
-//        validCharacters.put('z', true);
-//        validCharacters.put('é', true);
-//        validCharacters.put('ü', true);
-//        validCharacters.put('ñ', true);
-//        validCharacters.put('ç', true);
-//        validCharacters.put('ö', true);
-//        validCharacters.put('å', true);
-//        validCharacters.put('-', true);
-//        validCharacters.put('\'', true);
-//        validCharacters.put(' ', true);
-//
-//        for (char c : input.toCharArray()) {
-//            if (!validCharacters.containsKey(c)) return false;
-//        }
-//        return true;
     }
 }
