@@ -14,41 +14,17 @@ public class AddressService {
     }
 
     public AddressDTO processData(int addressId, String streetAddress, String addressNumber, String addressType, String city,
-                                         String state, String zipCode, String country, boolean isActive, ProcessDataType processDataType) {
+                                  String state, String zipCode, String country, boolean isActive, ProcessDataType processDataType) {
 
         try {
-            if (processDataType == null) {
+            if (!hasValidInput(streetAddress, addressNumber, addressType, city, state, zipCode, country, processDataType))
                 return null;
-            }
-
-            // implement Google Map API (Geocoding)
-
-            String cityCheck = InputValidator.stringChecker(city, false, true, false, 1);
-            String stateCheck = InputValidator.stringChecker(state, false, true, false, 1);
-            String zipCodeCheck = InputValidator.stringChecker(zipCode, false, true, false, 1);
-            String countryCheck = InputValidator.stringChecker(country, false, true, false, 1);
-
-            if (
-                    !InputValidator.hasValidAddressNumber(streetAddress) ||
-                    !InputValidator.hasValidAddressNumber(addressNumber) ||
-                    !InputValidator.hasValidAddressType(addressType) ||
-                    cityCheck == null ||
-                    stateCheck == null ||
-                    zipCodeCheck == null ||
-                    countryCheck == null
-            ) {
-                return null;
-            }
-
             streetAddress = InputValidator.stringSanitize(streetAddress);
             addressNumber = InputValidator.stringSanitize(addressNumber);
-
-            if (
-                    !InputValidator.lengthChecker(streetAddress, 1, streetAddress.length()) ||
-                    !InputValidator.lengthChecker(addressNumber, 1, addressNumber.length())
-            ) {
-                return null;
-            }
+            city = InputValidator.stringSanitize(city);
+            state = InputValidator.stringSanitize(state);
+            country = InputValidator.stringSanitize(country);
+            if (!hasValidLength(city, state, zipCode, country)) return null;
 
             return performDmlAction(addressId, streetAddress, addressNumber, addressType, city,
                     state, zipCode, country, isActive, processDataType);
@@ -56,6 +32,35 @@ public class AddressService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private boolean hasValidInput(String streetAddress, String addressNumber, String addressType, String city,
+                                  String state, String zipCode, String country, ProcessDataType processDataType) {
+        // implement Google Map API (Geocoding)
+        String cityCheck = InputValidator.stringChecker(city, false, true, false, 1);
+        String stateCheck = InputValidator.stringChecker(state, false, true, false, 1);
+        String zipCodeCheck = InputValidator.stringChecker(zipCode, false, true, false, 1);
+        String countryCheck = InputValidator.stringChecker(country, false, true, false, 1);
+
+        return InputValidator.hasValidStreetAddress(streetAddress) &&
+                InputValidator.hasValidAddressNumber(addressNumber) &&
+                InputValidator.hasValidAddressType(addressType) &&
+                cityCheck != null &&
+                stateCheck != null &&
+                zipCodeCheck != null &&
+                countryCheck != null &&
+                processDataType != null;
+    }
+
+    public boolean hasValidLength(String city, String state, String zipCode, String country) {
+        int standardMin = 1;
+        int standardMax = 255;
+        int numberTypeZipcodeMaxLength = 50;
+
+        return InputValidator.hasValidLength(state, standardMin, standardMax) &&
+                InputValidator.hasValidLength(country, standardMin, standardMax) &&
+                InputValidator.hasValidLength(city, standardMin, standardMax) &&
+                InputValidator.hasValidLength(zipCode, standardMin, numberTypeZipcodeMaxLength);
     }
 
     private AddressDTO performDmlAction(int addressId, String streetAddress, String addressNumber, String addressType, String city,

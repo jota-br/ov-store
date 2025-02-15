@@ -18,14 +18,9 @@ public class ProductImageService {
     public ProductImageDTO processData(Map<EntityType, Integer> entityAndId, String url,
                                        boolean isMain, ProcessDataType processDataType) {
         try {
-            if (processDataType == null) {
-                return null;
-            }
-            String urlCheck = InputValidator.imageUrlCheck(url);
-
-            if (urlCheck == null) {
-                return null;
-            }
+            if (!hasValidInput(url, processDataType)) return null;
+            url = InputValidator.encodeUrl(url);
+            if (!hasValidLength(url)) return null;
 
             return performDmlAction(entityAndId, url, isMain, processDataType);
 
@@ -33,6 +28,16 @@ public class ProductImageService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private static boolean hasValidInput(String url, ProcessDataType processDataType) {
+        return processDataType != null && InputValidator.hasValidUrl(url);
+    }
+
+    private static boolean hasValidLength(String input) {
+        int min = 12;
+        int max = 255;
+        return InputValidator.hasValidLength(input, min, max);
     }
 
     private ProductImageDTO performDmlAction(Map<EntityType, Integer> entityAndId, String url,

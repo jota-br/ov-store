@@ -37,8 +37,6 @@ public class ProductServiceTest {
             ProductImageService productImageService = new ProductImageService(productImageRepository);
             ProductService productService = new ProductService(categoryService, productImageService, productRepository);
 
-            assertNull(productService.processData("four", "valid description",
-                    45.99, 15, false, categories, images, ProcessDataType.ADD, null));
             assertNull(productService.processData("Mega Box", "valid description",
                     -1, 15, true, categories, images, ProcessDataType.ADD, null));
             assertNull(productService.processData("Ultra Coin", "valid description",

@@ -22,29 +22,9 @@ public class UserService {
                                String firstName, String lastName, String phone, boolean isActive, ProcessDataType processDataType) {
 
         try {
-            if (processDataType == null) {
-                return null;
-            }
-
-            int usernameMinLength = 8;
-            int passwordMinLength = 8;
-            int firstNameMinLength = 3;
-            int lastNameMinLength = 3;
-
-            String usernameCheck = InputValidator.stringChecker(username, false, false, false, usernameMinLength);
-            String passwordCheck = InputValidator.stringChecker(password, false, false, false, passwordMinLength);
-            String emailCheck = InputValidator.emailChecker(email);
-            String firstNameCheck = InputValidator.stringChecker(firstName, true, false, true, firstNameMinLength);
-            String lastNameCheck = InputValidator.stringChecker(lastName, true, false, true, lastNameMinLength);
-            String phoneCheck = InputValidator.phoneChecker("+" + phone);
-
-            if (usernameCheck == null || passwordCheck == null || emailCheck == null ||
-                    (firstNameCheck == null && !firstName.isEmpty()) ||
-                    (lastNameCheck == null && !lastName.isEmpty()) ||
-                    (phoneCheck == null && !phone.isEmpty())) {
-                return null;
-            }
-
+            if (!hasValidInput(username, password, email, firstName, lastName, phone, processDataType)) return null;
+            firstName = InputValidator.stringSanitize(firstName);
+            lastName = InputValidator.stringSanitize(lastName);
 
             return performDmlAction(userId, username, password, email,
                     firstName, lastName, phone, isActive, processDataType);
@@ -53,6 +33,23 @@ public class UserService {
             return null;
         }
     }
+
+    private boolean hasValidInput(String username, String password, String email, String firstName, String lastName, String phone, ProcessDataType processDataType) {
+        return InputValidator.hasValidPhone("+" + phone) &&
+                InputValidator.hasValidUsername(username) &&
+                InputValidator.hasValidPassword(password) &&
+                InputValidator.hasValidEmail(email) &&
+                InputValidator.hasValidPersonName(firstName) &&
+                InputValidator.hasValidPersonName(lastName) &&
+                processDataType != null;
+    }
+
+//    private boolean hasValidLength(String firstName, String lastName) {
+//        int min = 3;
+//        int max = 255;
+//        return InputValidator.hasValidLength(firstName, min, max) &&
+//                InputValidator.hasValidLength(lastName, min, max);
+//    }
 
     private UserDTO performDmlAction(int userId, String username, String password, String email,
                                      String firstName, String lastName, String phone, boolean isActive, ProcessDataType processDataType) {

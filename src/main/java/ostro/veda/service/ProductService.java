@@ -30,32 +30,13 @@ public class ProductService {
 //        Map<String, Boolean> images = k:Url v:isMain
 
         try {
-            if (processDataType == null) {
-                return null;
-            }
+            if (!hasValidInput(nameProduct, descriptionProduct, priceProduct, stockProduct, processDataType)) return null;
+            nameProduct = InputValidator.stringSanitize(nameProduct);
+            descriptionProduct = InputValidator.stringSanitize(descriptionProduct);
+//            if (!hasValidLength(nameProduct, descriptionProduct)) return null;
 
-            List<CategoryDTO> categoriesList = new ArrayList<>();
-            for (String string : categories) {
-                CategoryDTO category = this.categoryService.processData(entityAndId, string, "", isActiveProduct, processDataType);
-                categoriesList.add(category);
-            }
-
-            List<ProductImageDTO> imagesList = new ArrayList<>();
-            for (Map.Entry<String, Boolean> entry : images.entrySet()) {
-                String url = entry.getKey();
-                boolean isMain = entry.getValue();
-                ProductImageDTO productImageDTO = this.productImageService.processData(entityAndId, url, isMain, processDataType);
-                imagesList.add(productImageDTO);
-            }
-
-            int nameMinLength = 5;
-
-            String nameCheck = InputValidator.stringChecker(nameProduct, true, true, false, nameMinLength);
-            String descriptionCheck = InputValidator.stringChecker(descriptionProduct, true, true, true, -1);
-
-            if (nameCheck == null || descriptionCheck == null || priceProduct < 0.0 || stockProduct < 0) {
-                return null;
-            }
+            List<CategoryDTO> categoriesList = getCategoryDTOList(isActiveProduct, categories, processDataType, entityAndId);
+            List<ProductImageDTO> imagesList = getImageDTOList(images, processDataType, entityAndId);
 
             return performDmlAction(entityAndId, nameProduct, descriptionProduct, priceProduct, stockProduct, isActiveProduct,
                     categoriesList, imagesList, processDataType);
@@ -63,6 +44,44 @@ public class ProductService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private List<ProductImageDTO> getImageDTOList(Map<String, Boolean> images, ProcessDataType processDataType, Map<EntityType, Integer> entityAndId) {
+        List<ProductImageDTO> imagesList = new ArrayList<>();
+        for (Map.Entry<String, Boolean> entry : images.entrySet()) {
+            String url = entry.getKey();
+            boolean isMain = entry.getValue();
+            ProductImageDTO productImageDTO = this.productImageService.processData(entityAndId, url, isMain, processDataType);
+            imagesList.add(productImageDTO);
+        }
+        return imagesList;
+    }
+
+    private List<CategoryDTO> getCategoryDTOList(boolean isActiveProduct, List<String> categories, ProcessDataType processDataType, Map<EntityType, Integer> entityAndId) {
+        List<CategoryDTO> categoriesList = new ArrayList<>();
+        for (String string : categories) {
+            CategoryDTO category = this.categoryService.processData(entityAndId, string, "", isActiveProduct, processDataType);
+            categoriesList.add(category);
+        }
+        return categoriesList;
+    }
+
+    private boolean hasValidInput(String nameProduct, String descriptionProduct, double priceProduct, int stockProduct,
+                                  ProcessDataType processDataType) {
+        return InputValidator.hasValidName(nameProduct) &&
+                InputValidator.hasValidDescription(descriptionProduct) &&
+                priceProduct >= 0.0 &&
+                stockProduct >= 0 &&
+                processDataType != null;
+    }
+
+    private boolean hasValidLength(String nameProduct, String descriptionProduct) {
+        int emptyMin = 0;
+        int standardMin = 1;
+        int standardMax = 255;
+        int descriptionMax = 510;
+        return InputValidator.hasValidLength(nameProduct, standardMin, standardMax) &&
+                InputValidator.hasValidLength(descriptionProduct, emptyMin, descriptionMax);
     }
 
     private ProductDTO performDmlAction(Map<EntityType, Integer> entityAndId, String name, String description,

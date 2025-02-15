@@ -19,18 +19,10 @@ public class CategoryService {
                                    boolean isActive, ProcessDataType processDataType) {
 
         try {
-            if (processDataType == null) {
-                return null;
-            }
-
-            int nameMinLength = 5;
-
-            String nameCheck = InputValidator.stringChecker(name, true, true, false, nameMinLength);
-            String descriptionCheck = InputValidator.stringChecker(description, true, true, true, -1);
-
-            if (nameCheck == null || descriptionCheck == null) {
-                return null;
-            }
+            if (!hasValidInput(name, description, processDataType)) return null;
+            name = InputValidator.stringSanitize(name);
+            description = InputValidator.stringSanitize(description);
+//            if (!hasValidLength(name, description)) return null;
 
             return performDmlAction(entityAndId, name, description, isActive, processDataType);
         } catch (Exception e) {
@@ -39,9 +31,25 @@ public class CategoryService {
         }
     }
 
+    private boolean hasValidInput(String name, String description, ProcessDataType processDataType) {
+        return InputValidator.hasValidName(name) &&
+                InputValidator.hasValidDescription(description) &&
+                processDataType != null;
+    }
+
+    private boolean hasValidLength(String name, String description) {
+        int emptyMin = 0;
+        int minimumLength = 1;
+        int nameMaxLength = 255;
+        int descriptionMaxLength = 510;
+
+        return InputValidator.hasValidLength(name, minimumLength, nameMaxLength) &&
+                InputValidator.hasValidLength(description, emptyMin, descriptionMaxLength);
+    }
+
     private CategoryDTO performDmlAction(Map<EntityType, Integer> entityAndId, String name, String description,
-                                        boolean isActive, ProcessDataType processDataType) {
-        switch(processDataType) {
+                                         boolean isActive, ProcessDataType processDataType) {
+        switch (processDataType) {
             case ADD -> {
                 return this.categoryRepository.addCategory(name, description, isActive);
             }

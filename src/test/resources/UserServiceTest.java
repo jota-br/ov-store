@@ -23,7 +23,9 @@ public class UserServiceTest {
                     "valid@email.com", "ValidName", "ValidLastName", "5511000000000", true, ProcessDataType.ADD));
 
             // invalid password
-            assertNull(userService.processData(-1,"validUserName", "invalid#!password78",
+            assertNull(userService.processData(-1,"validUserName", "short",
+                    "valid@email.com", "ValidName", "ValidLastName", "5511000000000", true, ProcessDataType.ADD));
+            assertNull(userService.processData(-1,"validUserName", "tooLongMaximumIs20letters",
                     "valid@email.com", "ValidName", "ValidLastName", "5511000000000", true, ProcessDataType.ADD));
 
             // invalid email

@@ -12,7 +12,7 @@ public class ProductImage {
     @Column(name = "product_image_id")
     private int productImageId;
 
-    @Column(name = "image_url")
+    @Column(name = "image_url", nullable = false)
     private String imageUrl;
 
     @Column(name = "is_main")
