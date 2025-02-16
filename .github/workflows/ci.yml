@@ -103,7 +103,7 @@ jobs:
       - name: List local branches
         run: git branch --all
 
-      - name: Push to master if build and tests pass
+      - name: Push to test if build and tests pass
         if: github.ref == 'refs/heads/dev'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -111,6 +111,6 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git fetch origin
-          git checkout master
-          git reset --hard origin/dev
-          git push origin master --force
+          git checkout test
+          git merge dev
+          git push origin test
