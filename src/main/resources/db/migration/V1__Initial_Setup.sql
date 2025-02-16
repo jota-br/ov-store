@@ -139,6 +139,7 @@ Create Table If Not Exists orders (
   status Varchar(50)  Default 'pending',
   shipping_address_id Int Not Null,
   billing_address_id Int Not Null,
+  updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp,
   Constraint Foreign Key (user_id) References users (user_id) On Delete Cascade On Update Cascade,
   Constraint Foreign Key (shipping_address_id) References addresses (address_id) On Delete Cascade On Update Cascade,
   Constraint Foreign Key (billing_address_id) References addresses (address_id) On Delete Cascade On Update Cascade
