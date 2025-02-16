@@ -7,6 +7,7 @@ import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.dto.ProductImageDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.ProductRepository;
+import ostro.veda.loggerService.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,7 @@ public class ProductService {
             return performDmlAction(entityAndId, nameProduct, descriptionProduct, priceProduct, stockProduct, isActiveProduct,
                     categoriesList, imagesList, processDataType);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.log(e);
             return null;
         }
     }

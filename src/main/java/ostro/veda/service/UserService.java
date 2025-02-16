@@ -5,6 +5,7 @@ import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.UserDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.UserRepository;
+import ostro.veda.loggerService.Logger;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -30,7 +31,7 @@ public class UserService {
             return performDmlAction(userId, username, password, email,
                     firstName, lastName, phone, isActive, processDataType);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.log(e);
             return null;
         }
     }
@@ -91,7 +92,7 @@ public class UserService {
             sr.nextBytes(salt);
             return salt;
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            Logger.log(e);
         }
         return null;
     }
@@ -103,7 +104,7 @@ public class UserService {
             byte[] hashedPassword = md.digest(password.getBytes());
             return Base64.getEncoder().encodeToString(hashedPassword);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            Logger.log(e);
         }
         return null;
     }

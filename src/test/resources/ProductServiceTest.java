@@ -53,8 +53,7 @@ public class ProductServiceTest {
                     49.99, 50, true, categories, images, ProcessDataType.UPDATE,
                     Map.of(EntityType.PRODUCT, 1)));
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
 
     }

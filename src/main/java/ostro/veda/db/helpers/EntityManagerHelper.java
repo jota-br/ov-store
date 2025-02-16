@@ -3,6 +3,7 @@ package ostro.veda.db.helpers;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
+import ostro.veda.loggerService.Logger;
 
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,7 @@ public class EntityManagerHelper {
             transaction.commit();
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.log(e);
             JPAUtil.transactionRollBack(transaction);
         }
         return false;
@@ -63,7 +64,7 @@ public class EntityManagerHelper {
             transaction.commit();
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.log(e);
             JPAUtil.transactionRollBack(transaction);
         }
         return false;

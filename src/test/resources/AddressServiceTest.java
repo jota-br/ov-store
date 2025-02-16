@@ -74,8 +74,7 @@ public class AddressServiceTest {
             UserService userService = new UserService(userRepository);
             userService.processData(-1, "userForAddress", "userForAddress@w",
                     "userForAddress@google.com", "userForAddress", "userForAddress", "5511000000000", true, ProcessDataType.ADD);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
     }
 }

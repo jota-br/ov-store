@@ -5,6 +5,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 import org.mariadb.jdbc.MariaDbDataSource;
+import ostro.veda.loggerService.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -69,7 +70,7 @@ public class JPAUtil {
 
             return dataSource.getConnection();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.log(e);
         }
         return null;
     }
@@ -80,7 +81,7 @@ public class JPAUtil {
                 connection.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.log(e);
         }
     }
 }

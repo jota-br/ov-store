@@ -5,6 +5,7 @@ import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.AddressRepository;
+import ostro.veda.loggerService.Logger;
 
 public class AddressService {
 
@@ -30,7 +31,7 @@ public class AddressService {
             return performDmlAction(addressId, streetAddress, addressNumber, addressType, city,
                     state, zipCode, country, isActive, processDataType);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.log(e);
             return null;
         }
     }

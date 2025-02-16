@@ -5,6 +5,7 @@ import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.ProductImageDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.ProductImageRepository;
+import ostro.veda.loggerService.Logger;
 
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public class ProductImageService {
             return performDmlAction(entityAndId, url, isMain, processDataType);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.log(e);
             return null;
         }
     }

@@ -58,8 +58,7 @@ public class EntityManagerHelperTest {
             assertEquals(productDTO.getDescription(), product.get(0).getDescription());
             assertEquals(productDTO.getPrice(), product.get(0).getPrice(), 0);
             assertEquals(productDTO.getStock(), product.get(0).getStock());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
     }
 }

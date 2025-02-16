@@ -5,6 +5,7 @@ import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.CategoryRepository;
+import ostro.veda.loggerService.Logger;
 
 import java.util.Map;
 
@@ -27,7 +28,7 @@ public class CategoryService {
 
             return performDmlAction(entityAndId, name, description, isActive, processDataType);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.log(e);
             return null;
         }
     }

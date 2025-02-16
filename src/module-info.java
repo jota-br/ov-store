@@ -4,6 +4,7 @@ module ostro.veda.project {
     requires junit;
     requires org.mariadb.jdbc;
     requires org.checkerframework.checker.qual;
+    requires ostro.veda.Logger;
 
     exports test.resources to junit;
     opens ostro.veda.db.jpa to org.hibernate.orm.core;
