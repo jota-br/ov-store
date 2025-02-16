@@ -2,13 +2,10 @@ package ostro.veda.service;
 
 import ostro.veda.common.InputValidator;
 import ostro.veda.common.ProcessDataType;
-import ostro.veda.common.dto.OrderDTO;
 import ostro.veda.common.dto.OrderDetailDTO;
+import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.OrderDetailRepository;
-import ostro.veda.db.helpers.OrderStatus;
-import ostro.veda.db.jpa.Address;
-import ostro.veda.db.jpa.Product;
 import ostro.veda.loggerService.Logger;
 
 import java.util.List;
@@ -22,7 +19,7 @@ public class OrderDetailService {
         this.orderDetailRepository = orderDetailRepository;
     }
 
-    public List<OrderDetailDTO> processData(int orderId, Map<Product, Integer> productAndQuantity, ProcessDataType processDataType) {
+    public List<OrderDetailDTO> processData(int orderId, Map<ProductDTO, Integer> productAndQuantity, ProcessDataType processDataType) {
 
         try {
             return performDmlAction(orderId, productAndQuantity, processDataType);
@@ -32,8 +29,9 @@ public class OrderDetailService {
         }
     }
 
-    private List<OrderDetailDTO> performDmlAction(int orderId, Map<Product, Integer> productAndQuantity, ProcessDataType processDataType)
-            throws ErrorHandling.InvalidProcessDataType {
+    private List<OrderDetailDTO> performDmlAction(int orderId, Map<ProductDTO, Integer> productAndQuantity, ProcessDataType processDataType)
+            throws ErrorHandling.InvalidProcessDataTypeException, ErrorHandling.UnableToPersistException,
+            ErrorHandling.InsufficientInventoryException {
         if (InputValidator.hasValidProcessDataType(processDataType, ProcessDataType.ADD)) {
             return orderDetailRepository.addOrderDetail(orderId, productAndQuantity);
         }

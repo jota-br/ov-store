@@ -1,10 +1,10 @@
 package ostro.veda.common;
 
+import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.helpers.AddressType;
 import ostro.veda.db.helpers.OrderStatus;
 import ostro.veda.db.jpa.Address;
-import ostro.veda.db.jpa.Product;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -245,12 +245,14 @@ public class InputValidator {
         throw new ErrorHandling.InvalidAddressException();
     }
 
-    public static boolean hasValidProductAndQuantity(Map<Product, Integer> productAndQuantity)
+    public static boolean hasValidProductAndQuantity(Map<ProductDTO, Integer> productAndQuantity)
             throws ErrorHandling.InvalidProductException, ErrorHandling.InvalidQuantityException {
-        for (Map.Entry<Product, Integer> entry : productAndQuantity.entrySet()) {
-            if (entry.getKey() == null) {
+        for (Map.Entry<ProductDTO, Integer> entry : productAndQuantity.entrySet()) {
+            ProductDTO productDTO = entry.getKey();
+            int quantity = entry.getValue();
+            if (productDTO == null) {
                 throw new ErrorHandling.InvalidProductException();
-            } else if (entry.getValue() < 0) {
+            } else if (quantity < 0 || productDTO.getStock() < quantity) {
                 throw new ErrorHandling.InvalidQuantityException();
             }
         }
@@ -258,9 +260,9 @@ public class InputValidator {
     }
 
     public static boolean hasValidProcessDataType(ProcessDataType input, ProcessDataType required)
-            throws ErrorHandling.InvalidProcessDataType {
+            throws ErrorHandling.InvalidProcessDataTypeException {
         if (input == null || !input.getType().equals(required.getType())) {
-            throw new ErrorHandling.InvalidProcessDataType();
+            throw new ErrorHandling.InvalidProcessDataTypeException();
         }
         return true;
     }

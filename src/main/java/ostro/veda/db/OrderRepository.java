@@ -1,11 +1,11 @@
 package ostro.veda.db;
 
 import ostro.veda.common.dto.OrderDTO;
+import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.db.helpers.OrderStatus;
 import ostro.veda.db.jpa.Address;
 import ostro.veda.db.jpa.Order;
-import ostro.veda.db.jpa.Product;
 
 import java.util.Map;
 
@@ -15,7 +15,7 @@ public class OrderRepository extends Repository {
     }
 
     public OrderDTO addOrder(int userId, double totalAmount, OrderStatus status, Address shippingAddress,
-                             Address billingAddress, Map<Product, Integer> productAndQuantity) {
+                             Address billingAddress, Map<ProductDTO, Integer> productAndQuantity) {
 
         Order order = new Order(userId, totalAmount, status, shippingAddress, billingAddress);
 

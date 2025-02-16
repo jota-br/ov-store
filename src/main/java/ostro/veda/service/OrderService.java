@@ -4,11 +4,11 @@ import ostro.veda.common.InputValidator;
 import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.OrderDTO;
 import ostro.veda.common.dto.OrderDetailDTO;
+import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.OrderRepository;
 import ostro.veda.db.helpers.OrderStatus;
 import ostro.veda.db.jpa.Address;
-import ostro.veda.db.jpa.Product;
 import ostro.veda.loggerService.Logger;
 
 import java.util.List;
@@ -24,8 +24,8 @@ public class OrderService {
         this.orderDetailService = orderDetailService;
     }
 
-    public OrderDTO processData(int userId, double totalAmount, OrderStatus status, Address shippingAddress,
-                                Address billingAddress, Map<Product, Integer> productAndQuantity, ProcessDataType processDataType) {
+    public Map<OrderDTO, List<OrderDetailDTO>> processData(int userId, double totalAmount, OrderStatus status, Address shippingAddress,
+                                Address billingAddress, Map<ProductDTO, Integer> productAndQuantity, ProcessDataType processDataType) {
 
         try {
             if (!hasValidInput(userId, totalAmount, status, shippingAddress, billingAddress, productAndQuantity, processDataType))
@@ -39,7 +39,7 @@ public class OrderService {
             }
 
             List<OrderDetailDTO> orderDetailDTOList = orderDetailService.processData(orderDTO.getOrderId(), productAndQuantity, processDataType);
-            return orderDTO;
+            return Map.of(orderDTO, orderDetailDTOList);
         } catch (Exception e) {
             Logger.log(e);
             return null;
@@ -47,7 +47,7 @@ public class OrderService {
     }
 
     private boolean hasValidInput(int userId, double totalAmount, OrderStatus status, Address shippingAddress,
-                                  Address billingAddress, Map<Product, Integer> productAndQuantity, ProcessDataType processDataType)
+                                  Address billingAddress, Map<ProductDTO, Integer> productAndQuantity, ProcessDataType processDataType)
             throws ErrorHandling.InvalidValueException, ErrorHandling.InvalidAddressException, ErrorHandling.InvalidQuantityException,
             ErrorHandling.InvalidProductException {
         return InputValidator.hasValidValue(totalAmount) && status != null &&
@@ -56,8 +56,8 @@ public class OrderService {
     }
 
     private OrderDTO performDmlAction(int userId, double totalAmount, OrderStatus status, Address shippingAddress,
-                                      Address billingAddress, Map<Product, Integer> productAndQuantity, ProcessDataType processDataType)
-            throws ErrorHandling.InvalidProcessDataType {
+                                      Address billingAddress, Map<ProductDTO, Integer> productAndQuantity, ProcessDataType processDataType)
+            throws ErrorHandling.InvalidProcessDataTypeException {
         if (InputValidator.hasValidProcessDataType(processDataType, ProcessDataType.ADD)) {
             return orderRepository.addOrder(userId, totalAmount, status, shippingAddress,
                     billingAddress, productAndQuantity);

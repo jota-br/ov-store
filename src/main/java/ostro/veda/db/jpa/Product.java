@@ -132,6 +132,11 @@ public class Product {
         return this;
     }
 
+    public Product updateStock(int newStock) {
+        this.stock = newStock;
+        return this;
+    }
+
     public ProductDTO transformToDto() {
         List<ProductImageDTO> images = new ArrayList<>();
         for (ProductImage pi : this.getImages()) {

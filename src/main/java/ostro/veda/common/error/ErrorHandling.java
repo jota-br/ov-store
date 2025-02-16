@@ -104,9 +104,21 @@ public class ErrorHandling {
         }
     }
 
-    public static class InvalidProcessDataType extends Exception {
-        public InvalidProcessDataType() {
+    public static class InvalidProcessDataTypeException extends Exception {
+        public InvalidProcessDataTypeException() {
             super("Process Data Type is invalid. Check field requirements and restrictions for valid characters.");
+        }
+    }
+
+    public static class InsufficientInventoryException extends Exception {
+        public InsufficientInventoryException() {
+            super("Insufficient Inventory. Stock quantity is insufficient to supply the order.");
+        }
+    }
+
+    public static class UnableToPersistException extends Exception {
+        public UnableToPersistException() {
+            super("Unable to Persist Changes. Something went wrong and all changes were rolled back.");
         }
     }
 }

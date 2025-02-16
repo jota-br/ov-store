@@ -5,6 +5,7 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import ostro.veda.loggerService.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -68,5 +69,53 @@ public class EntityManagerHelper {
             JPAUtil.transactionRollBack(transaction);
         }
         return false;
+    }
+
+    public <T> List<T> executePersistBatch(EntityManager em, List<T> entities) {
+
+        if (entities == null || entities.isEmpty()) {
+            return null;
+        }
+
+        List<T> list = new ArrayList<>();
+        EntityTransaction transaction = null;
+        try {
+            transaction = em.getTransaction();
+            transaction.begin();
+            for (T entity : entities) {
+                em.persist(entity);
+                list.add(entity);
+            }
+            transaction.commit();
+            return list;
+        } catch (Exception e) {
+            Logger.log(e);
+            JPAUtil.transactionRollBack(transaction);
+        }
+        return null;
+    }
+
+    public <T> List<T> executeMergeBatch(EntityManager em, List<T> entities) {
+
+        if (entities == null || entities.isEmpty()) {
+            return null;
+        }
+
+        List<T> list = new ArrayList<>();
+        EntityTransaction transaction = null;
+        try {
+            transaction = em.getTransaction();
+            transaction.begin();
+            for (T entity : entities) {
+                em.merge(entity);
+                list.add(entity);
+            }
+            transaction.commit();
+            return list;
+        } catch (Exception e) {
+            Logger.log(e);
+            JPAUtil.transactionRollBack(transaction);
+        }
+        return null;
     }
 }
