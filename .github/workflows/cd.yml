@@ -65,5 +65,5 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git checkout master
-          git merge test
+          git merge test --allow-unrelated-histories
           git push origin master
