@@ -32,7 +32,7 @@ public class AddressServiceTest {
             String country = "Brazil";
 
 
-            AddressDTO addressDTO = addressService.processData(-1, street, addressNumber,
+            AddressDTO addressDTO = addressService.processData(-1, 1, street, addressNumber,
                     addressType, city, state, zipCode, country, true, ProcessDataType.ADD);
 
             insertAddressId = addressDTO.getAddressId();
@@ -56,7 +56,7 @@ public class AddressServiceTest {
             String zipCode = "11111111";
             String country = "United State";
 
-            AddressDTO addressDTO = addressService.processData(insertAddressId, street, addressNumber,
+            AddressDTO addressDTO = addressService.processData(insertAddressId, 1, street, addressNumber,
                     addressType, city, state, zipCode, country, true, ProcessDataType.UPDATE);
 
             assertEquals(street, addressDTO.getStreetAddress());

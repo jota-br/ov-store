@@ -9,13 +9,13 @@ import ostro.veda.loggerService.Logger;
 
 public class AddressService {
 
-    AddressRepository addressRepository;
+    private final AddressRepository addressRepository;
 
     public AddressService(AddressRepository addressRepository) {
         this.addressRepository = addressRepository;
     }
 
-    public AddressDTO processData(int addressId, String streetAddress, String addressNumber, String addressType, String city,
+    public AddressDTO processData(int addressId, int userId, String streetAddress, String addressNumber, String addressType, String city,
                                   String state, String zipCode, String country, boolean isActive, ProcessDataType processDataType) {
 
         try {
@@ -28,7 +28,7 @@ public class AddressService {
             country = InputValidator.stringSanitize(country);
             if (!hasValidLength(city, state, zipCode, country)) return null;
 
-            return performDmlAction(addressId, streetAddress, addressNumber, addressType, city,
+            return performDmlAction(addressId, userId, streetAddress, addressNumber, addressType, city,
                     state, zipCode, country, isActive, processDataType);
         } catch (Exception e) {
             Logger.log(e);
@@ -38,7 +38,7 @@ public class AddressService {
 
     private boolean hasValidInput(String streetAddress, String addressNumber, String addressType, String city,
                                   String state, String zipCode, String country, ProcessDataType processDataType)
-            throws ErrorHandling.InvalidStreetAddress, ErrorHandling.InvalidAddressNumberException, ErrorHandling.InvalidAddressType {
+            throws ErrorHandling.InvalidStreetAddressException, ErrorHandling.InvalidAddressNumberException, ErrorHandling.InvalidAddressTypeException {
         // implement Google Map API (Geocoding)
         String cityCheck = InputValidator.stringChecker(city, false, true, false, 1);
         String stateCheck = InputValidator.stringChecker(state, false, true, false, 1);
@@ -66,11 +66,11 @@ public class AddressService {
                 InputValidator.hasValidLength(zipCode, standardMin, numberTypeZipcodeMaxLength);
     }
 
-    private AddressDTO performDmlAction(int addressId, String streetAddress, String addressNumber, String addressType, String city,
+    private AddressDTO performDmlAction(int addressId, int userId, String streetAddress, String addressNumber, String addressType, String city,
                                         String state, String zipCode, String country, boolean isActive, ProcessDataType processDataType) {
         switch (processDataType) {
             case ADD -> {
-                AddressDTO addressDTO = this.addressRepository.addAddress(1, streetAddress, addressNumber, addressType, city, state, zipCode, country, isActive);
+                AddressDTO addressDTO = this.addressRepository.addAddress(userId, streetAddress, addressNumber, addressType, city, state, zipCode, country, isActive);
                 this.addressRepository.closeEm();
                 return addressDTO;
             }
@@ -78,7 +78,7 @@ public class AddressService {
                 if (addressId < 1) {
                     return null;
                 }
-                AddressDTO addressDTO = this.addressRepository.updateAddress(1, addressId, streetAddress, addressNumber, addressType, city, state, zipCode, country, isActive);
+                AddressDTO addressDTO = this.addressRepository.updateAddress(addressId, userId, streetAddress, addressNumber, addressType, city, state, zipCode, country, isActive);
                 this.addressRepository.closeEm();
                 return addressDTO;
             }

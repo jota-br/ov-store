@@ -39,7 +39,7 @@ public class UserService {
     private boolean hasValidInput(String username, String password, String email, String firstName,
                                   String lastName, String phone, ProcessDataType processDataType)
             throws ErrorHandling.InvalidUsernameException, ErrorHandling.InvalidPasswordException,
-            ErrorHandling.InvalidEmailException, ErrorHandling.InvalidPhoneException, ErrorHandling.InvalidPersonName {
+            ErrorHandling.InvalidEmailException, ErrorHandling.InvalidPhoneException, ErrorHandling.InvalidPersonNameException {
         return InputValidator.hasValidPhone("+" + phone) &&
                 InputValidator.hasValidUsername(username) &&
                 InputValidator.hasValidPassword(password) &&

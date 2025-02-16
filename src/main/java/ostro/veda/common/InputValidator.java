@@ -2,6 +2,9 @@ package ostro.veda.common;
 
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.helpers.AddressType;
+import ostro.veda.db.helpers.OrderStatus;
+import ostro.veda.db.jpa.Address;
+import ostro.veda.db.jpa.Product;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -184,13 +187,13 @@ public class InputValidator {
         throw new ErrorHandling.InvalidPhoneException();
     }
 
-    public static boolean hasValidStreetAddress(String input) throws ErrorHandling.InvalidStreetAddress {
+    public static boolean hasValidStreetAddress(String input) throws ErrorHandling.InvalidStreetAddressException {
         Pattern validPattern = Pattern.compile("^[A-Za-z0-9\\s,.\\-/#&]{1,255}$");
         Matcher matcher = validPattern.matcher(input);
         if (matcher.matches()) {
             return true;
         }
-        throw new ErrorHandling.InvalidStreetAddress();
+        throw new ErrorHandling.InvalidStreetAddressException();
     }
 
     public static boolean hasValidAddressNumber(String input) throws ErrorHandling.InvalidAddressNumberException {
@@ -202,21 +205,63 @@ public class InputValidator {
         throw new ErrorHandling.InvalidAddressNumberException();
     }
 
-    public static boolean hasValidAddressType(String input) throws ErrorHandling.InvalidAddressType {
+    public static boolean hasValidAddressType(String input) throws ErrorHandling.InvalidAddressTypeException {
         for (AddressType addressType : AddressType.values()) {
             if (addressType.getValue().equals(input)) {
                 return true;
             }
         }
-        throw new ErrorHandling.InvalidAddressType();
+        throw new ErrorHandling.InvalidAddressTypeException();
     }
 
-    public static boolean hasValidPersonName(String input) throws ErrorHandling.InvalidPersonName {
+    public static boolean hasValidPersonName(String input) throws ErrorHandling.InvalidPersonNameException {
         Pattern validPattern = Pattern.compile("^[A-Za-záéíóúüñçöäåèàìòùêâîôûëïÿÁÉÍÓÚÜÑÇÖÄÅÈÀÌÒÙÊÂÎÔÛËÏŸ\\-'\\s]{0,255}$");
         Matcher matcher = validPattern.matcher(input);
         if (matcher.matches()) {
             return true;
         }
-        throw new ErrorHandling.InvalidPersonName();
+        throw new ErrorHandling.InvalidPersonNameException();
+    }
+
+    public static boolean hasValidValue(double input) throws ErrorHandling.InvalidValueException {
+        if (input >= 0.0) {
+            return true;
+        }
+        throw new ErrorHandling.InvalidValueException();
+    }
+
+    public static boolean hasValidOrderStatus(OrderStatus status)
+            throws ErrorHandling.InvalidOrderStatusException {
+        if (status != null) {
+            return true;
+        }
+        throw new ErrorHandling.InvalidOrderStatusException();
+    }
+
+    public static boolean hasValidAddress(int userId, Address address) throws ErrorHandling.InvalidAddressException {
+        if (address != null && address.getUserId() == userId) {
+            return true;
+        }
+        throw new ErrorHandling.InvalidAddressException();
+    }
+
+    public static boolean hasValidProductAndQuantity(Map<Product, Integer> productAndQuantity)
+            throws ErrorHandling.InvalidProductException, ErrorHandling.InvalidQuantityException {
+        for (Map.Entry<Product, Integer> entry : productAndQuantity.entrySet()) {
+            if (entry.getKey() == null) {
+                throw new ErrorHandling.InvalidProductException();
+            } else if (entry.getValue() < 0) {
+                throw new ErrorHandling.InvalidQuantityException();
+            }
+        }
+        return true;
+    }
+
+    public static boolean hasValidProcessDataType(ProcessDataType input, ProcessDataType required)
+            throws ErrorHandling.InvalidProcessDataType {
+        if (input == null || !input.getType().equals(required.getType())) {
+            throw new ErrorHandling.InvalidProcessDataType();
+        }
+        return true;
     }
 }

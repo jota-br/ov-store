@@ -50,8 +50,8 @@ public class ErrorHandling {
         }
     }
 
-    public static class InvalidStreetAddress extends Exception {
-        public InvalidStreetAddress() {
+    public static class InvalidStreetAddressException extends Exception {
+        public InvalidStreetAddressException() {
             super("Street Address is invalid. Check field requirements and restrictions for valid characters.");
         }
     }
@@ -62,15 +62,51 @@ public class ErrorHandling {
         }
     }
 
-    public static class InvalidAddressType extends Exception {
-        public InvalidAddressType() {
+    public static class InvalidAddressTypeException extends Exception {
+        public InvalidAddressTypeException() {
             super("Address Type is invalid. Check field requirements and restrictions for valid characters.");
         }
     }
 
-    public static class InvalidPersonName extends Exception {
-        public InvalidPersonName() {
+    public static class InvalidPersonNameException extends Exception {
+        public InvalidPersonNameException() {
             super("Name is invalid. Check field requirements and restrictions for valid characters.");
+        }
+    }
+
+    public static class InvalidValueException extends Exception {
+        public InvalidValueException() {
+            super("Value is invalid. Values and prices can't be negative.");
+        }
+    }
+
+    public static class InvalidOrderStatusException extends Exception {
+        public InvalidOrderStatusException() {
+            super("Order Status is invalid. Check field requirements and restrictions for valid characters.");
+        }
+    }
+
+    public static class InvalidAddressException extends Exception {
+        public InvalidAddressException() {
+            super("Address is invalid. Check field requirements and restrictions for valid characters.");
+        }
+    }
+
+    public static class InvalidProductException extends Exception {
+        public InvalidProductException() {
+            super("Product is invalid. Product is null or doesn't exists.");
+        }
+    }
+
+    public static class InvalidQuantityException extends Exception {
+        public InvalidQuantityException() {
+            super("Quantity is invalid. Check field requirements and restrictions for valid characters.");
+        }
+    }
+
+    public static class InvalidProcessDataType extends Exception {
+        public InvalidProcessDataType() {
+            super("Process Data Type is invalid. Check field requirements and restrictions for valid characters.");
         }
     }
 }

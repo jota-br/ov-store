@@ -1,6 +1,7 @@
 package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import ostro.veda.common.dto.OrderDTO;
 import ostro.veda.db.helpers.OrderStatus;
@@ -47,16 +48,13 @@ public class Order {
     public Order() {
     }
 
-    public Order(int userId, LocalDateTime orderDate, double totalAmount, OrderStatus status,
-                 List<OrderDetail> orderDetails, Address shippingAddress, Address billingAddress, LocalDateTime updatedAt) {
+    public Order(int userId, double totalAmount, OrderStatus status,
+                 Address shippingAddress, Address billingAddress) {
         this.userId = userId;
-        this.orderDate = orderDate;
         this.totalAmount = totalAmount;
         this.status = status;
-        this.orderDetails = orderDetails;
         this.shippingAddress = shippingAddress;
         this.billingAddress = billingAddress;
-        this.updatedAt = updatedAt;
     }
 
     public int getOrderId() {
@@ -67,6 +65,7 @@ public class Order {
         return userId;
     }
 
+    @CreationTimestamp
     public LocalDateTime getOrderDate() {
         return orderDate;
     }
@@ -91,6 +90,7 @@ public class Order {
         return billingAddress;
     }
 
+    @UpdateTimestamp
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
@@ -100,7 +100,7 @@ public class Order {
         return this;
     }
 
-    public OrderDTO transformToDTO() {
+    public OrderDTO transformToDto() {
         return new OrderDTO(this.getOrderId(), this.getUserId(), this.getOrderDate(), this.getTotalAmount(), this.getStatus(),
                 this.getOrderDetails(), this.getShippingAddress(), this.getBillingAddress(), this.getUpdatedAt());
     }

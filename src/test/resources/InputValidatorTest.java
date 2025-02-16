@@ -336,7 +336,7 @@ public class InputValidatorTest {
         for (String s : valid) {
             try {
                 assertTrue(InputValidator.hasValidStreetAddress(s));
-            } catch (ErrorHandling.InvalidStreetAddress ignored) {
+            } catch (ErrorHandling.InvalidStreetAddressException ignored) {
             }
         }
 
@@ -354,7 +354,7 @@ public class InputValidatorTest {
         for (String s : invalid) {
             try {
                 assertFalse(InputValidator.hasValidStreetAddress(s));
-            } catch (ErrorHandling.InvalidStreetAddress ignored) {
+            } catch (ErrorHandling.InvalidStreetAddressException ignored) {
             }
         }
     }
@@ -416,7 +416,7 @@ public class InputValidatorTest {
         for (AddressType at : valid) {
             try {
                 assertTrue(InputValidator.hasValidAddressType(at.getValue()));
-            } catch (ErrorHandling.InvalidAddressType ignored) {
+            } catch (ErrorHandling.InvalidAddressTypeException ignored) {
             }
         }
     }
@@ -439,7 +439,7 @@ public class InputValidatorTest {
         for (String s : valid) {
             try {
                 assertTrue(InputValidator.hasValidPersonName(s));
-            } catch (ErrorHandling.InvalidPersonName ignored) {
+            } catch (ErrorHandling.InvalidPersonNameException ignored) {
             }
         }
 
@@ -460,7 +460,7 @@ public class InputValidatorTest {
         for (String s : invalid) {
             try {
                 assertFalse(InputValidator.hasValidPersonName(s));
-            } catch (ErrorHandling.InvalidPersonName ignored) {
+            } catch (ErrorHandling.InvalidPersonNameException ignored) {
             }
         }
     }
