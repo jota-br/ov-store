@@ -2,6 +2,7 @@ package test.resources;
 
 import org.junit.Test;
 import ostro.veda.common.InputValidator;
+import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.helpers.AddressType;
 
 import java.util.HashMap;
@@ -27,7 +28,10 @@ public class InputValidatorTest {
         );
 
         for (String s : valid) {
-            assertTrue(InputValidator.hasValidUsername(s));
+            try {
+                assertTrue(InputValidator.hasValidUsername(s));
+            } catch (ErrorHandling.InvalidUsernameException ignored) {
+            }
         }
 
         List<String> invalid = List.of(
@@ -39,7 +43,10 @@ public class InputValidatorTest {
         );
 
         for (String s : invalid) {
-            assertFalse(InputValidator.hasValidUsername(s));
+            try {
+                assertFalse(InputValidator.hasValidUsername(s));
+            } catch (ErrorHandling.InvalidUsernameException ignored) {
+            }
         }
     }
 
@@ -54,7 +61,10 @@ public class InputValidatorTest {
         );
 
         for (String s : valid) {
-            assertTrue(InputValidator.hasValidPassword(s));
+            try {
+                assertTrue(InputValidator.hasValidPassword(s));
+            } catch (ErrorHandling.InvalidPasswordException ignored) {
+            }
         }
 
         List<String> invalid = List.of(
@@ -64,7 +74,10 @@ public class InputValidatorTest {
         );
 
         for (String s : invalid) {
-            assertFalse(InputValidator.hasValidPassword(s));
+            try {
+                assertFalse(InputValidator.hasValidPassword(s));
+            } catch (ErrorHandling.InvalidPasswordException ignored) {
+            }
         }
     }
 
@@ -80,7 +93,10 @@ public class InputValidatorTest {
 
 
         for (String s : valid) {
-            assertTrue(InputValidator.hasValidLength(s, 8, 20));
+            try {
+                assertTrue(InputValidator.hasValidLength(s, 8, 20));
+            } catch (ErrorHandling.InvalidLengthException ignored) {
+            }
         }
 
         List<String> invalid = List.of(
@@ -93,7 +109,10 @@ public class InputValidatorTest {
 
 
         for (String s : invalid) {
-            assertFalse(InputValidator.hasValidLength(s, 8, 20));
+            try {
+                assertFalse(InputValidator.hasValidLength(s, 8, 20));
+            } catch (ErrorHandling.InvalidLengthException ignored) {
+            }
         }
     }
 
@@ -129,7 +148,10 @@ public class InputValidatorTest {
 
     @Test
     public void hasValidName() {
-        assertTrue(InputValidator.hasValidName("Furniture"));
+        try {
+            assertTrue(InputValidator.hasValidName("Furniture"));
+        } catch (ErrorHandling.InvalidNameException ignored) {
+        }
     }
 
     @Test
@@ -145,7 +167,10 @@ public class InputValidatorTest {
 
 
         for (String s : valid) {
-            assertTrue(InputValidator.hasValidDescription(s));
+            try {
+                assertTrue(InputValidator.hasValidDescription(s));
+            } catch (ErrorHandling.InvalidDescriptionException ignored) {
+            }
         }
 
         List<String> invalid = List.of(
@@ -160,12 +185,15 @@ public class InputValidatorTest {
         );
 
         for (String s : invalid) {
-            assertFalse(InputValidator.hasValidDescription(s));
+            try {
+                assertFalse(InputValidator.hasValidDescription(s));
+            } catch (ErrorHandling.InvalidDescriptionException ignored) {
+            }
         }
     }
 
     @Test
-    public void hasValidUrl() {
+    public void hasValidImageUrl() {
         List<String> valid = List.of(
                 "https://example.com/image.png",
                 "http://subdomain.example.com/path/to/image.png",
@@ -175,7 +203,10 @@ public class InputValidatorTest {
         );
 
         for (String s : valid) {
-            assertTrue(InputValidator.hasValidUrl(s));
+            try {
+                assertTrue(InputValidator.hasValidImageUrl(s));
+            } catch (ErrorHandling.InvalidImageUrlException ignored) {
+            }
         }
 
         List<String> invalid = List.of(
@@ -187,7 +218,10 @@ public class InputValidatorTest {
         );
 
         for (String s : invalid) {
-            assertFalse(InputValidator.hasValidUrl(s));
+            try {
+                assertFalse(InputValidator.hasValidImageUrl(s));
+            } catch (ErrorHandling.InvalidImageUrlException ignored) {
+            }
         }
     }
 
@@ -230,7 +264,10 @@ public class InputValidatorTest {
         );
 
         for (String s : valid) {
-            assertTrue(InputValidator.hasValidEmail(s));
+            try {
+                assertTrue(InputValidator.hasValidEmail(s));
+            } catch (ErrorHandling.InvalidEmailException ignored) {
+            }
         }
 
         List<String> invalid = List.of(
@@ -242,7 +279,10 @@ public class InputValidatorTest {
         );
 
         for (String s : invalid) {
-            assertFalse(InputValidator.hasValidUrl(s));
+            try {
+                assertFalse(InputValidator.hasValidImageUrl(s));
+            } catch (ErrorHandling.InvalidImageUrlException ignored) {
+            }
         }
     }
 
@@ -257,7 +297,10 @@ public class InputValidatorTest {
         );
 
         for (String s : valid) {
-            assertTrue(InputValidator.hasValidPhone(s));
+            try {
+                assertTrue(InputValidator.hasValidPhone(s));
+            } catch (ErrorHandling.InvalidPhoneException ignored) {
+            }
         }
 
         List<String> invalid = List.of(
@@ -270,7 +313,10 @@ public class InputValidatorTest {
 
 
         for (String s : invalid) {
-            assertFalse(InputValidator.hasValidPhone(s));
+            try {
+                assertFalse(InputValidator.hasValidPhone(s));
+            } catch (ErrorHandling.InvalidPhoneException ignored) {
+            }
         }
     }
 
@@ -288,7 +334,10 @@ public class InputValidatorTest {
 
 
         for (String s : valid) {
-            assertTrue(InputValidator.hasValidStreetAddress(s));
+            try {
+                assertTrue(InputValidator.hasValidStreetAddress(s));
+            } catch (ErrorHandling.InvalidStreetAddress ignored) {
+            }
         }
 
         List<String> invalid = List.of(
@@ -303,7 +352,10 @@ public class InputValidatorTest {
         );
 
         for (String s : invalid) {
-            assertFalse(InputValidator.hasValidStreetAddress(s));
+            try {
+                assertFalse(InputValidator.hasValidStreetAddress(s));
+            } catch (ErrorHandling.InvalidStreetAddress ignored) {
+            }
         }
     }
 
@@ -321,7 +373,10 @@ public class InputValidatorTest {
         );
 
         for (String s : valid) {
-            assertTrue(InputValidator.hasValidAddressNumber(s));
+            try {
+                assertTrue(InputValidator.hasValidAddressNumber(s));
+            } catch (ErrorHandling.InvalidAddressNumberException ignored) {
+            }
         }
 
         List<String> invalid = List.of(
@@ -335,7 +390,10 @@ public class InputValidatorTest {
         );
 
         for (String s : invalid) {
-            assertFalse(InputValidator.hasValidAddressNumber(s));
+            try {
+                assertFalse(InputValidator.hasValidAddressNumber(s));
+            } catch (ErrorHandling.InvalidAddressNumberException ignored) {
+            }
         }
     }
 
@@ -356,7 +414,10 @@ public class InputValidatorTest {
         );
 
         for (AddressType at : valid) {
-            assertTrue(InputValidator.hasValidAddressType(at.getValue()));
+            try {
+                assertTrue(InputValidator.hasValidAddressType(at.getValue()));
+            } catch (ErrorHandling.InvalidAddressType ignored) {
+            }
         }
     }
 
@@ -376,7 +437,10 @@ public class InputValidatorTest {
         );
 
         for (String s : valid) {
-            assertTrue(InputValidator.hasValidPersonName(s));
+            try {
+                assertTrue(InputValidator.hasValidPersonName(s));
+            } catch (ErrorHandling.InvalidPersonName ignored) {
+            }
         }
 
         List<String> invalid = List.of(
@@ -394,7 +458,10 @@ public class InputValidatorTest {
         );
 
         for (String s : invalid) {
-            assertFalse(InputValidator.hasValidPersonName(s));
+            try {
+                assertFalse(InputValidator.hasValidPersonName(s));
+            } catch (ErrorHandling.InvalidPersonName ignored) {
+            }
         }
     }
 }

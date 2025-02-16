@@ -3,6 +3,7 @@ package ostro.veda.service;
 import ostro.veda.common.InputValidator;
 import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.UserDTO;
+import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.UserRepository;
 
 import java.security.MessageDigest;
@@ -34,7 +35,10 @@ public class UserService {
         }
     }
 
-    private boolean hasValidInput(String username, String password, String email, String firstName, String lastName, String phone, ProcessDataType processDataType) {
+    private boolean hasValidInput(String username, String password, String email, String firstName,
+                                  String lastName, String phone, ProcessDataType processDataType)
+            throws ErrorHandling.InvalidUsernameException, ErrorHandling.InvalidPasswordException,
+            ErrorHandling.InvalidEmailException, ErrorHandling.InvalidPhoneException, ErrorHandling.InvalidPersonName {
         return InputValidator.hasValidPhone("+" + phone) &&
                 InputValidator.hasValidUsername(username) &&
                 InputValidator.hasValidPassword(password) &&

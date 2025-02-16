@@ -5,6 +5,7 @@ import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.dto.ProductImageDTO;
+import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.ProductRepository;
 
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class ProductService {
     }
 
     private boolean hasValidInput(String nameProduct, String descriptionProduct, double priceProduct, int stockProduct,
-                                  ProcessDataType processDataType) {
+                                  ProcessDataType processDataType) throws ErrorHandling.InvalidNameException, ErrorHandling.InvalidDescriptionException {
         return InputValidator.hasValidName(nameProduct) &&
                 InputValidator.hasValidDescription(descriptionProduct) &&
                 priceProduct >= 0.0 &&
@@ -75,7 +76,7 @@ public class ProductService {
                 processDataType != null;
     }
 
-    private boolean hasValidLength(String nameProduct, String descriptionProduct) {
+    private boolean hasValidLength(String nameProduct, String descriptionProduct) throws ErrorHandling.InvalidLengthException {
         int emptyMin = 0;
         int standardMin = 1;
         int standardMax = 255;

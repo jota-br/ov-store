@@ -3,6 +3,7 @@ package ostro.veda.service;
 import ostro.veda.common.InputValidator;
 import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.AddressDTO;
+import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.AddressRepository;
 
 public class AddressService {
@@ -35,7 +36,8 @@ public class AddressService {
     }
 
     private boolean hasValidInput(String streetAddress, String addressNumber, String addressType, String city,
-                                  String state, String zipCode, String country, ProcessDataType processDataType) {
+                                  String state, String zipCode, String country, ProcessDataType processDataType)
+            throws ErrorHandling.InvalidStreetAddress, ErrorHandling.InvalidAddressNumberException, ErrorHandling.InvalidAddressType {
         // implement Google Map API (Geocoding)
         String cityCheck = InputValidator.stringChecker(city, false, true, false, 1);
         String stateCheck = InputValidator.stringChecker(state, false, true, false, 1);
@@ -52,7 +54,7 @@ public class AddressService {
                 processDataType != null;
     }
 
-    public boolean hasValidLength(String city, String state, String zipCode, String country) {
+    public boolean hasValidLength(String city, String state, String zipCode, String country) throws ErrorHandling.InvalidLengthException {
         int standardMin = 1;
         int standardMax = 255;
         int numberTypeZipcodeMaxLength = 50;

@@ -3,6 +3,7 @@ package ostro.veda.service;
 import ostro.veda.common.InputValidator;
 import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.ProductImageDTO;
+import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.ProductImageRepository;
 
 import java.util.Map;
@@ -30,11 +31,11 @@ public class ProductImageService {
         }
     }
 
-    private static boolean hasValidInput(String url, ProcessDataType processDataType) {
-        return processDataType != null && InputValidator.hasValidUrl(url);
+    private static boolean hasValidInput(String url, ProcessDataType processDataType) throws ErrorHandling.InvalidImageUrlException {
+        return processDataType != null && InputValidator.hasValidImageUrl(url);
     }
 
-    private static boolean hasValidLength(String input) {
+    private static boolean hasValidLength(String input) throws ErrorHandling.InvalidLengthException {
         int min = 12;
         int max = 255;
         return InputValidator.hasValidLength(input, min, max);

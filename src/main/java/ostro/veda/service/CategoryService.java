@@ -3,6 +3,7 @@ package ostro.veda.service;
 import ostro.veda.common.InputValidator;
 import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.CategoryDTO;
+import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.CategoryRepository;
 
 import java.util.Map;
@@ -31,13 +32,14 @@ public class CategoryService {
         }
     }
 
-    private boolean hasValidInput(String name, String description, ProcessDataType processDataType) {
+    private boolean hasValidInput(String name, String description, ProcessDataType processDataType)
+            throws ErrorHandling.InvalidNameException, ErrorHandling.InvalidDescriptionException {
         return InputValidator.hasValidName(name) &&
                 InputValidator.hasValidDescription(description) &&
                 processDataType != null;
     }
 
-    private boolean hasValidLength(String name, String description) {
+    private boolean hasValidLength(String name, String description) throws ErrorHandling.InvalidLengthException {
         int emptyMin = 0;
         int minimumLength = 1;
         int nameMaxLength = 255;
