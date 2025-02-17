@@ -110,7 +110,7 @@ jobs:
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          git fetch origin
+          git fetch test
           git checkout test
-          git merge origin/dev
-          git push origin test
+          git merge dev test
+          git push test
