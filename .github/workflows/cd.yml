@@ -1,20 +1,24 @@
 name: Java CD with Maven
 
 on:
-  push:
-    branches:
-      - test
+  workflow_run:
+    workflows: ["Java CI with Maven and Hibernate"]
+    types:
+      - completed
 
 permissions:
   contents: write
 
 jobs:
   build:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'dev' }}
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -53,7 +57,6 @@ jobs:
           files: staging/*.jar
 
       - name: Push to master
-        if: github.ref == 'refs/heads/test'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -61,5 +64,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git fetch origin 
           git checkout master 
-          git reset --hard origin/test 
+          git reset --hard ${{ github.event.workflow_run.head_sha }}
           git push origin master --force
