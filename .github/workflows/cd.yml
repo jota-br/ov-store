@@ -1,13 +1,10 @@
 name: Java CD with Maven
 
 on:
-  push:
-    branches:
-      - master
-      - test
   pull_request:
     branches:
-      - master
+      - test
+    types: [opened, synchronize]
 
 permissions:
   contents: write
@@ -57,7 +54,7 @@ jobs:
           files: staging/*.jar
 
       - name: Push to master
-        if: github.ref == 'refs/heads/test'
+        if: github.event.pull_request.base.ref == 'test' && github.event.pull_request.head.ref == 'dev'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
