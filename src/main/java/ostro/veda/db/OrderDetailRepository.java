@@ -74,7 +74,7 @@ public class OrderDetailRepository extends Repository {
         for (Map.Entry<ProductDTO, Integer> entry : productAndQuantity.entrySet()) {
             Product product = this.getEm().find(Product.class, entry.getKey().getProductId());
             int quantity = entry.getValue();
-            if (product.getStock() <= quantity) {
+            if (product.getStock() >= quantity) {
                 productDaoAndQuantity.put(product, quantity);
             } else {
                 throw new ErrorHandling.InsufficientInventoryException();

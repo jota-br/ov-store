@@ -11,7 +11,7 @@ public class OrderRepository extends Repository {
         super(entityManagerHelper);
     }
 
-    public OrderDTO addOrder(int userId, double totalAmount, OrderStatus status, Address shippingAddress,
+    public OrderDTO addOrder(int userId, double totalAmount, String status, Address shippingAddress,
                              Address billingAddress) {
 
         Order order = getNewOrder(userId, totalAmount, status, shippingAddress, billingAddress);
@@ -24,7 +24,7 @@ public class OrderRepository extends Repository {
         return order.transformToDto();
     }
 
-    private static Order getNewOrder(int userId, double totalAmount, OrderStatus status, Address shippingAddress, Address billingAddress) {
+    private static Order getNewOrder(int userId, double totalAmount, String status, Address shippingAddress, Address billingAddress) {
         return new Order(userId, totalAmount, status, shippingAddress, billingAddress);
     }
 
@@ -39,6 +39,6 @@ public class OrderRepository extends Repository {
     }
 
     private void updateOrder(Order o) {
-        o.updateOrder(OrderStatus.CANCELLED);
+        o.updateOrder(OrderStatus.CANCELLED.getStatus());
     }
 }

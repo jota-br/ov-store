@@ -32,7 +32,7 @@ public class AddressServiceTest {
             String country = "Brazil";
 
 
-            AddressDTO addressDTO = addressService.processData(-1, 1, street, addressNumber,
+            AddressDTO addressDTO = addressService.processData(id, 1, street, addressNumber,
                     addressType, city, state, zipCode, country, true, ProcessDataType.ADD);
 
             insertAddressId = addressDTO.getAddressId();

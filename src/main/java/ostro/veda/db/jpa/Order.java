@@ -2,9 +2,7 @@ package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import ostro.veda.common.dto.OrderDTO;
-import ostro.veda.db.helpers.OrderStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,6 +19,7 @@ public class Order {
     @Column(name = "user_id")
     private int userId;
 
+    @CreationTimestamp
     @Column(name = "order_date")
     private LocalDateTime orderDate;
 
@@ -28,7 +27,7 @@ public class Order {
     private double totalAmount;
 
     @Column(name = "status")
-    private OrderStatus status;
+    private String status;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetails;
@@ -41,14 +40,10 @@ public class Order {
     @JoinColumn(name = "billing_address_id", referencedColumnName = "address_id")
     private Address billingAddress;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
     public Order() {
     }
 
-    public Order(int userId, double totalAmount, OrderStatus status,
+    public Order(int userId, double totalAmount, String status,
                  Address shippingAddress, Address billingAddress) {
         this.userId = userId;
         this.totalAmount = totalAmount;
@@ -65,7 +60,6 @@ public class Order {
         return userId;
     }
 
-    @CreationTimestamp
     public LocalDateTime getOrderDate() {
         return orderDate;
     }
@@ -74,7 +68,7 @@ public class Order {
         return totalAmount;
     }
 
-    public OrderStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
@@ -90,18 +84,13 @@ public class Order {
         return billingAddress;
     }
 
-    @UpdateTimestamp
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public Order updateOrder(OrderStatus status) {
+    public Order updateOrder(String status) {
         this.status = status;
         return this;
     }
 
     public OrderDTO transformToDto() {
         return new OrderDTO(this.getOrderId(), this.getUserId(), this.getOrderDate(), this.getTotalAmount(), this.getStatus(),
-                this.getOrderDetails(), this.getShippingAddress(), this.getBillingAddress(), this.getUpdatedAt());
+                this.getOrderDetails(), this.getShippingAddress(), this.getBillingAddress());
     }
 }

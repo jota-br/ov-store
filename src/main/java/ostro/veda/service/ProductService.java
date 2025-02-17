@@ -50,6 +50,9 @@ public class ProductService {
     }
 
     private List<ProductImageDTO> getImageDTOList(Map<String, Boolean> images, ProcessDataType processDataType, Map<EntityType, Integer> entityAndId) {
+        if (images == null) {
+            return null;
+        }
         List<ProductImageDTO> imagesList = new ArrayList<>();
         for (Map.Entry<String, Boolean> entry : images.entrySet()) {
             String url = entry.getKey();

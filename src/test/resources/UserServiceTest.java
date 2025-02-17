@@ -24,13 +24,13 @@ public class UserServiceTest {
 
             // invalid password
             assertNull(userService.processData(-1,"validUserName", "short",
-                    "valid@email.com", "ValidName", "ValidLastName", "5511000000000", true, ProcessDataType.ADD));
+                    "valid@email.com", "ValidName", "ValidLastName", "5511000000001", true, ProcessDataType.ADD));
             assertNull(userService.processData(-1,"validUserName", "tooLongMaximumIs20letters",
-                    "valid@email.com", "ValidName", "ValidLastName", "5511000000000", true, ProcessDataType.ADD));
+                    "valid@email.com", "ValidName", "ValidLastName", "5511000000002", true, ProcessDataType.ADD));
 
             // invalid email
             assertNull(userService.processData(-1,"validUserName", "ValidPassword",
-                    "invalidemail.com", "ValidName", "ValidLastName", "5511000000000", true, ProcessDataType.ADD));
+                    "invalidemail.com", "ValidName", "ValidLastName", "5511000000003", true, ProcessDataType.ADD));
 
             // invalid phone
             assertNull(userService.processData(-1,"validUserName", "ValidPassword",
@@ -41,7 +41,7 @@ public class UserServiceTest {
             String email = "ema88890_il@google.com";
             String firstName = "John";
             String lastName = "Vesneski";
-            String phone = "5511000000000";
+            String phone = "5511000000004";
 
             UserDTO insertedUser = userService.processData(-1, username, password,
                     email, firstName, lastName, phone, true, ProcessDataType.ADD);

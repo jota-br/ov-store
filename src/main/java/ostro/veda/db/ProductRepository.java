@@ -77,6 +77,9 @@ public class ProductRepository extends Repository {
     }
 
     private List<ProductImage> getImagesList(List<ProductImageDTO> images) {
+        if (images == null) {
+            return null;
+        }
         List<ProductImage> imagesList = new ArrayList<>();
         for (ProductImageDTO pi : images) {
             ProductImage productImage = null;

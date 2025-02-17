@@ -146,13 +146,17 @@ public class Product {
 
     public ProductDTO transformToDto() {
         List<ProductImageDTO> images = new ArrayList<>();
-        for (ProductImage pi : this.getImages()) {
-            images.add(pi.transformToDto());
+        if (this.images != null) {
+            for (ProductImage pi : this.getImages()) {
+                images.add(pi.transformToDto());
+            }
         }
 
         List<CategoryDTO> categories = new ArrayList<>();
-        for (Category c : this.getCategories()) {
-            categories.add(c.transformToDto());
+        if (this.categories != null) {
+            for (Category c : this.getCategories()) {
+                categories.add(c.transformToDto());
+            }
         }
 
         return new ProductDTO(this.getProductId(), this.getName(), this.getDescription(), this.getPrice(), this.getStock(), this.isActive(),

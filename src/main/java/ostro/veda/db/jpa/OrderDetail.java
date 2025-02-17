@@ -8,7 +8,7 @@ import ostro.veda.common.dto.OrderDetailDTO;
 public class OrderDetail {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_detail_id")
     private int orderDetailId;
 

@@ -31,7 +31,7 @@ public class OrderService {
             if (!hasValidInput(userId, totalAmount, status, shippingAddress, billingAddress, productAndQuantity, processDataType))
                 return null;
 
-            OrderDTO orderDTO = performDmlAction(userId, totalAmount, status, shippingAddress, billingAddress, processDataType);
+            OrderDTO orderDTO = performDmlAction(userId, totalAmount, status.getStatus(), shippingAddress, billingAddress, processDataType);
 
             if (orderDTO == null) {
                 return null;
@@ -65,7 +65,7 @@ public class OrderService {
                 InputValidator.hasValidProductAndQuantity(productAndQuantity) && processDataType != null;
     }
 
-    private OrderDTO performDmlAction(int userId, double totalAmount, OrderStatus status, Address shippingAddress,
+    private OrderDTO performDmlAction(int userId, double totalAmount, String status, Address shippingAddress,
                                       Address billingAddress, ProcessDataType processDataType)
             throws ErrorHandling.InvalidProcessDataTypeException {
         if (InputValidator.hasValidProcessDataType(processDataType, ProcessDataType.ADD)) {
