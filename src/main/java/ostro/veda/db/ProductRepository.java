@@ -1,5 +1,6 @@
 package ostro.veda.db;
 
+import jakarta.persistence.OptimisticLockException;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.dto.ProductImageDTO;
@@ -43,7 +44,8 @@ public class ProductRepository extends Repository {
     }
 
     public ProductDTO updateProduct(Map<EntityType, Integer> entityAndId, String name, String description, double price, int stock, boolean isActive,
-                                           List<CategoryDTO> categories, List<ProductImageDTO> images) {
+                                           List<CategoryDTO> categories, List<ProductImageDTO> images)
+            throws OptimisticLockException {
 
         Product product = this.em.find(Product.class, entityAndId.get(EntityType.PRODUCT));
 

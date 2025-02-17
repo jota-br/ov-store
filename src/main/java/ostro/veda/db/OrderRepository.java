@@ -1,13 +1,10 @@
 package ostro.veda.db;
 
 import ostro.veda.common.dto.OrderDTO;
-import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.db.helpers.OrderStatus;
 import ostro.veda.db.jpa.Address;
 import ostro.veda.db.jpa.Order;
-
-import java.util.Map;
 
 public class OrderRepository extends Repository {
     public OrderRepository(EntityManagerHelper entityManagerHelper) {
@@ -15,9 +12,9 @@ public class OrderRepository extends Repository {
     }
 
     public OrderDTO addOrder(int userId, double totalAmount, OrderStatus status, Address shippingAddress,
-                             Address billingAddress, Map<ProductDTO, Integer> productAndQuantity) {
+                             Address billingAddress) {
 
-        Order order = new Order(userId, totalAmount, status, shippingAddress, billingAddress);
+        Order order = getNewOrder(userId, totalAmount, status, shippingAddress, billingAddress);
 
         boolean isInserted = this.entityManagerHelper.executePersist(this.em, order);
         if (!isInserted) {
@@ -25,5 +22,23 @@ public class OrderRepository extends Repository {
         }
 
         return order.transformToDto();
+    }
+
+    private static Order getNewOrder(int userId, double totalAmount, OrderStatus status, Address shippingAddress, Address billingAddress) {
+        return new Order(userId, totalAmount, status, shippingAddress, billingAddress);
+    }
+
+    public boolean cancelOrder(OrderDTO order) {
+        Order o = getOrder(order);
+        updateOrder(o);
+        return this.entityManagerHelper.executeMerge(this.em, o);
+    }
+
+    private Order getOrder(OrderDTO order) {
+        return this.getEm().find(Order.class, order.getOrderId());
+    }
+
+    private void updateOrder(Order o) {
+        o.updateOrder(OrderStatus.CANCELLED);
     }
 }

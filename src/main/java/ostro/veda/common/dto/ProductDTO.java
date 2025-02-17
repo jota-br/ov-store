@@ -15,9 +15,11 @@ public class ProductDTO {
     private final List<ProductImageDTO> images;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
+    private final int version;
 
     public ProductDTO(int productId, String name, String description, double price, int stock, boolean isActive,
-                      List<CategoryDTO> categories, List<ProductImageDTO> images, LocalDateTime createdAt, LocalDateTime updatedAt) {
+                      List<CategoryDTO> categories, List<ProductImageDTO> images, LocalDateTime createdAt, LocalDateTime updatedAt,
+                      int version) {
         this.productId = productId;
         this.name = name;
         this.description = description;
@@ -28,6 +30,7 @@ public class ProductDTO {
         this.images = images;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.version = version;
     }
 
     public int getProductId() {
@@ -68,5 +71,9 @@ public class ProductDTO {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public int getVersion() {
+        return version;
     }
 }

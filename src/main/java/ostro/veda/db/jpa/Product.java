@@ -62,6 +62,9 @@ public class Product {
     public Product() {
     }
 
+    @Version
+    private int version;
+
     public Product(String name, String description, double price, int stock, boolean isActive) {
         this.name = name;
         this.description = description;
@@ -120,6 +123,10 @@ public class Product {
         return updatedAt;
     }
 
+    public int getVersion() {
+        return version;
+    }
+
     public Product updateProduct(Product updatedData) {
         this.name = updatedData.getName();
         this.description = updatedData.getDescription();
@@ -149,6 +156,6 @@ public class Product {
         }
 
         return new ProductDTO(this.getProductId(), this.getName(), this.getDescription(), this.getPrice(), this.getStock(), this.isActive(),
-                categories, images, this.getCreatedAt(), this.getUpdatedAt());
+                categories, images, this.getCreatedAt(), this.getUpdatedAt(), this.getVersion());
     }
 }

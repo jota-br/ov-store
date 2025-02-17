@@ -31,14 +31,24 @@ public class OrderService {
             if (!hasValidInput(userId, totalAmount, status, shippingAddress, billingAddress, productAndQuantity, processDataType))
                 return null;
 
-            OrderDTO orderDTO = performDmlAction(userId, totalAmount, status, shippingAddress, billingAddress,
-                    productAndQuantity, processDataType);
+            OrderDTO orderDTO = performDmlAction(userId, totalAmount, status, shippingAddress, billingAddress, processDataType);
 
             if (orderDTO == null) {
                 return null;
             }
 
             List<OrderDetailDTO> orderDetailDTOList = orderDetailService.processData(orderDTO.getOrderId(), productAndQuantity, processDataType);
+            if (orderDetailDTOList == null) {
+                int retries = 0;
+                while (retries < 10) {
+                    boolean isCanceled = cancelOrder(orderDTO);
+                    if (isCanceled) {
+                        break;
+                    }
+                    retries++;
+                }
+                return null;
+            }
             return Map.of(orderDTO, orderDetailDTOList);
         } catch (Exception e) {
             Logger.log(e);
@@ -56,12 +66,16 @@ public class OrderService {
     }
 
     private OrderDTO performDmlAction(int userId, double totalAmount, OrderStatus status, Address shippingAddress,
-                                      Address billingAddress, Map<ProductDTO, Integer> productAndQuantity, ProcessDataType processDataType)
+                                      Address billingAddress, ProcessDataType processDataType)
             throws ErrorHandling.InvalidProcessDataTypeException {
         if (InputValidator.hasValidProcessDataType(processDataType, ProcessDataType.ADD)) {
             return orderRepository.addOrder(userId, totalAmount, status, shippingAddress,
-                    billingAddress, productAndQuantity);
+                    billingAddress);
         }
         return null;
+    }
+
+    private boolean cancelOrder(OrderDTO order) {
+        return orderRepository.cancelOrder(order);
     }
 }

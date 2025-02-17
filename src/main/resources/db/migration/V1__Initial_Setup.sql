@@ -16,7 +16,7 @@ Create Table If Not Exists users (
   email Varchar(320) Unique Not Null,
   first_name Varchar(255),
   last_name Varchar(255),
-  phone Varchar(15), -- E.164 format
+  phone Varchar(15) Unique, -- E.164 format
   is_active Boolean Default false,
   user_role_id int Default 20,
   created_at Timestamp Default Current_Timestamp,
@@ -105,6 +105,7 @@ Create Table If Not Exists products (
   price Decimal(10,2) Not Null,
   stock Int Not Null,
   is_active Boolean Default false,
+  version int Default 0,
   created_at Timestamp Default Current_Timestamp,
   updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp
 );

@@ -1,5 +1,6 @@
 package ostro.veda.db;
 
+import jakarta.persistence.OptimisticLockException;
 import ostro.veda.common.dto.OrderDetailDTO;
 import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.error.ErrorHandling;
@@ -20,25 +21,31 @@ public class OrderDetailRepository extends Repository {
     }
 
     public List<OrderDetailDTO> addOrderDetail(int orderId, Map<ProductDTO, Integer> productAndQuantity)
-            throws ErrorHandling.InsufficientInventoryException, ErrorHandling.UnableToPersistException {
-        List<OrderDetail> orderDetailList = new ArrayList<>();
-        Map<Product, Integer> productAndQuantityUpdated = new HashMap<>();
-        List<Product> mergeList = new ArrayList<>();
-
-        inventoryCheck(productAndQuantity, productAndQuantityUpdated);
-        updateProductInventory(productAndQuantityUpdated, mergeList, Calculation.SUBTRACTION);
-        List<Product> productInventoryUpdated = entityManagerHelper.executeMergeBatch(this.getEm(), mergeList);
-
-        if (productInventoryUpdated == null) {
-            return null;
-        }
+            throws ErrorHandling.InsufficientInventoryException, OptimisticLockException {
 
         Order order = this.getEm().find(Order.class, orderId);
         if (order == null) {
             return null;
         }
 
-        for (Map.Entry<Product, Integer> entry : productAndQuantityUpdated.entrySet()) {
+        List<OrderDetail> orderDetailList = new ArrayList<>();
+        Map<Product, Integer> productDaoAndQuantity = new HashMap<>();
+        List<Product> mergeList = new ArrayList<>();
+
+        // Updates and put's Product, Quantity to the productDaoAndQuantity map
+        inventoryCheck(productAndQuantity, productDaoAndQuantity);
+        // Updates the DAO entity with the new stock value Adding or Subtracting (see Calculation enum)
+        // and adds the updated object to the mergeList
+        updateProductInventory(productDaoAndQuantity, mergeList, Calculation.SUBTRACTION);
+        // If merge was successful and Product list is returned
+        List<Product> productInventoryMerged = entityManagerHelper.executeMergeBatch(this.getEm(), mergeList);
+
+        // if merge was unsuccessful a null value is returned
+        if (productInventoryMerged == null) {
+            return null;
+        }
+
+        for (Map.Entry<Product, Integer> entry : productDaoAndQuantity.entrySet()) {
             Product product = entry.getKey();
             int quantity = entry.getValue();
             orderDetailList.add(new OrderDetail(order, product, quantity, product.getPrice()));
@@ -46,29 +53,37 @@ public class OrderDetailRepository extends Repository {
 
         orderDetailList = entityManagerHelper.executePersistBatch(this.getEm(), orderDetailList);
 
-        mergeList = new ArrayList<>();
         if (orderDetailList == null || orderDetailList.isEmpty()) {
-            undoInventoryChanges(productAndQuantityUpdated, mergeList);
+            int retries = 0;
+            while (retries < 10) {
+                mergeList = new ArrayList<>();
+                undoInventoryChanges(productDaoAndQuantity, mergeList);
+                List<Product> productInventoryRollback = entityManagerHelper.executeMergeBatch(this.getEm(), mergeList);
+                if (productInventoryRollback != null) {
+                    break;
+                }
+                retries++;
+            }
             return null;
         }
 
         return getOrderDetailDTOList(orderDetailList);
     }
 
-    private void inventoryCheck(Map<ProductDTO, Integer> productAndQuantity, Map<Product, Integer> productAndQuantityUpdated) throws ErrorHandling.InsufficientInventoryException {
+    private void inventoryCheck(Map<ProductDTO, Integer> productAndQuantity, Map<Product, Integer> productDaoAndQuantity) throws ErrorHandling.InsufficientInventoryException {
         for (Map.Entry<ProductDTO, Integer> entry : productAndQuantity.entrySet()) {
             Product product = this.getEm().find(Product.class, entry.getKey().getProductId());
             int quantity = entry.getValue();
             if (product.getStock() <= quantity) {
-                productAndQuantityUpdated.put(product, quantity);
+                productDaoAndQuantity.put(product, quantity);
             } else {
                 throw new ErrorHandling.InsufficientInventoryException();
             }
         }
     }
 
-    private void updateProductInventory(Map<Product, Integer> productAndQuantityUpdated, List<Product> mergeList, Calculation calculation) {
-        for (Map.Entry<Product, Integer> entry : productAndQuantityUpdated.entrySet()) {
+    private void updateProductInventory(Map<Product, Integer> productDaoAndQuantity, List<Product> mergeList, Calculation calculation) {
+        for (Map.Entry<Product, Integer> entry : productDaoAndQuantity.entrySet()) {
             Product product = entry.getKey();
             int newStock = product.getStock();
             switch (calculation) {
@@ -81,13 +96,8 @@ public class OrderDetailRepository extends Repository {
         }
     }
 
-    private void undoInventoryChanges(Map<Product, Integer> productAndQuantityUpdated, List<Product> mergeList)
-            throws ErrorHandling.UnableToPersistException {
-        List<Product> productInventoryUpdated;
+    private void undoInventoryChanges(Map<Product, Integer> productAndQuantityUpdated, List<Product> mergeList) {
         updateProductInventory(productAndQuantityUpdated, mergeList, Calculation.SUM);
-        entityManagerHelper.executeMergeBatch(this.getEm(), mergeList);
-
-        throw new ErrorHandling.UnableToPersistException();
     }
 
     private static List<OrderDetailDTO> getOrderDetailDTOList(List<OrderDetail> orderDetailList) {

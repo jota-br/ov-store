@@ -1,5 +1,6 @@
 package ostro.veda.service;
 
+import jakarta.persistence.OptimisticLockException;
 import ostro.veda.common.InputValidator;
 import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.OrderDetailDTO;
@@ -30,8 +31,8 @@ public class OrderDetailService {
     }
 
     private List<OrderDetailDTO> performDmlAction(int orderId, Map<ProductDTO, Integer> productAndQuantity, ProcessDataType processDataType)
-            throws ErrorHandling.InvalidProcessDataTypeException, ErrorHandling.UnableToPersistException,
-            ErrorHandling.InsufficientInventoryException {
+            throws ErrorHandling.InvalidProcessDataTypeException, ErrorHandling.InsufficientInventoryException,
+            OptimisticLockException {
         if (InputValidator.hasValidProcessDataType(processDataType, ProcessDataType.ADD)) {
             return orderDetailRepository.addOrderDetail(orderId, productAndQuantity);
         }

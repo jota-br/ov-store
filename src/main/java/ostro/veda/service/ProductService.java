@@ -1,5 +1,6 @@
 package ostro.veda.service;
 
+import jakarta.persistence.OptimisticLockException;
 import ostro.veda.common.InputValidator;
 import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.CategoryDTO;
@@ -77,18 +78,10 @@ public class ProductService {
                 processDataType != null;
     }
 
-    private boolean hasValidLength(String nameProduct, String descriptionProduct) throws ErrorHandling.InvalidLengthException {
-        int emptyMin = 0;
-        int standardMin = 1;
-        int standardMax = 255;
-        int descriptionMax = 510;
-        return InputValidator.hasValidLength(nameProduct, standardMin, standardMax) &&
-                InputValidator.hasValidLength(descriptionProduct, emptyMin, descriptionMax);
-    }
-
     private ProductDTO performDmlAction(Map<EntityType, Integer> entityAndId, String name, String description,
                                         double price, int stock, boolean isActive, List<CategoryDTO> categories,
-                                        List<ProductImageDTO> images, ProcessDataType processDataType) {
+                                        List<ProductImageDTO> images, ProcessDataType processDataType)
+            throws OptimisticLockException {
         switch (processDataType) {
             case ADD -> {
                 return this.productRepository.addProduct(name, description, price, stock, isActive, categories, images);
