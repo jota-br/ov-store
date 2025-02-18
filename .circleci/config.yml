@@ -1,0 +1,73 @@
+version: 2.1
+
+jobs:
+  build_and_test:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Start MariaDB
+          command: |
+            docker run -d --name mariadb \\
+              -e MYSQL_ROOT_PASSWORD=root \\
+              -e MYSQL_DATABASE=ov_store \\
+              -p 3306:3306 mariadb:10.5
+      - run:
+          name: Wait for MariaDB to start
+          command: sleep 30
+      - run:
+          name: Build with Maven
+          command: mvn -B package --file pom.xml
+      - run:
+          name: Run tests with Maven
+          command: mvn test
+      - run:
+          name: Push to Test if Build and Tests Succeed
+          command: |
+            git config --global user.email "joaoostrovski92@gmail.com"
+            git config --global user.name "Your Name"
+            git remote set-url origin <https://${GITHUB_TOKEN}@github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git>
+            git checkout test
+            git merge --no-ff $CIRCLE_BRANCH
+            git push origin test
+          when: on_success
+
+  deploy:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - checkout
+      - run:
+          name: Set up Git
+          command: |
+            git config --global user.email "joaoostrovski92@gmail.com"
+            git config --global user.name "joaoostrovski"
+            git remote set-url origin <https://${GITHUB_TOKEN}@github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git>
+      - run:
+          name: Merge Test into Master and Create Release
+          command: |
+            git checkout master
+            git merge --no-ff test
+            git push origin master
+            # Create a release using GitHub API
+            curl -H "Authorization: token ${GITHUB_TOKEN}" \\
+                 -d '{ "tag_name": "'$CIRCLE_TAG'", "target_commitish": "master", "name": "'$CIRCLE_TAG'", "body": "'$CIRCLE_TAG'", "draft": false, "prerelease": false }' \\
+                 <https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/releases>
+      when: on_success
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build_and_test:
+          filters:
+            branches:
+              only: dev
+      - deploy:
+          requires:
+            - build_and_test
+          filters:
+            tags:
+              only: /^\\d+\\.\\d+\\.\\d+$/
