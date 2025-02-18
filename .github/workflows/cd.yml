@@ -7,9 +7,6 @@ on:
 
 permissions:
   contents: write
-  issues: write
-  packages: write
-  metadata: read
 
 jobs:
   deploy:
@@ -27,11 +24,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Extract project version
-        id: extract_version
-        run: |
-          echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
-
       - name: Push to master
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
@@ -43,12 +35,3 @@ jobs:
           git checkout master
           git reset --hard origin/test
           git push origin master --force
-
-      - name: Create tag on master
-        env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-        run: |
-          git fetch origin
-          git checkout master
-          git tag -a "${{ env.VERSION }}" -m "Release version ${{ env.VERSION }}"
-          git push origin --tags
