@@ -5,15 +5,13 @@ on:
     branches:
       - dev
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build and Test
     runs-on: ubuntu-latest
-
-    env:
-      DB_URL: jdbc:mariadb://127.0.0.1:3306/ov_store
-      DB_USERNAME: root
-      DB_PASSWORD: root
 
     services:
       mariadb:
@@ -28,85 +26,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          path: .
+          ref: dev
 
-      - name: Print working directory
-        run: pwd
-
-      - name: List top-level files
-        run: ls -la
-
-      - name: List contents of src directory
-        run: ls -la src/
-
-      - name: Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
           java-version: '17'
-
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          distribution: 'temurin'
 
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
-      - name: Install MariaDB client
-        run: sudo apt-get update && sudo apt-get install -y mariadb-client
-
-      - name: Wait for MariaDB to initialize
-        run: |
-          for i in {1..30}; do
-            if mysqladmin ping -h 127.0.0.1 -P 3306 -u root -proot --silent; then
-              echo "MariaDB is up!"
-              break
-            fi
-            echo "Waiting for MariaDB... ($i/30)"
-            sleep 2
-          done
-
-      - name: Confirm MariaDB is running
-        run: mysqladmin ping -h 127.0.0.1 -P 3306 -u root -proot
-
-      - name: Run Database Migrations
-        env:
-          DB_URL: ${{ env.DB_URL }}
-          DB_USERNAME: ${{ env.DB_USERNAME }}
-          DB_PASSWORD: ${{ env.DB_PASSWORD }}
-        run: |
-          mvn org.flywaydb:flyway-maven-plugin:8.0.0:migrate \
-            -Dflyway.url=$DB_URL \
-            -Dflyway.user=$DB_USERNAME \
-            -Dflyway.password=$DB_PASSWORD \
-            -Dflyway.locations=filesystem:src/main/resources/db/migration
-
       - name: Run tests with Maven
-        env:
-          DB_URL: ${{ env.DB_URL }}
-          DB_USERNAME: ${{ env.DB_USERNAME }}
-          DB_PASSWORD: ${{ env.DB_PASSWORD }}
-        run: |
-          mvn test \
-            -Ddb.url=$DB_URL \
-            -Ddb.username=$DB_USERNAME \
-            -Ddb.password=$DB_PASSWORD
-
-      - name: List local branches
-        run: git branch --all
+        run: mvn test
 
       - name: Push to test if build and tests pass
-        if: github.ref == 'refs/heads/dev'
+        if: success()
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          git fetch origin 
-          git checkout test 
-          git reset --hard origin/dev 
+          git remote set-url origin https://$PAT_TOKEN@github.com/${{ github.repository }}
+          git fetch origin
+          git checkout test
+          git reset --hard origin/dev
           git push origin test --force
