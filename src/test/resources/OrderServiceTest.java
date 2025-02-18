@@ -23,18 +23,20 @@ public class OrderServiceTest {
         try (
                 OrderRepository orderRepository = new OrderRepository(entityManagerHelper);
                 OrderDetailRepository orderDetailRepository = new OrderDetailRepository(entityManagerHelper);
+                OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(entityManagerHelper);
                 UserRepository userRepository = new UserRepository(entityManagerHelper);
                 ProductRepository productRepository = new ProductRepository(entityManagerHelper);
                 CategoryRepository categoryRepository = new CategoryRepository(entityManagerHelper);
                 ProductImageRepository productImageRepository = new ProductImageRepository(entityManagerHelper);
-                AddressRepository addressRepository = new AddressRepository(entityManagerHelper)
+                AddressRepository addressRepository = new AddressRepository(entityManagerHelper);
         ) {
             UserService userService = new UserService(userRepository);
             CategoryService categoryService = new CategoryService(categoryRepository);
             ProductImageService productImageService = new ProductImageService(productImageRepository);
             ProductService productService = new ProductService(categoryService, productImageService, productRepository);
+            OrderStatusHistoryService orderStatusHistoryService = new OrderStatusHistoryService(orderStatusHistoryRepository);
             OrderDetailService orderDetailService = new OrderDetailService(orderDetailRepository);
-            OrderService orderService = new OrderService(orderRepository, orderDetailService);
+            OrderService orderService = new OrderService(orderRepository, orderDetailService, orderStatusHistoryService);
 
             String username = "orderServiceUser";
             String password = "orderServiceUser@93";

@@ -4,6 +4,7 @@ import ostro.veda.common.InputValidator;
 import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.OrderDTO;
 import ostro.veda.common.dto.OrderDetailDTO;
+import ostro.veda.common.dto.OrderStatusHistoryDTO;
 import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.OrderRepository;
@@ -18,14 +19,16 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderDetailService orderDetailService;
+    private final OrderStatusHistoryService orderStatusHistoryService;
 
-    public OrderService(OrderRepository orderRepository, OrderDetailService orderDetailService) {
+    public OrderService(OrderRepository orderRepository, OrderDetailService orderDetailService, OrderStatusHistoryService orderStatusHistoryService) {
         this.orderRepository = orderRepository;
         this.orderDetailService = orderDetailService;
+        this.orderStatusHistoryService = orderStatusHistoryService;
     }
 
     public Map<OrderDTO, List<OrderDetailDTO>> processData(int userId, double totalAmount, OrderStatus status, Address shippingAddress,
-                                Address billingAddress, Map<ProductDTO, Integer> productAndQuantity, ProcessDataType processDataType) {
+                                                           Address billingAddress, Map<ProductDTO, Integer> productAndQuantity, ProcessDataType processDataType) {
 
         try {
             if (!hasValidInput(userId, totalAmount, status, shippingAddress, billingAddress, productAndQuantity, processDataType))
@@ -43,12 +46,17 @@ public class OrderService {
                 while (retries < 10) {
                     boolean isCanceled = cancelOrder(orderDTO);
                     if (isCanceled) {
+                        OrderStatusHistoryDTO orderStatusHistoryDTO = orderStatusHistoryService.processData(orderDTO.getOrderId(), OrderStatus.CANCELLED.getStatus(), ProcessDataType.ADD);
+                        orderDTO.getOrderStatusHistory().add(orderStatusHistoryDTO);
                         break;
                     }
                     retries++;
                 }
                 return null;
             }
+
+            OrderStatusHistoryDTO orderStatusHistoryDTO = orderStatusHistoryService.processData(orderDTO.getOrderId(), orderDTO.getStatus(), ProcessDataType.ADD);
+            orderDTO.getOrderStatusHistory().add(orderStatusHistoryDTO);
             return Map.of(orderDTO, orderDetailDTOList);
         } catch (Exception e) {
             Logger.log(e);
@@ -69,8 +77,7 @@ public class OrderService {
                                       Address billingAddress, ProcessDataType processDataType)
             throws ErrorHandling.InvalidProcessDataTypeException {
         if (InputValidator.hasValidProcessDataType(processDataType, ProcessDataType.ADD)) {
-            return orderRepository.addOrder(userId, totalAmount, status, shippingAddress,
-                    billingAddress);
+            return orderRepository.addOrder(userId, totalAmount, status, shippingAddress, billingAddress);
         }
         return null;
     }
