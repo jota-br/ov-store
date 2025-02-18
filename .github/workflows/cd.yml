@@ -7,6 +7,9 @@ on:
 
 permissions:
   contents: write
+  issues: write
+  packages: write
+  metadata: read
 
 jobs:
   deploy:
