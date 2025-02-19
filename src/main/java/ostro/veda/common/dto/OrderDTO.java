@@ -1,7 +1,6 @@
 package ostro.veda.common.dto;
 
 import ostro.veda.db.jpa.Address;
-import ostro.veda.db.jpa.OrderDetail;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,12 +12,14 @@ public class OrderDTO {
     private final LocalDateTime orderDate;
     private final double totalAmount;
     private final String status;
-    private final List<OrderDetail> orderDetails;
+    private final List<OrderDetailDTO> orderDetails;
     private final Address shippingAddress;
     private final Address billingAddress;
+    private final List<OrderStatusHistoryDTO> orderStatusHistory;
 
     public OrderDTO(int orderId, int userId, LocalDateTime orderDate, double totalAmount,
-                    String status, List<OrderDetail> orderDetails, Address shippingAddress, Address billingAddress) {
+                    String status, List<OrderDetailDTO> orderDetails, Address shippingAddress,
+                    Address billingAddress, List<OrderStatusHistoryDTO> orderStatusHistory) {
         this.orderId = orderId;
         this.userId = userId;
         this.orderDate = orderDate;
@@ -27,6 +28,7 @@ public class OrderDTO {
         this.status = status;
         this.shippingAddress = shippingAddress;
         this.billingAddress = billingAddress;
+        this.orderStatusHistory = orderStatusHistory;
     }
 
     public int getOrderId() {
@@ -49,7 +51,7 @@ public class OrderDTO {
         return status;
     }
 
-    public List<OrderDetail> getOrderDetails() {
+    public List<OrderDetailDTO> getOrderDetails() {
         return orderDetails;
     }
 
@@ -59,5 +61,9 @@ public class OrderDTO {
 
     public Address getBillingAddress() {
         return billingAddress;
+    }
+
+    public List<OrderStatusHistoryDTO> getOrderStatusHistory() {
+        return orderStatusHistory;
     }
 }

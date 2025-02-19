@@ -25,7 +25,7 @@ public class OrderRepository extends Repository {
     }
 
     private static Order getNewOrder(int userId, double totalAmount, String status, Address shippingAddress, Address billingAddress) {
-        return new Order(userId, totalAmount, status, shippingAddress, billingAddress);
+        return new Order(userId, totalAmount, status, shippingAddress, billingAddress, null);
     }
 
     public boolean cancelOrder(OrderDTO order) {

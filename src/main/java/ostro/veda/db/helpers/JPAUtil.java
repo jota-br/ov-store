@@ -31,10 +31,10 @@ public class JPAUtil {
         String dbUser = System.getenv().getOrDefault("DB_USERNAME", "root");
         String dbPassword = System.getenv().getOrDefault("DB_PASSWORD", "root");
 
-        properties.put("javax.persistence.jdbc.driver", "org.mariadb.jdbc.Driver");
-        properties.put("javax.persistence.jdbc.url", dbUrl);
-        properties.put("javax.persistence.jdbc.user", dbUser);
-        properties.put("javax.persistence.jdbc.password", dbPassword);
+        properties.put("jakarta.persistence.jdbc.driver", "org.mariadb.jdbc.Driver");
+        properties.put("jakarta.persistence.jdbc.url", dbUrl);
+        properties.put("jakarta.persistence.jdbc.user", dbUser);
+        properties.put("jakarta.persistence.jdbc.password", dbPassword);
         return properties;
     }
 

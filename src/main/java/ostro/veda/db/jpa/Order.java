@@ -3,8 +3,11 @@ package ostro.veda.db.jpa;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import ostro.veda.common.dto.OrderDTO;
+import ostro.veda.common.dto.OrderDetailDTO;
+import ostro.veda.common.dto.OrderStatusHistoryDTO;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -40,16 +43,20 @@ public class Order {
     @JoinColumn(name = "billing_address_id", referencedColumnName = "address_id")
     private Address billingAddress;
 
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    private List<OrderStatusHistory> orderStatusHistory;
+
     public Order() {
     }
 
     public Order(int userId, double totalAmount, String status,
-                 Address shippingAddress, Address billingAddress) {
+                 Address shippingAddress, Address billingAddress, List<OrderStatusHistory> orderStatusHistory) {
         this.userId = userId;
         this.totalAmount = totalAmount;
         this.status = status;
         this.shippingAddress = shippingAddress;
         this.billingAddress = billingAddress;
+        this.orderStatusHistory = orderStatusHistory;
     }
 
     public int getOrderId() {
@@ -84,13 +91,31 @@ public class Order {
         return billingAddress;
     }
 
+    public List<OrderStatusHistory> getOrderStatusHistory() {
+        return orderStatusHistory;
+    }
+
     public Order updateOrder(String status) {
         this.status = status;
         return this;
     }
 
     public OrderDTO transformToDto() {
+        List<OrderDetailDTO> orderDetailDTOList = new ArrayList<>();
+        if (this.orderDetails != null) {
+            for (OrderDetail orderDetail : this.getOrderDetails()) {
+                orderDetailDTOList.add(orderDetail.transformToDto());
+            }
+        }
+
+        List<OrderStatusHistoryDTO> orderStatusHistoryDTOList = new ArrayList<>();
+        if (this.orderStatusHistory != null) {
+            for (OrderStatusHistory orderStatusHistory : this.getOrderStatusHistory()) {
+                orderStatusHistoryDTOList.add(orderStatusHistory.transformToDto());
+            }
+        }
+
         return new OrderDTO(this.getOrderId(), this.getUserId(), this.getOrderDate(), this.getTotalAmount(), this.getStatus(),
-                this.getOrderDetails(), this.getShippingAddress(), this.getBillingAddress());
+                orderDetailDTOList, this.getShippingAddress(), this.getBillingAddress(), orderStatusHistoryDTOList);
     }
 }

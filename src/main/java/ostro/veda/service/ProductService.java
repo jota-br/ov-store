@@ -36,7 +36,6 @@ public class ProductService {
             if (!hasValidInput(nameProduct, descriptionProduct, priceProduct, stockProduct, processDataType)) return null;
             nameProduct = InputValidator.stringSanitize(nameProduct);
             descriptionProduct = InputValidator.stringSanitize(descriptionProduct);
-//            if (!hasValidLength(nameProduct, descriptionProduct)) return null;
 
             List<CategoryDTO> categoriesList = getCategoryDTOList(isActiveProduct, categories, processDataType, entityAndId);
             List<ProductImageDTO> imagesList = getImageDTOList(images, processDataType, entityAndId);

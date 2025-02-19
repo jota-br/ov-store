@@ -156,6 +156,14 @@ Create Table If Not Exists order_details (
   Constraint Foreign Key (product_id) References products (product_id) On Delete Cascade On Update Cascade
 );
 
+Create Table If Not Exists order_status_history (
+  order_status_history_id Int Primary Key Auto_Increment,
+  order_id Int Not Null,
+  status Varchar(50) Default 'pending',
+  changed_at Timestamp Default Current_Timestamp,
+  Constraint Foreign Key (order_id) References orders (order_id) On Delete Cascade On Update Cascade
+);
+
 Create Table If Not Exists coupons (
   coupon_id Int Primary Key Auto_Increment,
   code Varchar(50) Not Null Unique,
@@ -211,14 +219,6 @@ Create Table If Not Exists shippings (
   carrier Varchar(255) Not Null,
   tracking_number Varchar(255),
   status Varchar(50) Default 'pending',
-  Constraint Foreign Key (order_id) References orders (order_id) On Delete Cascade On Update Cascade
-);
-
-Create Table If Not Exists order_status_history (
-  order_status_history_id Int Primary Key Auto_Increment,
-  order_id Int Not Null,
-  status Varchar(50) Default 'pending',
-  changed_at Timestamp Default Current_Timestamp,
   Constraint Foreign Key (order_id) References orders (order_id) On Delete Cascade On Update Cascade
 );
 
