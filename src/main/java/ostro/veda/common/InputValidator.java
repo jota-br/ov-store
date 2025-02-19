@@ -230,10 +230,12 @@ public class InputValidator {
         throw new ErrorHandling.InvalidValueException();
     }
 
-    public static boolean hasValidOrderStatus(OrderStatus status)
+    public static boolean hasValidOrderStatus(String status)
             throws ErrorHandling.InvalidOrderStatusException {
-        if (status != null) {
-            return true;
+        for (OrderStatus orderStatus : OrderStatus.values()) {
+            if (orderStatus.getStatus().equals(status)) {
+                return true;
+            }
         }
         throw new ErrorHandling.InvalidOrderStatusException();
     }
