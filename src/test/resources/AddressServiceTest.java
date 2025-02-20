@@ -19,7 +19,7 @@ public class AddressServiceTest {
         int insertAddressId;
         EntityManagerHelper entityManagerHelper = new EntityManagerHelper();
         createUser(entityManagerHelper);
-        try (AddressRepository addressRepository = new AddressRepository(entityManagerHelper)) {
+        try (AddressRepository addressRepository = new AddressRepository(null, entityManagerHelper)) {
             AddressService addressService = new AddressService(addressRepository);
 
             int id = -1;
@@ -45,7 +45,7 @@ public class AddressServiceTest {
             assertEquals(country, addressDTO.getCountry());
         }
 
-        try (AddressRepository addressRepository = new AddressRepository(entityManagerHelper)) {
+        try (AddressRepository addressRepository = new AddressRepository(null, entityManagerHelper)) {
             AddressService addressService = new AddressService(addressRepository);
 
             String street = "New Street";
@@ -69,7 +69,7 @@ public class AddressServiceTest {
     }
 
     public void createUser(EntityManagerHelper entityManagerHelper) {
-        try (UserRepository userRepository = new UserRepository(entityManagerHelper)) {
+        try (UserRepository userRepository = new UserRepository(null, entityManagerHelper)) {
 
             UserService userService = new UserService(userRepository);
             userService.processData(-1, "userForAddress", "userForAddress@w",

@@ -5,6 +5,7 @@ import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.AddressRepository;
+import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.loggerService.Logger;
 
 public class AddressService {
@@ -71,7 +72,7 @@ public class AddressService {
         switch (processDataType) {
             case ADD -> {
                 AddressDTO addressDTO = this.addressRepository.addAddress(userId, streetAddress, addressNumber, addressType, city, state, zipCode, country, isActive);
-                this.addressRepository.closeEm();
+                JPAUtil.closeEntityManager(this.addressRepository.getEm());
                 return addressDTO;
             }
             case UPDATE -> {
@@ -79,7 +80,7 @@ public class AddressService {
                     return null;
                 }
                 AddressDTO addressDTO = this.addressRepository.updateAddress(addressId, userId, streetAddress, addressNumber, addressType, city, state, zipCode, country, isActive);
-                this.addressRepository.closeEm();
+                JPAUtil.closeEntityManager(this.addressRepository.getEm());
                 return addressDTO;
             }
             default -> {

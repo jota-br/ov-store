@@ -1,5 +1,6 @@
 package ostro.veda.db;
 
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.OptimisticLockException;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.dto.ProductDTO;
@@ -17,10 +18,10 @@ import java.util.Map;
 
 public class ProductRepository extends Repository {
 
-    public ProductRepository(EntityManagerHelper entityManagerHelper) {
-        super(entityManagerHelper);
-    }
 
+    public ProductRepository(EntityManager em, EntityManagerHelper entityManagerHelper) {
+        super(em, entityManagerHelper);
+    }
 
     public ProductDTO addProduct(String name, String description, double price, int stock, boolean isActive,
                                  List<CategoryDTO> categories, List<ProductImageDTO> images) {

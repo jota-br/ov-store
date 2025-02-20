@@ -15,27 +15,25 @@ public class OrderStatusHistoryService {
         this.orderStatusHistoryRepository = orderStatusHistoryRepository;
     }
 
-    public OrderStatusHistoryDTO processData(int orderId, String status, ProcessDataType processDataType) {
-
+    public boolean processData(int orderId, String status, ProcessDataType processDataType) {
+//        OrderStatusHistoryDTO
         try {
-            if (!hasValidInput(orderId, status, processDataType)) return null;
-
-            return performDmlAction(orderId, status, processDataType);
+            return hasValidInput(orderId, status, processDataType);
+//            if (!hasValidInput(orderId, status, processDataType)) return null;
+//            return performDmlAction(orderId, status, processDataType);
         } catch (Exception e) {
             Logger.log(e);
-            return null;
+            return false;
         }
     }
 
-    private boolean hasValidInput(int orderId, String status, ProcessDataType processDataType) throws ErrorHandling.InvalidOrderStatusException {
-        return InputValidator.hasValidOrderStatus(status) && processDataType != null && orderId > 0;
+    private boolean hasValidInput(int orderId, String status, ProcessDataType processDataType) throws ErrorHandling.InvalidOrderStatusException, ErrorHandling.InvalidProcessDataTypeException {
+        return InputValidator.hasValidOrderStatus(status) && processDataType != null &&
+                InputValidator.hasValidProcessDataType(processDataType, ProcessDataType.ADD) && orderId > 0;
     }
 
-    private OrderStatusHistoryDTO performDmlAction(int orderId, String status, ProcessDataType processDataType)
-            throws ErrorHandling.InvalidProcessDataTypeException {
-        if (InputValidator.hasValidProcessDataType(processDataType, ProcessDataType.ADD)) {
-            return orderStatusHistoryRepository.addOrderStatusHistory(orderId, status);
-        }
+    private OrderStatusHistoryDTO performDmlAction(int orderId, String status, ProcessDataType processDataType) {
+//        return orderStatusHistoryRepository.addOrderStatusHistory(orderId, status);
         return null;
     }
 }
