@@ -1,5 +1,6 @@
 package ostro.veda.db;
 
+import jakarta.persistence.EntityManager;
 import ostro.veda.common.dto.ProductImageDTO;
 import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.db.helpers.columns.ProductImageColumns;
@@ -10,8 +11,8 @@ import java.util.Map;
 
 public class ProductImageRepository extends Repository {
 
-    public ProductImageRepository(EntityManagerHelper entityManagerHelper) {
-        super(entityManagerHelper);
+    public ProductImageRepository(EntityManager em, EntityManagerHelper entityManagerHelper) {
+        super(em, entityManagerHelper);
     }
 
     public ProductImageDTO addImage(String url, boolean isMain) {

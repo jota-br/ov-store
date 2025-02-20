@@ -1,5 +1,6 @@
 package ostro.veda.db;
 
+import jakarta.persistence.EntityManager;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.db.helpers.columns.CategoryColumns;
 import ostro.veda.db.helpers.EntityManagerHelper;
@@ -10,8 +11,8 @@ import java.util.Map;
 
 public class CategoryRepository extends Repository {
 
-    public CategoryRepository(EntityManagerHelper entityManagerHelper) {
-        super(entityManagerHelper);
+    public CategoryRepository(EntityManager em, EntityManagerHelper entityManagerHelper) {
+        super(em, entityManagerHelper);
     }
 
     public CategoryDTO addCategory(String name, String description, boolean isActive) {

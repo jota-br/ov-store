@@ -14,7 +14,7 @@ public class UserServiceTest {
     @Test
     public void processData() {
         EntityManagerHelper entityManagerHelper = new EntityManagerHelper();
-        try (UserRepository userRepository = new UserRepository(entityManagerHelper)) {
+        try (UserRepository userRepository = new UserRepository(null, entityManagerHelper)) {
 
             UserService userService = new UserService(userRepository);
 

@@ -1,10 +1,12 @@
 package test.resources;
 
+import jakarta.persistence.EntityManager;
 import org.junit.Test;
 import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.*;
 import ostro.veda.db.*;
 import ostro.veda.db.helpers.EntityManagerHelper;
+import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.db.helpers.OrderStatus;
 import ostro.veda.db.jpa.Address;
 import ostro.veda.db.jpa.Product;
@@ -20,30 +22,30 @@ public class OrderServiceTest {
     @Test
     public void processData() {
         EntityManagerHelper entityManagerHelper = new EntityManagerHelper();
+        EntityManager em = JPAUtil.getEm();
         try (
-                OrderRepository orderRepository = new OrderRepository(entityManagerHelper);
-                OrderDetailRepository orderDetailRepository = new OrderDetailRepository(entityManagerHelper);
-                OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(entityManagerHelper);
-                UserRepository userRepository = new UserRepository(entityManagerHelper);
-                ProductRepository productRepository = new ProductRepository(entityManagerHelper);
-                CategoryRepository categoryRepository = new CategoryRepository(entityManagerHelper);
-                ProductImageRepository productImageRepository = new ProductImageRepository(entityManagerHelper);
-                AddressRepository addressRepository = new AddressRepository(entityManagerHelper);
+                OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em, entityManagerHelper);
+                OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em, entityManagerHelper);
+                OrderRepository orderRepository = new OrderRepository(em, entityManagerHelper, orderDetailRepository, orderStatusHistoryRepository);
+                UserRepository userRepository = new UserRepository(null, entityManagerHelper);
+                ProductRepository productRepository = new ProductRepository(null, entityManagerHelper);
+                CategoryRepository categoryRepository = new CategoryRepository(null, entityManagerHelper);
+                ProductImageRepository productImageRepository = new ProductImageRepository(null, entityManagerHelper);
+                AddressRepository addressRepository = new AddressRepository(null, entityManagerHelper)
         ) {
+
             UserService userService = new UserService(userRepository);
             CategoryService categoryService = new CategoryService(categoryRepository);
             ProductImageService productImageService = new ProductImageService(productImageRepository);
             ProductService productService = new ProductService(categoryService, productImageService, productRepository);
-            OrderStatusHistoryService orderStatusHistoryService = new OrderStatusHistoryService(orderStatusHistoryRepository);
-            OrderDetailService orderDetailService = new OrderDetailService(orderDetailRepository);
-            OrderService orderService = new OrderService(orderRepository, orderDetailService, orderStatusHistoryService);
+            OrderService orderService = new OrderService(orderRepository);
 
             String username = "orderServiceUser";
             String password = "orderServiceUser@93";
             String email = "orderServiceUser@example.com";
             String firstName = "orderServiceUser";
             String lastName = "orderService";
-            String phone = "5511000000000";
+            String phone = "5511000000099";
 
             UserDTO user = userService.processData(-1, username, password,
                     email, firstName, lastName, phone, true, ProcessDataType.ADD);
@@ -81,31 +83,35 @@ public class OrderServiceTest {
             int remainingStockTwo = productDTOList.get(1).getStock() - itemTwoQty;
             Address address = orderRepository.getEm().find(Address.class, addressDTO.getAddressId());
 
-            Map<OrderDTO, List<OrderDetailDTO>> orderDTOListMap = orderService.processData(user.getUserId(), total, OrderStatus.DRAFT, address, address,
+            OrderDTO orderDTO = orderService.processData(user.getUserId(), total, OrderStatus.DRAFT.getStatus(), address, address,
                     Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty), ProcessDataType.ADD);
 
-            assertNotNull(orderDTOListMap);
+            assertNotNull(orderDTO);
 
             itemOneQty = 2;
             itemTwoQty = 2;
             total = (productDTOList.get(0).getPrice() * itemOneQty) + (productDTOList.get(1).getPrice() * itemTwoQty);
             remainingStockOne = remainingStockOne - itemOneQty;
             remainingStockTwo = remainingStockTwo - itemTwoQty;
-            orderDTOListMap = orderService.processData(user.getUserId(), total, OrderStatus.DRAFT, address, address,
+            orderDTO = orderService.processData(user.getUserId(), total, OrderStatus.DRAFT.getStatus(), address, address,
                     Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty), ProcessDataType.ADD);
 
-            assertNotNull(orderDTOListMap);
+            assertNotNull(orderDTO);
+
+            orderDTO = orderRepository.updateOrderStatus(orderDTO.getOrderId(), OrderStatus.PENDING_PAYMENT.getStatus());
+            assertNotNull(orderDTO);
+            assertEquals(orderDTO.getStatus(), OrderStatus.PENDING_PAYMENT.getStatus());
 
             // Product Test Two has no sufficient inventory for this transaction
             itemOneQty = 3;
             itemTwoQty = 3;
             total = (productDTOList.get(0).getPrice() * itemOneQty) + (productDTOList.get(1).getPrice() * itemTwoQty);
-            orderDTOListMap = orderService.processData(user.getUserId(), total, OrderStatus.DRAFT, address, address,
+            orderDTO = orderService.processData(user.getUserId(), total, OrderStatus.DRAFT.getStatus(), address, address,
                     Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty), ProcessDataType.ADD);
             Product pOne = orderRepository.getEm().find(Product.class, productDTOList.get(0).getProductId());
             Product pOTwo = orderRepository.getEm().find(Product.class, productDTOList.get(1).getProductId());
 
-            assertNull(orderDTOListMap);
+            assertNull(orderDTO);
             assertEquals(remainingStockOne, pOne.getStock());
             assertEquals(remainingStockTwo, pOTwo.getStock());
         } catch (Exception ignored) {

@@ -95,7 +95,7 @@ public class Order {
         return orderStatusHistory;
     }
 
-    public Order updateOrder(String status) {
+    public Order updateOrderStatus(String status) {
         this.status = status;
         return this;
     }
