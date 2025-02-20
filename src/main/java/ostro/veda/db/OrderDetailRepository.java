@@ -5,7 +5,6 @@ import jakarta.persistence.OptimisticLockException;
 import ostro.veda.common.dto.OrderDetailDTO;
 import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.error.ErrorHandling;
-import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.db.jpa.Order;
 import ostro.veda.db.jpa.OrderDetail;
 import ostro.veda.db.jpa.Product;
@@ -17,8 +16,8 @@ import java.util.Map;
 
 public class OrderDetailRepository extends Repository {
 
-    public OrderDetailRepository(EntityManager em, EntityManagerHelper entityManagerHelper) {
-        super(em, entityManagerHelper);
+    public OrderDetailRepository(EntityManager em) {
+        super(em);
     }
 
     public List<OrderDetailDTO> addOrderDetail(Map<ProductDTO, Integer> productAndQuantity, Order order)

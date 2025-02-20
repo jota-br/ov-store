@@ -5,7 +5,6 @@ import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.db.AddressRepository;
 import ostro.veda.db.UserRepository;
-import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.service.AddressService;
 import ostro.veda.service.UserService;
 
@@ -17,9 +16,8 @@ public class AddressServiceTest {
     public void processData() {
 
         int insertAddressId;
-        EntityManagerHelper entityManagerHelper = new EntityManagerHelper();
-        createUser(entityManagerHelper);
-        try (AddressRepository addressRepository = new AddressRepository(null, entityManagerHelper)) {
+        createUser();
+        try (AddressRepository addressRepository = new AddressRepository()) {
             AddressService addressService = new AddressService(addressRepository);
 
             int id = -1;
@@ -45,7 +43,7 @@ public class AddressServiceTest {
             assertEquals(country, addressDTO.getCountry());
         }
 
-        try (AddressRepository addressRepository = new AddressRepository(null, entityManagerHelper)) {
+        try (AddressRepository addressRepository = new AddressRepository()) {
             AddressService addressService = new AddressService(addressRepository);
 
             String street = "New Street";
@@ -68,8 +66,8 @@ public class AddressServiceTest {
         }
     }
 
-    public void createUser(EntityManagerHelper entityManagerHelper) {
-        try (UserRepository userRepository = new UserRepository(null, entityManagerHelper)) {
+    public void createUser() {
+        try (UserRepository userRepository = new UserRepository()) {
 
             UserService userService = new UserService(userRepository);
             userService.processData(-1, "userForAddress", "userForAddress@w",

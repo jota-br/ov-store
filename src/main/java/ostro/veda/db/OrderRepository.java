@@ -6,7 +6,6 @@ import ostro.veda.common.dto.OrderDTO;
 import ostro.veda.common.dto.OrderDetailDTO;
 import ostro.veda.common.dto.OrderStatusHistoryDTO;
 import ostro.veda.common.dto.ProductDTO;
-import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.db.jpa.Address;
 import ostro.veda.db.jpa.Order;
@@ -20,8 +19,8 @@ public class OrderRepository extends Repository {
     private final OrderDetailRepository orderDetailRepository;
     private final OrderStatusHistoryRepository orderStatusHistoryRepository;
 
-    public OrderRepository(EntityManager em, EntityManagerHelper entityManagerHelper, OrderDetailRepository orderDetailRepository, OrderStatusHistoryRepository orderStatusHistoryRepository) {
-        super(em, entityManagerHelper);
+    public OrderRepository(EntityManager em, OrderDetailRepository orderDetailRepository, OrderStatusHistoryRepository orderStatusHistoryRepository) {
+        super(em);
         this.orderDetailRepository = orderDetailRepository;
         this.orderStatusHistoryRepository = orderStatusHistoryRepository;
     }

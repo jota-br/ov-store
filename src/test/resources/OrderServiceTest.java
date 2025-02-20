@@ -24,14 +24,14 @@ public class OrderServiceTest {
         EntityManagerHelper entityManagerHelper = new EntityManagerHelper();
         EntityManager em = JPAUtil.getEm();
         try (
-                OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em, entityManagerHelper);
-                OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em, entityManagerHelper);
-                OrderRepository orderRepository = new OrderRepository(em, entityManagerHelper, orderDetailRepository, orderStatusHistoryRepository);
-                UserRepository userRepository = new UserRepository(null, entityManagerHelper);
-                ProductRepository productRepository = new ProductRepository(null, entityManagerHelper);
-                CategoryRepository categoryRepository = new CategoryRepository(null, entityManagerHelper);
-                ProductImageRepository productImageRepository = new ProductImageRepository(null, entityManagerHelper);
-                AddressRepository addressRepository = new AddressRepository(null, entityManagerHelper)
+                OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em);
+                OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
+                OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
+                UserRepository userRepository = new UserRepository();
+                ProductRepository productRepository = new ProductRepository();
+                CategoryRepository categoryRepository = new CategoryRepository();
+                ProductImageRepository productImageRepository = new ProductImageRepository();
+                AddressRepository addressRepository = new AddressRepository()
         ) {
 
             UserService userService = new UserService(userRepository);

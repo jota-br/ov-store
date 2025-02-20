@@ -25,9 +25,9 @@ public class EntityManagerHelperTest {
     public void findByFields() {
 
         EntityManagerHelper entityManagerHelper = new EntityManagerHelper();
-        try (ProductRepository productRepository = new ProductRepository(null, entityManagerHelper);
-             CategoryRepository categoryRepository = new CategoryRepository(null, entityManagerHelper);
-             ProductImageRepository productImageRepository = new ProductImageRepository(null, entityManagerHelper)) {
+        try (ProductRepository productRepository = new ProductRepository();
+             CategoryRepository categoryRepository = new CategoryRepository();
+             ProductImageRepository productImageRepository = new ProductImageRepository()) {
 
             CategoryService categoryService = new CategoryService(categoryRepository);
             ProductImageService productImageService = new ProductImageService(productImageRepository);
