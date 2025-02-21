@@ -5,7 +5,6 @@ import ostro.veda.common.ProcessDataType;
 import ostro.veda.db.CategoryRepository;
 import ostro.veda.db.ProductImageRepository;
 import ostro.veda.db.ProductRepository;
-import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.service.CategoryService;
 import ostro.veda.service.EntityType;
 import ostro.veda.service.ProductImageService;
@@ -28,10 +27,9 @@ public class ProductServiceTest {
         List<String> categories = List.of("Furniture", "High quality handmade");
         Map<String, Boolean> images = Map.of("http://sub.example.co.uk/images/photo.png", true);
 
-        EntityManagerHelper entityManagerHelper = new EntityManagerHelper();
-        try (ProductRepository productRepository = new ProductRepository(entityManagerHelper);
-             CategoryRepository categoryRepository = new CategoryRepository(entityManagerHelper);
-             ProductImageRepository productImageRepository = new ProductImageRepository(entityManagerHelper)) {
+        try (ProductRepository productRepository = new ProductRepository();
+             CategoryRepository categoryRepository = new CategoryRepository();
+             ProductImageRepository productImageRepository = new ProductImageRepository()) {
 
             CategoryService categoryService = new CategoryService(categoryRepository);
             ProductImageService productImageService = new ProductImageService(productImageRepository);

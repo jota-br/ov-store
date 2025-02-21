@@ -59,11 +59,11 @@ public class Product {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public Product() {
-    }
-
     @Version
     private int version;
+
+    public Product() {
+    }
 
     public Product(String name, String description, double price, int stock, boolean isActive) {
         this.name = name;

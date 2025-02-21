@@ -1,7 +1,6 @@
 package ostro.veda.db;
 
 import ostro.veda.common.dto.UserDTO;
-import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.db.helpers.columns.UserColumns;
 import ostro.veda.db.jpa.Role;
 import ostro.veda.db.jpa.User;
@@ -10,11 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 public class UserRepository extends Repository {
-
-
-    public UserRepository(EntityManagerHelper entityManagerHelper) {
-        super(entityManagerHelper);
-    }
 
     public UserDTO addUser(String username, String salt, String hash, String email,
                            String firstName, String lastName, String phone, boolean isActive) {

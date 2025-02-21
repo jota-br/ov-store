@@ -2,17 +2,12 @@ package ostro.veda.db;
 
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.db.helpers.columns.CategoryColumns;
-import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.db.jpa.Category;
 
 import java.util.List;
 import java.util.Map;
 
 public class CategoryRepository extends Repository {
-
-    public CategoryRepository(EntityManagerHelper entityManagerHelper) {
-        super(entityManagerHelper);
-    }
 
     public CategoryDTO addCategory(String name, String description, boolean isActive) {
 

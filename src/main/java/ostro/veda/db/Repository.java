@@ -6,19 +6,21 @@ import ostro.veda.db.helpers.JPAUtil;
 
 public abstract class Repository implements AutoCloseable {
 
-    protected final EntityManager em = JPAUtil.getEm();
+    protected final EntityManager em;
     protected final EntityManagerHelper entityManagerHelper;
 
-    public Repository(EntityManagerHelper entityManagerHelper) {
-        this.entityManagerHelper = entityManagerHelper;
+    public Repository() {
+        this.em = JPAUtil.getEm();
+        this.entityManagerHelper = EntityManagerHelper.getEntityManagerHelper();
+    }
+
+    public Repository(EntityManager em) {
+        this.em = em;
+        this.entityManagerHelper = EntityManagerHelper.getEntityManagerHelper();
     }
 
     public EntityManager getEm() {
         return this.em;
-    }
-
-    public void closeEm() {
-        JPAUtil.closeEntityManager(this.em);
     }
 
     @Override
