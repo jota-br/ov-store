@@ -83,8 +83,8 @@ public class OrderServiceTest {
             int remainingStockTwo = productDTOList.get(1).getStock() - itemTwoQty;
             Address address = orderRepository.getEm().find(Address.class, addressDTO.getAddressId());
 
-            OrderDTO orderDTO = orderService.processData(user.getUserId(), total, OrderStatus.DRAFT.getStatus(), address, address,
-                    Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty), ProcessDataType.ADD);
+            OrderDTO orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.DRAFT.getStatus(), address, address,
+                    Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty));
 
             assertNotNull(orderDTO);
 
@@ -93,12 +93,12 @@ public class OrderServiceTest {
             total = (productDTOList.get(0).getPrice() * itemOneQty) + (productDTOList.get(1).getPrice() * itemTwoQty);
             remainingStockOne = remainingStockOne - itemOneQty;
             remainingStockTwo = remainingStockTwo - itemTwoQty;
-            orderDTO = orderService.processData(user.getUserId(), total, OrderStatus.DRAFT.getStatus(), address, address,
-                    Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty), ProcessDataType.ADD);
+            orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.DRAFT.getStatus(), address, address,
+                    Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty));
 
             assertNotNull(orderDTO);
 
-            orderDTO = orderRepository.updateOrderStatus(orderDTO.getOrderId(), OrderStatus.PENDING_PAYMENT.getStatus());
+            orderDTO = orderService.updateOrderStatus(orderDTO.getOrderId(), OrderStatus.PENDING_PAYMENT.getStatus());
             assertNotNull(orderDTO);
             assertEquals(orderDTO.getStatus(), OrderStatus.PENDING_PAYMENT.getStatus());
 
@@ -106,8 +106,8 @@ public class OrderServiceTest {
             itemOneQty = 3;
             itemTwoQty = 3;
             total = (productDTOList.get(0).getPrice() * itemOneQty) + (productDTOList.get(1).getPrice() * itemTwoQty);
-            orderDTO = orderService.processData(user.getUserId(), total, OrderStatus.DRAFT.getStatus(), address, address,
-                    Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty), ProcessDataType.ADD);
+            orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.DRAFT.getStatus(), address, address,
+                    Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty));
             Product pOne = orderRepository.getEm().find(Product.class, productDTOList.get(0).getProductId());
             Product pOTwo = orderRepository.getEm().find(Product.class, productDTOList.get(1).getProductId());
 

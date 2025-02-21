@@ -1,10 +1,7 @@
 package ostro.veda.common;
 
-import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.helpers.AddressType;
-import ostro.veda.db.helpers.OrderStatus;
-import ostro.veda.db.jpa.Address;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -221,51 +218,5 @@ public class InputValidator {
             return true;
         }
         throw new ErrorHandling.InvalidPersonNameException();
-    }
-
-    public static boolean hasValidValue(double input) throws ErrorHandling.InvalidValueException {
-        if (input >= 0.0) {
-            return true;
-        }
-        throw new ErrorHandling.InvalidValueException();
-    }
-
-    public static boolean hasValidOrderStatus(String status)
-            throws ErrorHandling.InvalidOrderStatusException {
-        for (OrderStatus orderStatus : OrderStatus.values()) {
-            if (orderStatus.getStatus().equals(status)) {
-                return true;
-            }
-        }
-        throw new ErrorHandling.InvalidOrderStatusException();
-    }
-
-    public static boolean hasValidAddress(int userId, Address address) throws ErrorHandling.InvalidAddressException {
-        if (address != null && address.getUserId() == userId) {
-            return true;
-        }
-        throw new ErrorHandling.InvalidAddressException();
-    }
-
-    public static boolean hasValidProductAndQuantity(Map<ProductDTO, Integer> productAndQuantity)
-            throws ErrorHandling.InvalidProductException, ErrorHandling.InvalidQuantityException {
-        for (Map.Entry<ProductDTO, Integer> entry : productAndQuantity.entrySet()) {
-            ProductDTO productDTO = entry.getKey();
-            int quantity = entry.getValue();
-            if (productDTO == null) {
-                throw new ErrorHandling.InvalidProductException();
-            } else if (quantity < 0 || productDTO.getStock() < quantity) {
-                throw new ErrorHandling.InvalidQuantityException();
-            }
-        }
-        return true;
-    }
-
-    public static boolean hasValidProcessDataType(ProcessDataType input, ProcessDataType required)
-            throws ErrorHandling.InvalidProcessDataTypeException {
-        if (input == null || !input.getType().equals(required.getType())) {
-            throw new ErrorHandling.InvalidProcessDataTypeException();
-        }
-        return true;
     }
 }

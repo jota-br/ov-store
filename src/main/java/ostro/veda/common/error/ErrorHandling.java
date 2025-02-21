@@ -2,6 +2,31 @@ package ostro.veda.common.error;
 
 public class ErrorHandling {
 
+    public static class InvalidInputException extends Exception {
+        public InvalidInputException(InputExceptionMessage e, String input) {
+            super(e.getMessage() + "Input:{" + input + "}");
+        }
+    }
+
+    public enum InputExceptionMessage {
+
+        EX_INVALID_TOTAL_AMOUNT("Invalid Total Amount"),
+        EX_INVALID_ORDER_STATUS("Invalid Order Status"),
+        EX_INVALID_ADDRESS("Invalid Address"),
+        EX_INVALID_PRODUCT("Invalid Product"),
+        EX_INVALID_PRODUCT_QUANTITY("Invalid Product Quantity");
+
+        private final String message;
+
+        InputExceptionMessage(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return this.message;
+        }
+    }
+
     public static class InvalidUsernameException extends Exception {
         public InvalidUsernameException() {
             super("Username is invalid. Check field requirements and restrictions for valid characters.");
