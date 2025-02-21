@@ -14,7 +14,8 @@ public class ErrorHandling {
         EX_INVALID_ORDER_STATUS("Invalid Order Status"),
         EX_INVALID_ADDRESS("Invalid Address"),
         EX_INVALID_PRODUCT("Invalid Product"),
-        EX_INVALID_PRODUCT_QUANTITY("Invalid Product Quantity");
+        EX_INVALID_PRODUCT_QUANTITY("Invalid Product Quantity"),
+        EX_INVALID_ID("Invalid Database Id");
 
         private final String message;
 

@@ -96,7 +96,7 @@ public class OrderValidation {
     private static boolean hasValidId(int input) throws ErrorHandling.InvalidInputException {
         if (input > MINIMUM_VALID_ID) return true;
         throw new ErrorHandling.InvalidInputException(
-                ErrorHandling.InputExceptionMessage.EX_INVALID_PRODUCT_QUANTITY,
+                ErrorHandling.InputExceptionMessage.EX_INVALID_ID,
                 "id:" + input
         );
     }
