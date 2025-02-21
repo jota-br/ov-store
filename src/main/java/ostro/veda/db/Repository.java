@@ -9,9 +9,14 @@ public abstract class Repository implements AutoCloseable {
     protected final EntityManager em;
     protected final EntityManagerHelper entityManagerHelper;
 
-    public Repository(EntityManager em, EntityManagerHelper entityManagerHelper) {
-        this.em = em == null ? JPAUtil.getEm() : em;
-        this.entityManagerHelper = entityManagerHelper;
+    public Repository() {
+        this.em = JPAUtil.getEm();
+        this.entityManagerHelper = EntityManagerHelper.getEntityManagerHelper();
+    }
+
+    public Repository(EntityManager em) {
+        this.em = em;
+        this.entityManagerHelper = EntityManagerHelper.getEntityManagerHelper();
     }
 
     public EntityManager getEm() {

@@ -11,6 +11,15 @@ import java.util.Map;
 
 public class EntityManagerHelper {
 
+    private static EntityManagerHelper entityManagerHelper;
+
+    public static EntityManagerHelper getEntityManagerHelper() {
+        if (entityManagerHelper == null) {
+            entityManagerHelper = new EntityManagerHelper();
+        }
+        return entityManagerHelper;
+    }
+
     public <T> List<T> findByFields(EntityManager em, Class<T> entityClass, Map<String, String> columnsAndValues) {
 
         String[] columns = columnsAndValues.keySet().toArray(new String[0]);

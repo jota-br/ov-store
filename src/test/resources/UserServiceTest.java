@@ -1,11 +1,10 @@
 package test.resources;
 
+import org.junit.Test;
 import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.UserDTO;
 import ostro.veda.db.UserRepository;
-import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.service.UserService;
-import org.junit.Test;
 
 import static org.junit.Assert.*;
 
@@ -13,8 +12,7 @@ public class UserServiceTest {
 
     @Test
     public void processData() {
-        EntityManagerHelper entityManagerHelper = new EntityManagerHelper();
-        try (UserRepository userRepository = new UserRepository(null, entityManagerHelper)) {
+        try (UserRepository userRepository = new UserRepository()) {
 
             UserService userService = new UserService(userRepository);
 

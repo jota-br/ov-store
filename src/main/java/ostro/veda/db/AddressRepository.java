@@ -1,8 +1,6 @@
 package ostro.veda.db;
 
-import jakarta.persistence.EntityManager;
 import ostro.veda.common.dto.AddressDTO;
-import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.db.helpers.columns.AddressColumns;
 import ostro.veda.db.jpa.Address;
 
@@ -10,10 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 public class AddressRepository extends Repository {
-
-    public AddressRepository(EntityManager em, EntityManagerHelper entityManagerHelper) {
-        super(em, entityManagerHelper);
-    }
 
     public AddressDTO addAddress(int userId, String streetAddress, String addressNumber, String addressType, String city,
                                  String state, String zipCode, String country, boolean isActive) {
