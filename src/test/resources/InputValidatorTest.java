@@ -1,4 +1,4 @@
-package test.resources;
+package test;
 
 import org.junit.Test;
 import ostro.veda.common.InputValidator;

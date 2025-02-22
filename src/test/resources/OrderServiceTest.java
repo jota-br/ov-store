@@ -1,4 +1,4 @@
-package test.resources;
+package test;
 
 import jakarta.persistence.EntityManager;
 import org.junit.Test;
@@ -83,7 +83,7 @@ public class OrderServiceTest {
             int remainingStockTwo = productDTOList.get(1).getStock() - itemTwoQty;
             Address address = orderRepository.getEm().find(Address.class, addressDTO.getAddressId());
 
-            OrderDTO orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.DRAFT.getStatus(), address, address,
+            OrderDTO orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.PENDING_PAYMENT.getStatus(), address, address,
                     Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty));
 
             assertNotNull(orderDTO);
@@ -98,15 +98,19 @@ public class OrderServiceTest {
 
             assertNotNull(orderDTO);
 
-            orderDTO = orderService.updateOrderStatus(orderDTO.getOrderId(), OrderStatus.PENDING_PAYMENT.getStatus());
+            orderDTO = orderService.updateOrderStatus(orderDTO.getOrderId(), OrderStatus.PROCESSING.getStatus());
             assertNotNull(orderDTO);
-            assertEquals(orderDTO.getStatus(), OrderStatus.PENDING_PAYMENT.getStatus());
+            assertEquals(orderDTO.getStatus(), OrderStatus.PROCESSING.getStatus());
+
+            orderDTO = orderService.cancelOrder(orderDTO.getOrderId());
+            assertNotNull(orderDTO);
+            assertEquals(orderDTO.getStatus(), OrderStatus.CANCELLED.getStatus());
 
             // Product Test Two has no sufficient inventory for this transaction
             itemOneQty = 3;
             itemTwoQty = 3;
             total = (productDTOList.get(0).getPrice() * itemOneQty) + (productDTOList.get(1).getPrice() * itemTwoQty);
-            orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.DRAFT.getStatus(), address, address,
+            orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.PENDING_PAYMENT.getStatus(), address, address,
                     Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty));
             Product pOne = orderRepository.getEm().find(Product.class, productDTOList.get(0).getProductId());
             Product pOTwo = orderRepository.getEm().find(Product.class, productDTOList.get(1).getProductId());
