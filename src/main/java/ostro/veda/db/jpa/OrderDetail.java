@@ -12,12 +12,12 @@ public class OrderDetail {
     @Column(name = "order_detail_id")
     private int orderDetailId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", referencedColumnName = "order_id")
+    @ManyToOne
+    @JoinColumn(name = "order_id")
     private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", referencedColumnName = "product_id")
+    @ManyToOne
+    @JoinColumn(name = "product_id")
     private Product product;
 
     @Column(name = "quantity")

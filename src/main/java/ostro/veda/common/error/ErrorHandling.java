@@ -4,7 +4,7 @@ public class ErrorHandling {
 
     public static class InvalidInputException extends Exception {
         public InvalidInputException(InputExceptionMessage e, String input) {
-            super(e.getMessage() + "Input:{" + input + "}");
+            super(e.getMessage() + "[Input:{" + input + "}]");
         }
     }
 

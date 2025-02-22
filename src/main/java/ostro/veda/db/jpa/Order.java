@@ -33,7 +33,7 @@ public class Order {
     private String status;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<OrderDetail> orderDetails;
+    private List<OrderDetail> orderDetails = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shipping_address_id", referencedColumnName = "address_id")
@@ -44,7 +44,7 @@ public class Order {
     private Address billingAddress;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
-    private List<OrderStatusHistory> orderStatusHistory;
+    private List<OrderStatusHistory> orderStatusHistory = new ArrayList<>();
 
     public Order() {
     }

@@ -15,8 +15,8 @@ public class OrderStatusHistory {
     @Column(name = "order_status_history_id")
     private int orderStatusHistoryId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", referencedColumnName = "order_id")
+    @ManyToOne
+    @JoinColumn(name = "order_id")
     private Order order;
 
     @Column(name = "status")
