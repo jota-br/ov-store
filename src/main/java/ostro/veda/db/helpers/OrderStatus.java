@@ -22,4 +22,13 @@ public enum OrderStatus {
     public String getStatus() {
         return status;
     }
+
+    public static int getOrdinal(String status) {
+        for (OrderStatus orderStatus : OrderStatus.values()) {
+            if (orderStatus.getStatus().equals(status)) {
+                return orderStatus.ordinal();
+            }
+        }
+        return -1;
+    }
 }
