@@ -1,9 +1,9 @@
 package ostro.veda.common.validation;
 
+import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.helpers.OrderStatus;
-import ostro.veda.db.jpa.Address;
 import ostro.veda.db.jpa.Product;
 
 import java.util.Map;
@@ -11,10 +11,10 @@ import java.util.Map;
 public class OrderValidation {
 
     private static final double MINIMUM_TOTAL_AMOUNT = 0.0;
-    private static final int MINIMUM_VALID_QUANTITY = 1, MINIMUM_VALID_ID = 1;
+    private static final int MINIMUM_VALID_QUANTITY = 1, MINIMUM_VALID_ID = 0;
 
-    public static boolean hasValidInput(int userId, double totalAmount, String status, Address shippingAddress,
-                                        Address billingAddress, Map<ProductDTO, Integer> productAndQuantity)
+    public static boolean hasValidInput(int userId, double totalAmount, String status, AddressDTO shippingAddress,
+                                        AddressDTO billingAddress, Map<ProductDTO, Integer> productAndQuantity)
             throws ErrorHandling.InvalidInputException {
         return hasValidTotalAmount(totalAmount) && hasValidOrderStatus(status) &&
                 hasValidAddress(userId, billingAddress) && hasValidAddress(userId, shippingAddress) &&
@@ -27,6 +27,10 @@ public class OrderValidation {
 
     public static boolean hasValidInput(Product product, int quantity) throws ErrorHandling.InvalidInputException {
         return hasValidProductAndQuantity(product, quantity);
+    }
+
+    public static boolean hasValidInput(int orderId) throws ErrorHandling.InvalidInputException {
+        return hasValidId(orderId);
     }
 
     private static boolean hasValidTotalAmount(double amount) throws ErrorHandling.InvalidInputException {
@@ -50,7 +54,7 @@ public class OrderValidation {
         );
     }
 
-    private static boolean hasValidAddress(int userId, Address address) throws ErrorHandling.InvalidInputException {
+    private static boolean hasValidAddress(int userId, AddressDTO address) throws ErrorHandling.InvalidInputException {
         if (address != null && address.getUserId() == userId) {
             return true;
         }

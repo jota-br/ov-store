@@ -3,12 +3,13 @@ package test.resources;
 import jakarta.persistence.EntityManager;
 import org.junit.Test;
 import ostro.veda.common.ProcessDataType;
-import ostro.veda.common.dto.*;
+import ostro.veda.common.dto.AddressDTO;
+import ostro.veda.common.dto.OrderDTO;
+import ostro.veda.common.dto.ProductDTO;
+import ostro.veda.common.dto.UserDTO;
 import ostro.veda.db.*;
-import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.db.helpers.OrderStatus;
-import ostro.veda.db.jpa.Address;
 import ostro.veda.db.jpa.Product;
 import ostro.veda.service.*;
 
@@ -20,8 +21,7 @@ import static org.junit.Assert.*;
 public class OrderServiceTest {
 
     @Test
-    public void processData() {
-        EntityManagerHelper entityManagerHelper = new EntityManagerHelper();
+    public void addOrder() {
         EntityManager em = JPAUtil.getEm();
         try (
                 OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em);
@@ -40,52 +40,22 @@ public class OrderServiceTest {
             ProductService productService = new ProductService(categoryService, productImageService, productRepository);
             OrderService orderService = new OrderService(orderRepository);
 
-            String username = "orderServiceUser";
-            String password = "orderServiceUser@93";
-            String email = "orderServiceUser@example.com";
-            String firstName = "orderServiceUser";
-            String lastName = "orderService";
-            String phone = "5511000000099";
-
-            UserDTO user = userService.processData(-1, username, password,
-                    email, firstName, lastName, phone, true, ProcessDataType.ADD);
-
+            UserDTO user = getUserDTO(userService, "username1", "password99*", "email@email.com",
+                    "5511111000999");
             AddressService addressService = new AddressService(addressRepository);
-
-            int id = -1;
-            String street = "XV de Novembro";
-            String addressNumber = "10900";
-            String addressType = "Home";
-            String city = "Joinville";
-            String state = "Santa Catarina";
-            String zipCode = "00000000";
-            String country = "Brazil";
-
-
-            AddressDTO addressDTO = addressService.processData(id, user.getUserId(), street, addressNumber,
-                    addressType, city, state, zipCode, country, true, ProcessDataType.ADD);
-
-            List<String> categories = List.of("Test Category", "Another Test Category");
-
-            List<ProductDTO> productDTOList = List.of(
-                    productService.processData("Product Test One", "Description One",
-                            45.00, 10, true, categories, null, ProcessDataType.ADD,
-                            null),
-                    productService.processData("Product Test Two", "Description Two",
-                            50.00, 5, true, categories, null, ProcessDataType.ADD,
-                            null)
+            AddressDTO addressDTO = getAddressDTO(addressService, user
             );
+            List<String> categories = List.of("Test Category", "Another Test Category");
+            List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
             int itemOneQty = 1;
             int itemTwoQty = 1;
             double total = (productDTOList.get(0).getPrice() * itemOneQty) + (productDTOList.get(1).getPrice() * itemTwoQty);
             int remainingStockOne = productDTOList.get(0).getStock() - itemOneQty;
             int remainingStockTwo = productDTOList.get(1).getStock() - itemTwoQty;
-            Address address = orderRepository.getEm().find(Address.class, addressDTO.getAddressId());
 
-            OrderDTO orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.DRAFT.getStatus(), address, address,
+            OrderDTO orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.PENDING_PAYMENT.getStatus(), addressDTO, addressDTO,
                     Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty));
-
             assertNotNull(orderDTO);
 
             itemOneQty = 2;
@@ -93,20 +63,15 @@ public class OrderServiceTest {
             total = (productDTOList.get(0).getPrice() * itemOneQty) + (productDTOList.get(1).getPrice() * itemTwoQty);
             remainingStockOne = remainingStockOne - itemOneQty;
             remainingStockTwo = remainingStockTwo - itemTwoQty;
-            orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.DRAFT.getStatus(), address, address,
+            orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.DRAFT.getStatus(), addressDTO, addressDTO,
                     Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty));
-
             assertNotNull(orderDTO);
-
-            orderDTO = orderService.updateOrderStatus(orderDTO.getOrderId(), OrderStatus.PENDING_PAYMENT.getStatus());
-            assertNotNull(orderDTO);
-            assertEquals(orderDTO.getStatus(), OrderStatus.PENDING_PAYMENT.getStatus());
 
             // Product Test Two has no sufficient inventory for this transaction
             itemOneQty = 3;
             itemTwoQty = 3;
             total = (productDTOList.get(0).getPrice() * itemOneQty) + (productDTOList.get(1).getPrice() * itemTwoQty);
-            orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.DRAFT.getStatus(), address, address,
+            orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.PENDING_PAYMENT.getStatus(), addressDTO, addressDTO,
                     Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty));
             Product pOne = orderRepository.getEm().find(Product.class, productDTOList.get(0).getProductId());
             Product pOTwo = orderRepository.getEm().find(Product.class, productDTOList.get(1).getProductId());
@@ -115,7 +80,123 @@ public class OrderServiceTest {
             assertEquals(remainingStockOne, pOne.getStock());
             assertEquals(remainingStockTwo, pOTwo.getStock());
         } catch (Exception ignored) {
+        } finally {
+            ResetTables.resetTables();
         }
+    }
 
+    @Test
+    public void updateOrderStatus() {
+        EntityManager em = JPAUtil.getEm();
+        try (
+                OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em);
+                OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
+                OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
+                UserRepository userRepository = new UserRepository();
+                ProductRepository productRepository = new ProductRepository();
+                CategoryRepository categoryRepository = new CategoryRepository();
+                ProductImageRepository productImageRepository = new ProductImageRepository();
+                AddressRepository addressRepository = new AddressRepository()
+        ) {
+
+            UserService userService = new UserService(userRepository);
+            CategoryService categoryService = new CategoryService(categoryRepository);
+            ProductImageService productImageService = new ProductImageService(productImageRepository);
+            ProductService productService = new ProductService(categoryService, productImageService, productRepository);
+            OrderService orderService = new OrderService(orderRepository);
+
+            UserDTO user = getUserDTO(userService, "username12", "password99*", "email2@email.com",
+                    "5511111000998");
+            AddressService addressService = new AddressService(addressRepository);
+            AddressDTO addressDTO = getAddressDTO(addressService, user
+            );
+            List<String> categories = List.of("Test Category", "Another Test Category");
+            List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
+
+            int itemOneQty = 1;
+            int itemTwoQty = 1;
+            double total = (productDTOList.get(0).getPrice() * itemOneQty) + (productDTOList.get(1).getPrice() * itemTwoQty);
+
+            OrderDTO orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.PENDING_PAYMENT.getStatus(), addressDTO, addressDTO,
+                    Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty));
+            assertNotNull(orderDTO);
+
+            orderDTO = orderService.updateOrderStatus(1, OrderStatus.PROCESSING.getStatus());
+            assertNotNull(orderDTO);
+            assertEquals(orderDTO.getStatus(), OrderStatus.PROCESSING.getStatus());
+
+        } catch (Exception ignored) {
+        } finally {
+            ResetTables.resetTables();
+        }
+    }
+
+    @Test
+    public void cancelOrder() {
+        EntityManager em = JPAUtil.getEm();
+        try (
+                OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em);
+                OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
+                OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
+                UserRepository userRepository = new UserRepository();
+                ProductRepository productRepository = new ProductRepository();
+                CategoryRepository categoryRepository = new CategoryRepository();
+                ProductImageRepository productImageRepository = new ProductImageRepository();
+                AddressRepository addressRepository = new AddressRepository()
+        ) {
+
+            UserService userService = new UserService(userRepository);
+            CategoryService categoryService = new CategoryService(categoryRepository);
+            ProductImageService productImageService = new ProductImageService(productImageRepository);
+            ProductService productService = new ProductService(categoryService, productImageService, productRepository);
+            OrderService orderService = new OrderService(orderRepository);
+
+            UserDTO user = getUserDTO(userService, "username123", "password99*33", "email23@email.com",
+                    "5511111000997");
+            AddressService addressService = new AddressService(addressRepository);
+            AddressDTO addressDTO = getAddressDTO(addressService, user
+            );
+            List<String> categories = List.of("Test Category", "Another Test Category");
+            List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
+
+            int itemOneQty = 1;
+            int itemTwoQty = 1;
+            double total = (productDTOList.get(0).getPrice() * itemOneQty) + (productDTOList.get(1).getPrice() * itemTwoQty);
+            OrderDTO orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.PENDING_PAYMENT.getStatus(), addressDTO, addressDTO,
+                    Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty));
+            assertNotNull(orderDTO);
+
+            OrderDTO orderToBeCancelled = orderService.cancelOrder(orderDTO.getOrderId());
+            assertNotNull(orderToBeCancelled);
+            assertEquals(orderToBeCancelled.getStatus(), OrderStatus.CANCELLED.getStatus());
+
+        } catch (Exception ignored) {
+        } finally {
+            ResetTables.resetTables();
+        }
+    }
+
+    private static UserDTO getUserDTO(UserService userService, String username, String password, String email,
+                                      String phone) {
+
+        return userService.processData(-1, username, password,
+                email, "Hobart", "Shulz", phone, true, ProcessDataType.ADD);
+    }
+
+    private static AddressDTO getAddressDTO(AddressService addressService, UserDTO user) {
+        int id = -1;
+        return addressService.processData(id, user.getUserId(), "streetname", "1900-B",
+                "Home", "Joinville", "Santa Catarina", "900103041", "Brazil", true, ProcessDataType.ADD);
+    }
+
+    private static List<ProductDTO> getProductDTOList(ProductService productService, List<String> categories) {
+        return List.of(
+                productService.processData("Product Test One", "Description One",
+                        45.00, 10, true, categories, null, ProcessDataType.ADD,
+                        null),
+                productService.processData("Product Test Two", "Description Two",
+                        50.00, 5, true, categories, null, ProcessDataType.ADD,
+                        null)
+        );
     }
 }

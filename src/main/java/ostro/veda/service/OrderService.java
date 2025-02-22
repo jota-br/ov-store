@@ -1,11 +1,11 @@
 package ostro.veda.service;
 
+import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.common.dto.OrderDTO;
 import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.common.validation.OrderValidation;
 import ostro.veda.db.OrderRepository;
-import ostro.veda.db.jpa.Address;
 import ostro.veda.loggerService.Logger;
 
 import java.util.Map;
@@ -29,7 +29,7 @@ public class OrderService {
      * @return the OrderDTO after persisted.
      */
     public OrderDTO addOrder(int userId, double totalAmount, String status,
-                             Address shippingAddress, Address billingAddress,
+                             AddressDTO shippingAddress, AddressDTO billingAddress,
                              Map<ProductDTO, Integer> productAndQuantity) {
         try {
             if (!hasValidInput(userId, totalAmount, status, shippingAddress, billingAddress, productAndQuantity)) return null;
@@ -55,6 +55,21 @@ public class OrderService {
     }
 
     /**
+     * Requires single EntityManager injection
+     * @param orderId requires a valid orderId
+     * @return returns an OrderDTO with updated data
+     */
+    public OrderDTO cancelOrder(int orderId) {
+        try {
+            if (!hasValidInput(orderId)) return null;
+            return  orderRepository.cancelOrder(orderId);
+        } catch (ErrorHandling.InvalidInputException | UnsupportedOperationException e) {
+            Logger.log(e);
+            return null;
+        }
+    }
+
+    /**
      * parameters to be checked for valid input
      * @param userId requires a valid userId
      * @param totalAmount requires a valid total amount
@@ -66,8 +81,8 @@ public class OrderService {
      * @throws ErrorHandling.InvalidInputException input is invalid and a customized Exception in returned with
      * the Exception message and the reject input.
      */
-    private boolean hasValidInput(int userId, double totalAmount, String status, Address shippingAddress,
-                                        Address billingAddress, Map<ProductDTO, Integer> productAndQuantity)
+    private boolean hasValidInput(int userId, double totalAmount, String status, AddressDTO shippingAddress,
+                                  AddressDTO billingAddress, Map<ProductDTO, Integer> productAndQuantity)
             throws ErrorHandling.InvalidInputException {
         return OrderValidation.hasValidInput(userId, totalAmount, status, shippingAddress, billingAddress, productAndQuantity);
     }
@@ -82,5 +97,16 @@ public class OrderService {
      */
     private boolean hasValidInput(int orderId, String status) throws ErrorHandling.InvalidInputException {
         return OrderValidation.hasValidInput(orderId, status);
+    }
+
+    /**
+     *
+     * @param orderId requires a valid userId
+     * @return true if input is validated successfully
+     * @throws ErrorHandling.InvalidInputException input is invalid and a customized Exception in returned with
+     * the Exception message and the reject input.
+     */
+    private boolean hasValidInput(int orderId) throws ErrorHandling.InvalidInputException {
+        return OrderValidation.hasValidInput(orderId);
     }
 }

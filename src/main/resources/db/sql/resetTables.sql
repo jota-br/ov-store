@@ -23,7 +23,6 @@ DELETE FROM permissions;
 DELETE FROM addresses;
 DELETE FROM users;
 DELETE FROM roles;
-
 ALTER TABLE wishlist_items AUTO_INCREMENT = 1;
 ALTER TABLE wishlists AUTO_INCREMENT = 1;
 ALTER TABLE reviews AUTO_INCREMENT = 1;
@@ -49,7 +48,6 @@ ALTER TABLE permissions AUTO_INCREMENT = 1;
 ALTER TABLE addresses AUTO_INCREMENT = 1;
 ALTER TABLE users AUTO_INCREMENT = 1;
 ALTER TABLE roles AUTO_INCREMENT = 1;
-
 INSERT INTO roles (role_id, name, description) VALUES
 (1, 'Store Owner / Administrator', 'The highest authority in the store, responsible for overall operations and strategic decisions.'),
 (2, 'Store Manager', 'Oversees daily operations, staff management, and ensures the store meets its targets.'),

@@ -21,8 +21,12 @@ public class OrderDetailRepository extends Repository {
         super(em);
     }
 
+    public enum Calculation {
+        SUM,
+        SUBTRACTION;
+    }
+
     /**
-     *
      * @param productAndQuantity Map containing the Product and quantity
      *                           allocated for this order.
      * @param order Order entity for which the OrderDetail is being created for.
@@ -37,13 +41,12 @@ public class OrderDetailRepository extends Repository {
 
         List<OrderDetail> orderDetailList = new ArrayList<>();
         Map<Product, Integer> productDaoAndQuantity = new HashMap<>();
-        List<Product> mergeList = new ArrayList<>();
 
         // Updates and put's Product, Quantity to the productDaoAndQuantity map
         inventoryValidation(productAndQuantity, productDaoAndQuantity);
         // Updates the DAO entity with the new stock value Adding or Subtracting (see Calculation enum)
         // and adds the updated object to the mergeList
-        updateProductInventory(productDaoAndQuantity, mergeList, Calculation.SUBTRACTION);
+        List<Product> mergeList = updateProductInventory(productDaoAndQuantity, Calculation.SUBTRACTION);
         // If merge was successful and Product list is returned
         for (Product product : mergeList) {
             this.em.persist(product);
@@ -62,6 +65,13 @@ public class OrderDetailRepository extends Repository {
         return getOrderDetailDTOList(orderDetailList);
     }
 
+    public void cancelOrder(Map<Product, Integer> productDaoAndQuantity, Calculation calculation) {
+        List<Product> mergeList = updateProductInventory(productDaoAndQuantity, calculation);
+        for (Product product : mergeList) {
+            this.em.persist(product);
+        }
+    }
+
     /**
      *
      * @param productAndQuantity ProductDTO is used to get the most up-to-date Product information
@@ -69,7 +79,7 @@ public class OrderDetailRepository extends Repository {
      * @param productDaoAndQuantity Map containing the Product DAO entity to be updated and merged
      *                              with sold quantity.
      *                              While this method returns no value, the Map<Product, Integer> is a reference
-     *                              to the map with the same name in addOrder.
+     *                              to the map with the same name in addOrderStatusHistory.
      * @throws ErrorHandling.InvalidInputException input is invalid and a customized Exception in returned with
      * the Exception message and the reject input.
      */
@@ -78,7 +88,7 @@ public class OrderDetailRepository extends Repository {
         for (Map.Entry<ProductDTO, Integer> entry : productAndQuantity.entrySet()) {
             Product product = this.em.find(Product.class, entry.getKey().getProductId());
             int quantity = entry.getValue();
-            OrderValidation.hasValidInput(product, quantity);
+            if (!OrderValidation.hasValidInput(product, quantity)) continue;
             productDaoAndQuantity.put(product, quantity);
         }
     }
@@ -86,11 +96,11 @@ public class OrderDetailRepository extends Repository {
     /**
      *
      * @param productDaoAndQuantity Entity to be updated and new updated value.
-     * @param mergeList Merge entity list to be persisted.
      * @param calculation If a new order is placed the Calculation is a SUM
      *                    if it's a cancellation the Calculation is a SUBTRACTION
      */
-    private void updateProductInventory(Map<Product, Integer> productDaoAndQuantity, List<Product> mergeList, Calculation calculation) {
+    private List<Product> updateProductInventory(Map<Product, Integer> productDaoAndQuantity, Calculation calculation) {
+        List<Product> mergeList = new ArrayList<>();
         for (Map.Entry<Product, Integer> entry : productDaoAndQuantity.entrySet()) {
             Product product = entry.getKey();
             int newStock = product.getStock();
@@ -102,6 +112,7 @@ public class OrderDetailRepository extends Repository {
             product = product.updateStock(newStock);
             mergeList.add(product);
         }
+        return mergeList;
     }
 
     /**
@@ -117,12 +128,7 @@ public class OrderDetailRepository extends Repository {
         return orderDetailDTOList;
     }
 
-    private enum Calculation {
-        SUM,
-        SUBTRACTION;
-    }
-
-    private void undoInventoryChanges(Map<Product, Integer> productAndQuantityUpdated, List<Product> mergeList) {
-        updateProductInventory(productAndQuantityUpdated, mergeList, Calculation.SUM);
+    private void undoInventoryChanges(Map<Product, Integer> productAndQuantityUpdated) {
+        updateProductInventory(productAndQuantityUpdated, Calculation.SUM);
     }
 }
