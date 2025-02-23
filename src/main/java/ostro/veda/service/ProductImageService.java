@@ -1,13 +1,13 @@
 package ostro.veda.service;
 
-import ostro.veda.common.InputValidator;
-import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.ProductImageDTO;
-import ostro.veda.common.error.ErrorHandling;
+import ostro.veda.common.validation.ProductValidation;
+import ostro.veda.common.validation.UrlEncoder;
 import ostro.veda.db.ProductImageRepository;
 import ostro.veda.loggerService.Logger;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProductImageService {
 
@@ -17,45 +17,25 @@ public class ProductImageService {
         this.productImageRepository = productImageRepository;
     }
 
-    public ProductImageDTO processData(Map<EntityType, Integer> entityAndId, String url,
-                                       boolean isMain, ProcessDataType processDataType) {
+    /**
+     * Validates Image data to be persisted with Product. Called by ProductService.
+     * @param images
+     * @return List<ProductImageDTO>
+     */
+    public List<ProductImageDTO> addProduct(List<ProductImageDTO> images) {
         try {
-            if (!hasValidInput(url, processDataType)) return null;
-            url = InputValidator.encodeUrl(url);
-            if (!hasValidLength(url)) return null;
-
-            return performDmlAction(entityAndId, url, isMain, processDataType);
-
+            List<ProductImageDTO> productImageDTOList = new ArrayList<>();
+            for (ProductImageDTO entity : images) {
+                String url = entity.getImageUrl();
+                boolean isMain = entity.isMain();
+                if (!ProductValidation.hasValidInput(url)) continue;
+                url = UrlEncoder.encodeUrl(url);
+                productImageDTOList.add(new ProductImageDTO(-1, url, isMain));
+            }
+            return productImageDTOList;
         } catch (Exception e) {
             Logger.log(e);
             return null;
-        }
-    }
-
-    private static boolean hasValidInput(String url, ProcessDataType processDataType) throws ErrorHandling.InvalidImageUrlException {
-        return processDataType != null && InputValidator.hasValidImageUrl(url);
-    }
-
-    private static boolean hasValidLength(String input) throws ErrorHandling.InvalidLengthException {
-        int min = 12;
-        int max = 255;
-        return InputValidator.hasValidLength(input, min, max);
-    }
-
-    private ProductImageDTO performDmlAction(Map<EntityType, Integer> entityAndId, String url,
-                                             boolean isMain, ProcessDataType processDataType) {
-        switch (processDataType) {
-            case ADD -> {
-                return this.productImageRepository.addImage(url, isMain);
-            }
-            case UPDATE -> {
-                int id = entityAndId.getOrDefault(EntityType.PRODUCT_IMAGE, -1);
-                return this.productImageRepository.updateImage(id, url, isMain);
-            }
-
-            default -> {
-                return null;
-            }
         }
     }
 }

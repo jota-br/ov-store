@@ -1,13 +1,13 @@
 package ostro.veda.service;
 
 import ostro.veda.common.InputValidator;
-import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.error.ErrorHandling;
+import ostro.veda.common.validation.CategoryValidation;
 import ostro.veda.db.CategoryRepository;
 import ostro.veda.loggerService.Logger;
 
-import java.util.Map;
+import java.util.List;
 
 public class CategoryService {
 
@@ -17,52 +17,102 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public CategoryDTO processData(Map<EntityType, Integer> entityAndId, String name, String description,
-                                   boolean isActive, ProcessDataType processDataType) {
+    /**
+     * Get Category List to be persisted. Called by ProductRepository.
+     * @param categories category list to be validated.
+     * @return List<CategoryDTO>
+     * @throws ErrorHandling.InvalidInputException If validation is unsuccessful.
+     */
+    public List<CategoryDTO> addProduct(List<CategoryDTO> categories)
+            throws ErrorHandling.InvalidInputException {
+
+        getValidatedCategoryDTOList(categories);
+        return categories.isEmpty() ? null : categories;
+    }
+
+    /**
+     * Add Categories in the list.
+     * @param categories Category list with categories to be persisted.
+     * @return List<CategoryDTO>
+     */
+    public List<CategoryDTO> addCategory(List<CategoryDTO> categories) throws ErrorHandling.InvalidInputException {
 
         try {
-            if (!hasValidInput(name, description, processDataType)) return null;
-            name = InputValidator.stringSanitize(name);
-            description = InputValidator.stringSanitize(description);
-//            if (!hasValidLength(name, description)) return null;
+            getValidatedCategoryDTOList(categories);
+            if (categories.isEmpty()) return null;
 
-            return performDmlAction(entityAndId, name, description, isActive, processDataType);
+            return categoryRepository.addCategory(categories);
         } catch (Exception e) {
             Logger.log(e);
             return null;
         }
     }
 
-    private boolean hasValidInput(String name, String description, ProcessDataType processDataType)
-            throws ErrorHandling.InvalidNameException, ErrorHandling.InvalidDescriptionException {
-        return InputValidator.hasValidName(name) &&
-                InputValidator.hasValidDescription(description) &&
-                processDataType != null;
+    /**
+     * Updates data in an existing Category.
+     * @param categories Category list data to be updated with.
+     * @return List<CategoryDTO>
+     * @throws ErrorHandling.InvalidInputException if Input validation fails.
+     */
+    public List<CategoryDTO> updateCategory(List<CategoryDTO> categories)
+            throws ErrorHandling.InvalidInputException {
+        getValidatedCategoryDTOListWithId(categories);
+        if (categories.isEmpty()) return null;
+        return categoryRepository.updateCategory(categories);
     }
 
-    private boolean hasValidLength(String name, String description) throws ErrorHandling.InvalidLengthException {
-        int emptyMin = 0;
-        int minimumLength = 1;
-        int nameMaxLength = 255;
-        int descriptionMaxLength = 510;
+    /**
+     * Validates the Category List Input.
+     * @param categories Category list data to be validated.
+     * @throws ErrorHandling.InvalidInputException If input validation fails.
+     */
+    private void getValidatedCategoryDTOListWithId(List<CategoryDTO> categories)
+            throws ErrorHandling.InvalidInputException {
 
-        return InputValidator.hasValidLength(name, minimumLength, nameMaxLength) &&
-                InputValidator.hasValidLength(description, emptyMin, descriptionMaxLength);
-    }
+        for (CategoryDTO entity : categories) {
+            int categoryId = entity.getCategoryId();
+            String name = entity.getName();
+            String description = entity.getDescription();
 
-    private CategoryDTO performDmlAction(Map<EntityType, Integer> entityAndId, String name, String description,
-                                         boolean isActive, ProcessDataType processDataType) {
-        switch (processDataType) {
-            case ADD -> {
-                return this.categoryRepository.addCategory(name, description, isActive);
-            }
-            case UPDATE -> {
-                int id = entityAndId.getOrDefault(EntityType.CATEGORY, -1);
-                return this.categoryRepository.updateCategory(id, name, description, isActive);
-            }
-            default -> {
-                return null;
-            }
+            ValidatedInput result = getHasValidInput(categoryId, name, description);
+            if (result == null) categories.remove(entity);
         }
+    }
+
+    /**
+     * Validates the Category List Input.
+     * @param categories Category list data to be validated.
+     * @throws ErrorHandling.InvalidInputException If input validation fails.
+     */
+    private void getValidatedCategoryDTOList(List<CategoryDTO> categories)
+            throws ErrorHandling.InvalidInputException {
+
+        for (CategoryDTO entity : categories) {
+            int categoryId = entity.getCategoryId();
+            String name = entity.getName();
+            String description = entity.getDescription();
+
+            ValidatedInput result = getHasValidInput(categoryId, name, description);
+            if (result == null) categories.remove(entity);
+        }
+    }
+
+    /**
+     * Validation method.
+     * @param categoryId
+     * @param name
+     * @param description
+     * @return ValidatedInput
+     * @throws ErrorHandling.InvalidInputException If validation fails.
+     */
+    private ValidatedInput getHasValidInput(int categoryId, String name, String description) throws ErrorHandling.InvalidInputException {
+        if (!CategoryValidation.hasValidInput(categoryId, name, description)) return null;
+
+        name = InputValidator.stringSanitize(name);
+        description = InputValidator.stringSanitize(description);
+        return new ValidatedInput(categoryId, name, description);
+    }
+
+    private record ValidatedInput(int categoryId, String name, String description) {
     }
 }

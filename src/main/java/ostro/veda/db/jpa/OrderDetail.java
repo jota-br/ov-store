@@ -12,11 +12,11 @@ public class OrderDetail {
     @Column(name = "order_detail_id")
     private int orderDetailId;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 
@@ -57,7 +57,7 @@ public class OrderDetail {
     }
 
     public OrderDetailDTO transformToDto() {
-        return new OrderDetailDTO(this.getOrderDetailId(), this.getOrder(), this.getProduct(), this.getQuantity(),
+        return new OrderDetailDTO(this.getOrderDetailId(), null, this.getProduct(), this.getQuantity(),
                 this.getUnitPrice());
     }
 }

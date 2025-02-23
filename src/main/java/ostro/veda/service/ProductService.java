@@ -1,18 +1,15 @@
 package ostro.veda.service;
 
-import jakarta.persistence.OptimisticLockException;
-import ostro.veda.common.InputValidator;
-import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.dto.ProductImageDTO;
 import ostro.veda.common.error.ErrorHandling;
+import ostro.veda.common.validation.ProductValidation;
+import ostro.veda.common.validation.StringSanitize;
 import ostro.veda.db.ProductRepository;
 import ostro.veda.loggerService.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ProductService {
 
@@ -27,73 +24,58 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public ProductDTO processData(String nameProduct, String descriptionProduct, double priceProduct, int stockProduct, boolean isActiveProduct,
-                                  List<String> categories, Map<String, Boolean> images, ProcessDataType processDataType,
-                                  Map<EntityType, Integer> entityAndId) {
-//        Map<String, Boolean> images = k:Url v:isMain
-
+    public ProductDTO addProduct(String nameProduct, String descriptionProduct, double priceProduct, int stockProduct,
+                                 boolean isActiveProduct,
+                                 List<CategoryDTO> nameAndDescription, List<ProductImageDTO> images) {
         try {
-            if (!hasValidInput(nameProduct, descriptionProduct, priceProduct, stockProduct, processDataType)) return null;
-            nameProduct = InputValidator.stringSanitize(nameProduct);
-            descriptionProduct = InputValidator.stringSanitize(descriptionProduct);
+            if (!ProductValidation.hasValidInput(nameProduct, descriptionProduct, priceProduct, stockProduct))
+                return null;
+            nameProduct = StringSanitize.stringSanitize(nameProduct);
+            descriptionProduct = StringSanitize.stringSanitize(descriptionProduct);
 
-            List<CategoryDTO> categoriesList = getCategoryDTOList(isActiveProduct, categories, processDataType, entityAndId);
-            List<ProductImageDTO> imagesList = getImageDTOList(images, processDataType, entityAndId);
+            List<CategoryDTO> categoriesList = getCategoryDTOList(nameAndDescription);
+            List<ProductImageDTO> imagesList = getImageDTOList(images);
 
-            return performDmlAction(entityAndId, nameProduct, descriptionProduct, priceProduct, stockProduct, isActiveProduct,
-                    categoriesList, imagesList, processDataType);
+            return this.productRepository.addProduct(nameProduct, descriptionProduct, priceProduct, stockProduct,
+                    isActiveProduct, categoriesList, imagesList);
         } catch (Exception e) {
             Logger.log(e);
             return null;
         }
     }
 
-    private List<ProductImageDTO> getImageDTOList(Map<String, Boolean> images, ProcessDataType processDataType, Map<EntityType, Integer> entityAndId) {
+    public ProductDTO updateProduct(int productId, String nameProduct, String descriptionProduct, double priceProduct,
+                                    int stockProduct, boolean isActiveProduct,
+                                    List<CategoryDTO> nameAndDescription, List<ProductImageDTO> images) {
+        try {
+            if (!ProductValidation.hasValidInput(nameProduct, descriptionProduct, priceProduct, stockProduct))
+                return null;
+            nameProduct = StringSanitize.stringSanitize(nameProduct);
+            descriptionProduct = StringSanitize.stringSanitize(descriptionProduct);
+
+            List<CategoryDTO> categoriesList = getCategoryDTOList(nameAndDescription);
+            List<ProductImageDTO> imagesList = getImageDTOList(images);
+
+            return this.productRepository.updateProduct(productId, nameProduct, descriptionProduct, priceProduct,
+                    stockProduct, isActiveProduct, categoriesList, imagesList);
+        } catch (Exception e) {
+            Logger.log(e);
+            return null;
+        }
+    }
+
+    private List<ProductImageDTO> getImageDTOList(List<ProductImageDTO> images) {
         if (images == null) {
             return null;
         }
-        List<ProductImageDTO> imagesList = new ArrayList<>();
-        for (Map.Entry<String, Boolean> entry : images.entrySet()) {
-            String url = entry.getKey();
-            boolean isMain = entry.getValue();
-            ProductImageDTO productImageDTO = this.productImageService.processData(entityAndId, url, isMain, processDataType);
-            imagesList.add(productImageDTO);
-        }
-        return imagesList;
+        return this.productImageService.addProduct(images);
     }
 
-    private List<CategoryDTO> getCategoryDTOList(boolean isActiveProduct, List<String> categories, ProcessDataType processDataType, Map<EntityType, Integer> entityAndId) {
-        List<CategoryDTO> categoriesList = new ArrayList<>();
-        for (String string : categories) {
-            CategoryDTO category = this.categoryService.processData(entityAndId, string, "", isActiveProduct, processDataType);
-            categoriesList.add(category);
+    private List<CategoryDTO> getCategoryDTOList(List<CategoryDTO> nameAndDescription)
+            throws ErrorHandling.InvalidInputException {
+        if (nameAndDescription == null) {
+            return null;
         }
-        return categoriesList;
-    }
-
-    private boolean hasValidInput(String nameProduct, String descriptionProduct, double priceProduct, int stockProduct,
-                                  ProcessDataType processDataType) throws ErrorHandling.InvalidNameException, ErrorHandling.InvalidDescriptionException {
-        return InputValidator.hasValidName(nameProduct) &&
-                InputValidator.hasValidDescription(descriptionProduct) &&
-                priceProduct >= 0.0 &&
-                stockProduct >= 0 &&
-                processDataType != null;
-    }
-
-    private ProductDTO performDmlAction(Map<EntityType, Integer> entityAndId, String name, String description,
-                                        double price, int stock, boolean isActive, List<CategoryDTO> categories,
-                                        List<ProductImageDTO> images, ProcessDataType processDataType)
-            throws OptimisticLockException {
-        switch (processDataType) {
-            case ADD -> {
-                return this.productRepository.addProduct(name, description, price, stock, isActive, categories, images);
-            }
-            case UPDATE -> {
-                return this.productRepository.updateProduct(entityAndId, name, description, price, stock, isActive, categories, images);
-            }
-            default -> {
-                return null;
-            }
-        }
+        return this.categoryService.addProduct(nameAndDescription);
     }
 }

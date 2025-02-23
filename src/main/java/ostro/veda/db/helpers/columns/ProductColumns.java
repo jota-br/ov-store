@@ -5,7 +5,8 @@ public enum ProductColumns {
     NAME("name"),
     DESCRIPTION("description"),
     PRICE("price"),
-    STOCK("stock");
+    STOCK("stock"),
+    CATEGORIES("categories");
 
     private final String columnName;
 

@@ -26,13 +26,13 @@ public class OrderService {
      * @param shippingAddress user shipping address
      * @param billingAddress user billing address
      * @param productAndQuantity Product and Quantity sold.
-     * @return the OrderDTO after persisted.
+     * @return OrderDTO
      */
     public OrderDTO addOrder(int userId, double totalAmount, String status,
                              AddressDTO shippingAddress, AddressDTO billingAddress,
                              Map<ProductDTO, Integer> productAndQuantity) {
         try {
-            if (!hasValidInput(userId, totalAmount, status, shippingAddress, billingAddress, productAndQuantity)) return null;
+            if (!OrderValidation.hasValidInput(userId, totalAmount, status, shippingAddress, billingAddress, productAndQuantity)) return null;
             return orderRepository.addOrder(userId, totalAmount, status, shippingAddress, billingAddress, productAndQuantity);
         } catch (Exception e) {
             Logger.log(e);
@@ -44,24 +44,24 @@ public class OrderService {
      *
      * @param orderId will be used to find the order and create the DAO to persist the new order status
      * @param newStatus the new status value to be persisted
-     * @return updated OrderDTO
+     * @return OrderDTO
      * @throws ErrorHandling.InvalidInputException input is invalid and a customized Exception in returned with
      * the Exception message and the reject input.
      */
     public OrderDTO updateOrderStatus(int orderId, String newStatus)
             throws ErrorHandling.InvalidInputException {
-        if (!hasValidInput(orderId, newStatus)) return null;
+        if (!OrderValidation.hasValidInput(orderId, newStatus)) return null;
         return orderRepository.updateOrderStatus(orderId, newStatus);
     }
 
     /**
      * Requires single EntityManager injection
      * @param orderId requires a valid orderId
-     * @return returns an OrderDTO with updated data
+     * @return OrderDTO
      */
     public OrderDTO cancelOrder(int orderId) {
         try {
-            if (!hasValidInput(orderId)) return null;
+            if (!OrderValidation.hasValidInput(orderId)) return null;
             return  orderRepository.cancelOrder(orderId);
         } catch (ErrorHandling.InvalidInputException | UnsupportedOperationException e) {
             Logger.log(e);
@@ -70,43 +70,18 @@ public class OrderService {
     }
 
     /**
-     * parameters to be checked for valid input
-     * @param userId requires a valid userId
-     * @param totalAmount requires a valid total amount
-     * @param status requires a valid OrderStatus
-     * @param shippingAddress requires a valid shipping address
-     * @param billingAddress requires a valid billing address
-     * @param productAndQuantity will check if the product is valid and if it has the required stock
-     * @return true if input is validated successfully
-     * @throws ErrorHandling.InvalidInputException input is invalid and a customized Exception in returned with
-     * the Exception message and the reject input.
+     * orderId will be used to check the OrderDetail, product bought and quantity
+     * @param orderId order identifier from the returning product
+     * @param productAndQuantity product and quantity to be returned
+     * @return OrderDTO
      */
-    private boolean hasValidInput(int userId, double totalAmount, String status, AddressDTO shippingAddress,
-                                  AddressDTO billingAddress, Map<ProductDTO, Integer> productAndQuantity)
-            throws ErrorHandling.InvalidInputException {
-        return OrderValidation.hasValidInput(userId, totalAmount, status, shippingAddress, billingAddress, productAndQuantity);
-    }
-
-    /**
-     *
-     * @param orderId requires a valid userId
-     * @param status requires a valid OrderStatus
-     * @return true if input is validated successfully
-     * @throws ErrorHandling.InvalidInputException input is invalid and a customized Exception in returned with
-     * the Exception message and the reject input.
-     */
-    private boolean hasValidInput(int orderId, String status) throws ErrorHandling.InvalidInputException {
-        return OrderValidation.hasValidInput(orderId, status);
-    }
-
-    /**
-     *
-     * @param orderId requires a valid userId
-     * @return true if input is validated successfully
-     * @throws ErrorHandling.InvalidInputException input is invalid and a customized Exception in returned with
-     * the Exception message and the reject input.
-     */
-    private boolean hasValidInput(int orderId) throws ErrorHandling.InvalidInputException {
-        return OrderValidation.hasValidInput(orderId);
+    public OrderDTO returnItem(int orderId, Map<ProductDTO, Integer> productAndQuantity) {
+        try {
+            if (!OrderValidation.hasValidInput(orderId, productAndQuantity)) return null;
+            return orderRepository.returnItem(orderId, productAndQuantity);
+        } catch (Exception e) {
+            Logger.log(e);
+            return null;
+        }
     }
 }

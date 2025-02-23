@@ -3,10 +3,7 @@ package test.resources;
 import jakarta.persistence.EntityManager;
 import org.junit.Test;
 import ostro.veda.common.ProcessDataType;
-import ostro.veda.common.dto.AddressDTO;
-import ostro.veda.common.dto.OrderDTO;
-import ostro.veda.common.dto.ProductDTO;
-import ostro.veda.common.dto.UserDTO;
+import ostro.veda.common.dto.*;
 import ostro.veda.db.*;
 import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.db.helpers.OrderStatus;
@@ -23,14 +20,15 @@ public class OrderServiceTest {
     @Test
     public void addOrder() {
         EntityManager em = JPAUtil.getEm();
+        EntityManager em2 = JPAUtil.getEm();
         try (
                 OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em);
                 OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
                 OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
                 UserRepository userRepository = new UserRepository();
-                ProductRepository productRepository = new ProductRepository();
-                CategoryRepository categoryRepository = new CategoryRepository();
-                ProductImageRepository productImageRepository = new ProductImageRepository();
+                CategoryRepository categoryRepository = new CategoryRepository(em2);
+                ProductRepository productRepository = new ProductRepository(em2, categoryRepository);
+                ProductImageRepository productImageRepository = new ProductImageRepository(em2);
                 AddressRepository addressRepository = new AddressRepository()
         ) {
 
@@ -45,7 +43,7 @@ public class OrderServiceTest {
             AddressService addressService = new AddressService(addressRepository);
             AddressDTO addressDTO = getAddressDTO(addressService, user
             );
-            List<String> categories = List.of("Test Category", "Another Test Category");
+            List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
             int itemOneQty = 1;
@@ -79,7 +77,8 @@ public class OrderServiceTest {
             assertNull(orderDTO);
             assertEquals(remainingStockOne, pOne.getStock());
             assertEquals(remainingStockTwo, pOTwo.getStock());
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            fail(e.getMessage());
         } finally {
             ResetTables.resetTables();
         }
@@ -88,14 +87,15 @@ public class OrderServiceTest {
     @Test
     public void updateOrderStatus() {
         EntityManager em = JPAUtil.getEm();
+        EntityManager em2 = JPAUtil.getEm();
         try (
                 OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em);
                 OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
                 OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
                 UserRepository userRepository = new UserRepository();
-                ProductRepository productRepository = new ProductRepository();
-                CategoryRepository categoryRepository = new CategoryRepository();
-                ProductImageRepository productImageRepository = new ProductImageRepository();
+                CategoryRepository categoryRepository = new CategoryRepository(em2);
+                ProductRepository productRepository = new ProductRepository(em2, categoryRepository);
+                ProductImageRepository productImageRepository = new ProductImageRepository(em2);
                 AddressRepository addressRepository = new AddressRepository()
         ) {
 
@@ -110,7 +110,7 @@ public class OrderServiceTest {
             AddressService addressService = new AddressService(addressRepository);
             AddressDTO addressDTO = getAddressDTO(addressService, user
             );
-            List<String> categories = List.of("Test Category", "Another Test Category");
+            List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
             int itemOneQty = 1;
@@ -127,21 +127,22 @@ public class OrderServiceTest {
 
         } catch (Exception ignored) {
         } finally {
-            ResetTables.resetTables();
+            test.resources.ResetTables.resetTables();
         }
     }
 
     @Test
     public void cancelOrder() {
         EntityManager em = JPAUtil.getEm();
+        EntityManager em2 = JPAUtil.getEm();
         try (
                 OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em);
                 OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
                 OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
                 UserRepository userRepository = new UserRepository();
-                ProductRepository productRepository = new ProductRepository();
-                CategoryRepository categoryRepository = new CategoryRepository();
-                ProductImageRepository productImageRepository = new ProductImageRepository();
+                CategoryRepository categoryRepository = new CategoryRepository(em2);
+                ProductRepository productRepository = new ProductRepository(em2, categoryRepository);
+                ProductImageRepository productImageRepository = new ProductImageRepository(em2);
                 AddressRepository addressRepository = new AddressRepository()
         ) {
 
@@ -156,7 +157,7 @@ public class OrderServiceTest {
             AddressService addressService = new AddressService(addressRepository);
             AddressDTO addressDTO = getAddressDTO(addressService, user
             );
-            List<String> categories = List.of("Test Category", "Another Test Category");
+            List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
             int itemOneQty = 1;
@@ -170,7 +171,55 @@ public class OrderServiceTest {
             assertNotNull(orderToBeCancelled);
             assertEquals(orderToBeCancelled.getStatus(), OrderStatus.CANCELLED.getStatus());
 
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            fail(e.getMessage());
+        } finally {
+            ResetTables.resetTables();
+        }
+    }
+
+    @Test
+    public void returnItem() {
+        EntityManager em = JPAUtil.getEm();
+        EntityManager em2 = JPAUtil.getEm();
+        try (
+                OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em);
+                OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
+                OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
+                UserRepository userRepository = new UserRepository();
+                CategoryRepository categoryRepository = new CategoryRepository(em2);
+                ProductRepository productRepository = new ProductRepository(em2, categoryRepository);
+                ProductImageRepository productImageRepository = new ProductImageRepository(em2);
+                AddressRepository addressRepository = new AddressRepository()
+        ) {
+
+            UserService userService = new UserService(userRepository);
+            CategoryService categoryService = new CategoryService(categoryRepository);
+            ProductImageService productImageService = new ProductImageService(productImageRepository);
+            ProductService productService = new ProductService(categoryService, productImageService, productRepository);
+            OrderService orderService = new OrderService(orderRepository);
+
+            UserDTO user = getUserDTO(userService, "username123", "password99*33", "email23@email.com",
+                    "5511111000997");
+            AddressService addressService = new AddressService(addressRepository);
+            AddressDTO addressDTO = getAddressDTO(addressService, user
+            );
+            List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
+            List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
+
+            int itemOneQty = 1;
+            int itemTwoQty = 1;
+            double total = (productDTOList.get(0).getPrice() * itemOneQty) + (productDTOList.get(1).getPrice() * itemTwoQty);
+            OrderDTO orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.DELIVERED.getStatus(), addressDTO, addressDTO,
+                    Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty));
+            assertNotNull(orderDTO);
+
+            OrderDTO orderAndItemToReturn = orderService.returnItem(orderDTO.getOrderId(), Map.of(productDTOList.get(0), 1));
+            assertNotNull(orderAndItemToReturn);
+            assertEquals(orderAndItemToReturn.getStatus(), OrderStatus.RETURN_REQUESTED.getStatus());
+
+        } catch (Exception e) {
+            fail(e.getMessage());
         } finally {
             ResetTables.resetTables();
         }
@@ -189,14 +238,12 @@ public class OrderServiceTest {
                 "Home", "Joinville", "Santa Catarina", "900103041", "Brazil", true, ProcessDataType.ADD);
     }
 
-    private static List<ProductDTO> getProductDTOList(ProductService productService, List<String> categories) {
+    private static List<ProductDTO> getProductDTOList(ProductService productService, List<CategoryDTO> categories) {
         return List.of(
-                productService.processData("Product Test One", "Description One",
-                        45.00, 10, true, categories, null, ProcessDataType.ADD,
-                        null),
-                productService.processData("Product Test Two", "Description Two",
-                        50.00, 5, true, categories, null, ProcessDataType.ADD,
-                        null)
+                productService.addProduct("Product Test One", "Description One",
+                        45.00, 10, true, categories, null),
+                productService.addProduct("Product Test Two", "Description Two",
+                        50.00, 5, true, categories, null)
         );
     }
 }

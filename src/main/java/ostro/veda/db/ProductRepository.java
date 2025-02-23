@@ -1,20 +1,30 @@
 package ostro.veda.db;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.OptimisticLockException;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.dto.ProductImageDTO;
+import ostro.veda.db.helpers.JPAUtil;
+import ostro.veda.db.helpers.columns.CategoryColumns;
 import ostro.veda.db.helpers.columns.ProductColumns;
+import ostro.veda.db.helpers.columns.ProductImageColumns;
 import ostro.veda.db.jpa.Category;
 import ostro.veda.db.jpa.Product;
 import ostro.veda.db.jpa.ProductImage;
-import ostro.veda.service.EntityType;
+import ostro.veda.loggerService.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ProductRepository extends Repository {
+
+    private final CategoryRepository categoryRepository;
+
+    public ProductRepository(EntityManager em, CategoryRepository categoryRepository) {
+        super(em);
+        this.categoryRepository = categoryRepository;
+    }
 
     public ProductDTO addProduct(String name, String description, double price, int stock, boolean isActive,
                                  List<CategoryDTO> categories, List<ProductImageDTO> images) {
@@ -25,23 +35,33 @@ public class ProductRepository extends Repository {
             return null;
         }
 
-        List<Category> categoriesList = getCategoriesList(categories);
-        List<ProductImage> imagesList = getImagesList(images);
+        ProductDTO productDTO = null;
+        EntityTransaction transaction = null;
+        try {
+            transaction = this.em.getTransaction();
+            transaction.begin();
 
-        Product product = new Product(name, description, price, stock, isActive, categoriesList, imagesList);
-        boolean isInserted = this.entityManagerHelper.executePersist(this.em, product);
-        if (!isInserted) {
-            return null;
+            List<Category> categoriesList = getCategoriesList(categories);
+            List<ProductImage> imagesList = getImagesList(images);
+            Product product = new Product(name, description, price, stock, isActive, categoriesList, imagesList);
+
+            this.em.persist(product);
+
+            transaction.commit();
+            productDTO = product.transformToDto();
+        } catch (Exception e) {
+            Logger.log(e);
+            JPAUtil.transactionRollBack(transaction);
         }
 
-        return product.transformToDto();
+        return productDTO;
     }
 
-    public ProductDTO updateProduct(Map<EntityType, Integer> entityAndId, String name, String description, double price, int stock, boolean isActive,
+    public ProductDTO updateProduct(int productId, String name, String description, double price, int stock, boolean isActive,
                                            List<CategoryDTO> categories, List<ProductImageDTO> images)
             throws OptimisticLockException {
 
-        Product product = this.em.find(Product.class, entityAndId.get(EntityType.PRODUCT));
+        Product product = this.em.find(Product.class, productId);
 
         if (product == null) {
             return null;
@@ -49,6 +69,9 @@ public class ProductRepository extends Repository {
 
         List<Category> categoriesList = getCategoriesList(categories);
         List<ProductImage> imagesList = getImagesList(images);
+
+        List<Boolean> booleanList = new ArrayList<>(categoriesList.size());
+        categoryRepository.updateProduct(categories);
 
         product.updateProduct(new Product(name, description, price, stock, isActive, categoriesList, imagesList));
 
@@ -63,7 +86,15 @@ public class ProductRepository extends Repository {
     private List<Category> getCategoriesList(List<CategoryDTO> categories) {
         List<Category> categoriesList = new ArrayList<>();
         for (CategoryDTO c : categories) {
-            Category category = this.em.find(Category.class, c.getCategoryId());
+            Category category = null;
+            List<Category> result = this.entityManagerHelper.findByFields(this.getEm(), Category.class,
+                    Map.of(CategoryColumns.NAME.getColumnName(), c.getName()));
+            if (result != null) {
+                category = result.get(0);
+                category.updateCategory(new Category(c.getName(), c.getDescription(), c.isActive()));
+            } else {
+                category = new Category(c.getName(), c.getDescription(), c.isActive());
+            }
             categoriesList.add(category);
         }
 
@@ -77,8 +108,11 @@ public class ProductRepository extends Repository {
         List<ProductImage> imagesList = new ArrayList<>();
         for (ProductImageDTO pi : images) {
             ProductImage productImage = null;
-            if (pi.getProductImageId() > 0) {
-                productImage = this.em.find(ProductImage.class, pi.getProductImageId());
+            List<ProductImage> result = this.entityManagerHelper.findByFields(this.getEm(), ProductImage.class,
+                    Map.of(ProductImageColumns.IMAGE_URL.getColumnName(), pi.getImageUrl()));
+            if (result != null) {
+                productImage = result.get(0);
+                productImage.updateProductImage(new ProductImage(pi.getImageUrl(), pi.isMain()));
             } else {
                 productImage = new ProductImage(pi.getImageUrl(), pi.isMain());
             }

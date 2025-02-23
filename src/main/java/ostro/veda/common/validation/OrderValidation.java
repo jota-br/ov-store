@@ -33,6 +33,15 @@ public class OrderValidation {
         return hasValidId(orderId);
     }
 
+    public static boolean hasValidInput(int orderId, Map<ProductDTO, Integer> productAndQuantity)
+            throws ErrorHandling.InvalidInputException {
+        for (Map.Entry<ProductDTO, Integer> entry : productAndQuantity.entrySet()) {
+            hasValidProduct(entry.getKey());
+            hasValidQuantity(entry.getValue());
+        }
+        return hasValidId(orderId);
+    }
+
     private static boolean hasValidTotalAmount(double amount) throws ErrorHandling.InvalidInputException {
         if (amount >= MINIMUM_TOTAL_AMOUNT) {
             return true;
@@ -59,7 +68,7 @@ public class OrderValidation {
             return true;
         }
         throw new ErrorHandling.InvalidInputException(
-                ErrorHandling.InputExceptionMessage.EX_INVALID_ADDRESS, "address is null or userId doesn't match"
+                ErrorHandling.InputExceptionMessage.EX_INVALID_ADDRESS, "address:" + address
         );
     }
 
@@ -86,7 +95,7 @@ public class OrderValidation {
             throws ErrorHandling.InvalidInputException {
         if (product == null) {
             throw new ErrorHandling.InvalidInputException(
-                    ErrorHandling.InputExceptionMessage.EX_INVALID_PRODUCT, "null"
+                    ErrorHandling.InputExceptionMessage.EX_INVALID_PRODUCT, "product:null"
             );
         } else if (quantity < MINIMUM_VALID_QUANTITY || product.getStock() < quantity) {
             throw new ErrorHandling.InvalidInputException(
@@ -95,6 +104,19 @@ public class OrderValidation {
             );
         }
         return true;
+    }
+
+    private static boolean hasValidProduct(ProductDTO product)
+            throws ErrorHandling.InvalidInputException {
+        if (product != null) return true;
+        throw new ErrorHandling.InvalidInputException(ErrorHandling.InputExceptionMessage.EX_INVALID_PRODUCT, "product:null");
+    }
+
+    private static boolean hasValidQuantity(int quantity) throws ErrorHandling.InvalidInputException {
+        if (quantity >= MINIMUM_VALID_QUANTITY) return true;
+        throw new ErrorHandling.InvalidInputException(
+                    ErrorHandling.InputExceptionMessage.EX_INVALID_PRODUCT_QUANTITY,
+                    "quantity:" + quantity);
     }
 
     private static boolean hasValidId(int input) throws ErrorHandling.InvalidInputException {
