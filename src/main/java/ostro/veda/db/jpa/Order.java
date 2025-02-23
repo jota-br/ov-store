@@ -55,13 +55,12 @@ public class Order {
     }
 
     public Order(int userId, double totalAmount, String status,
-                 Address shippingAddress, Address billingAddress, List<OrderStatusHistory> orderStatusHistory) {
+                 Address shippingAddress, Address billingAddress) {
         this.userId = userId;
         this.totalAmount = totalAmount;
         this.status = status;
         this.shippingAddress = shippingAddress;
         this.billingAddress = billingAddress;
-        this.orderStatusHistory = orderStatusHistory;
     }
 
     public int getOrderId() {

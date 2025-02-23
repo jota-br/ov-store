@@ -40,6 +40,26 @@ public class EntityManagerHelper {
         return null;
     }
 
+    public <T> List<T> findByFieldId(EntityManager em, Class<T> entityClass, Map<String, Integer> columnsAndValues) {
+
+        String[] columns = columnsAndValues.keySet().toArray(new String[0]);
+        Integer[] values = columnsAndValues.values().toArray(new Integer[0]);
+
+        String dml = SqlBuilder.buildDml(entityClass, SqlBuilder.CrudType.SELECT, columns);
+        TypedQuery<T> query = em.createQuery(dml, entityClass);
+
+        for (int i = 0; i < values.length; i++) {
+            int parameterIndex = i + 1;
+            query.setParameter(parameterIndex, values[i]);
+        }
+
+        if (!query.getResultList().isEmpty()) {
+            return query.getResultList();
+        }
+
+        return null;
+    }
+
     public <T> boolean executePersist(EntityManager em, T entity) {
 
         if (entity == null) {

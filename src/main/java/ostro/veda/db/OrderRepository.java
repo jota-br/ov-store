@@ -76,7 +76,7 @@ public class OrderRepository extends Repository {
     private Order getNewOrder(int userId, double totalAmount, String status, AddressDTO shippingAddress, AddressDTO billingAddress) {
         Address shipping = this.em.find(Address.class, shippingAddress.getAddressId());
         Address billing = this.em.find(Address.class, billingAddress.getAddressId());
-        return new Order(userId, totalAmount, status, shipping, billing, null);
+        return new Order(userId, totalAmount, status, shipping, billing);
     }
 
     /**
@@ -287,6 +287,9 @@ public class OrderRepository extends Repository {
      * @return returns Order DAO to be persisted
      */
     private Order getOrder(int orderId) {
-        return this.getEm().find(Order.class, orderId);
+        List<OrderDetail> orderDetail = this.getEntityManagerHelper().findByFieldId(this.getEm(), OrderDetail.class, Map.of("order.orderId", orderId));
+        Order order = this.getEm().find(Order.class, orderId);
+        order.getOrderDetails().addAll(orderDetail);
+        return order;
     }
 }

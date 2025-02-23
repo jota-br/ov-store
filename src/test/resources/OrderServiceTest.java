@@ -11,6 +11,7 @@ import ostro.veda.db.*;
 import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.db.helpers.OrderStatus;
 import ostro.veda.db.jpa.Product;
+import ostro.veda.loggerService.Logger;
 import ostro.veda.service.*;
 
 import java.util.List;
@@ -170,7 +171,8 @@ public class OrderServiceTest {
             assertNotNull(orderToBeCancelled);
             assertEquals(orderToBeCancelled.getStatus(), OrderStatus.CANCELLED.getStatus());
 
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            Logger.log(e);
         } finally {
             ResetTables.resetTables();
         }

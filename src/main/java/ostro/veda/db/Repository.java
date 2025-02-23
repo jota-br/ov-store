@@ -23,6 +23,10 @@ public abstract class Repository implements AutoCloseable {
         return this.em;
     }
 
+    public EntityManagerHelper getEntityManagerHelper() {
+        return this.entityManagerHelper;
+    }
+
     @Override
     public void close() {
         if (this.em != null && this.em.isOpen()) {
