@@ -16,10 +16,11 @@ public class OrderDTO {
     private final Address shippingAddress;
     private final Address billingAddress;
     private final List<OrderStatusHistoryDTO> orderStatusHistory;
+    private final LocalDateTime updatedAt;
 
     public OrderDTO(int orderId, int userId, LocalDateTime orderDate, double totalAmount,
                     String status, List<OrderDetailDTO> orderDetails, Address shippingAddress,
-                    Address billingAddress, List<OrderStatusHistoryDTO> orderStatusHistory) {
+                    Address billingAddress, List<OrderStatusHistoryDTO> orderStatusHistory, LocalDateTime updatedAt) {
         this.orderId = orderId;
         this.userId = userId;
         this.orderDate = orderDate;
@@ -29,6 +30,7 @@ public class OrderDTO {
         this.shippingAddress = shippingAddress;
         this.billingAddress = billingAddress;
         this.orderStatusHistory = orderStatusHistory;
+        this.updatedAt = updatedAt;
     }
 
     public int getOrderId() {
@@ -65,5 +67,9 @@ public class OrderDTO {
 
     public List<OrderStatusHistoryDTO> getOrderStatusHistory() {
         return orderStatusHistory;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 }

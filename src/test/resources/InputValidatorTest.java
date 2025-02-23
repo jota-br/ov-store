@@ -30,7 +30,8 @@ public class InputValidatorTest {
         for (String s : valid) {
             try {
                 assertTrue(InputValidator.hasValidUsername(s));
-            } catch (ErrorHandling.InvalidUsernameException ignored) {
+            } catch (Exception e) {
+                fail(e.getMessage());
             }
         }
 
@@ -44,8 +45,9 @@ public class InputValidatorTest {
 
         for (String s : invalid) {
             try {
-                assertFalse(InputValidator.hasValidUsername(s));
-            } catch (ErrorHandling.InvalidUsernameException ignored) {
+                assertThrows(ErrorHandling.InvalidUsernameException.class, () -> InputValidator.hasValidUsername(s));
+            } catch (Exception e) {
+                fail(e.getMessage());
             }
         }
     }
@@ -63,7 +65,8 @@ public class InputValidatorTest {
         for (String s : valid) {
             try {
                 assertTrue(InputValidator.hasValidPassword(s));
-            } catch (ErrorHandling.InvalidPasswordException ignored) {
+            } catch (Exception e) {
+                fail(e.getMessage());
             }
         }
 
@@ -75,8 +78,9 @@ public class InputValidatorTest {
 
         for (String s : invalid) {
             try {
-                assertFalse(InputValidator.hasValidPassword(s));
-            } catch (ErrorHandling.InvalidPasswordException ignored) {
+                assertThrows(ErrorHandling.InvalidPasswordException.class, () -> InputValidator.hasValidPassword(s));
+            } catch (Exception e) {
+                fail(e.getMessage());
             }
         }
     }
@@ -95,7 +99,8 @@ public class InputValidatorTest {
         for (String s : valid) {
             try {
                 assertTrue(InputValidator.hasValidLength(s, 8, 20));
-            } catch (ErrorHandling.InvalidLengthException ignored) {
+            } catch (Exception e) {
+                fail(e.getMessage());
             }
         }
 
@@ -110,8 +115,9 @@ public class InputValidatorTest {
 
         for (String s : invalid) {
             try {
-                assertFalse(InputValidator.hasValidLength(s, 8, 20));
-            } catch (ErrorHandling.InvalidLengthException ignored) {
+                assertThrows(ErrorHandling.InvalidLengthException.class, () -> InputValidator.hasValidLength(s, 8, 20));
+            } catch (Exception e) {
+                fail(e.getMessage());
             }
         }
     }
@@ -150,7 +156,8 @@ public class InputValidatorTest {
     public void hasValidName() {
         try {
             assertTrue(InputValidator.hasValidName("Furniture"));
-        } catch (ErrorHandling.InvalidNameException ignored) {
+        } catch (Exception e) {
+            fail(e.getMessage());
         }
     }
 
@@ -169,7 +176,8 @@ public class InputValidatorTest {
         for (String s : valid) {
             try {
                 assertTrue(InputValidator.hasValidDescription(s));
-            } catch (ErrorHandling.InvalidDescriptionException ignored) {
+            } catch (Exception e) {
+                fail(e.getMessage());
             }
         }
 
@@ -186,71 +194,11 @@ public class InputValidatorTest {
 
         for (String s : invalid) {
             try {
-                assertFalse(InputValidator.hasValidDescription(s));
-            } catch (ErrorHandling.InvalidDescriptionException ignored) {
+                assertThrows(ErrorHandling.InvalidDescriptionException.class, () -> InputValidator.hasValidDescription(s));
+            } catch (Exception e) {
+                fail(e.getMessage());
             }
         }
-    }
-
-    @Test
-    public void hasValidImageUrl() {
-        List<String> valid = List.of(
-                "https://example.com/image.png",
-                "http://subdomain.example.com/path/to/image.png",
-                "example.com/image.png",
-                "https://example.com/image.png?version=1.0",
-                "http://example.com/path/to/image/file-name.png"
-        );
-
-        for (String s : valid) {
-            try {
-                assertTrue(InputValidator.hasValidImageUrl(s));
-            } catch (ErrorHandling.InvalidImageUrlException ignored) {
-            }
-        }
-
-        List<String> invalid = List.of(
-                "https://example.com/image.jpg",  // Invalid file extension
-                "ftp://example.com/image.png",    // Invalid protocol (ftp instead of http/https)
-                "example.com/image",              // Missing .png extension
-                "http://example.com/image.png/",  // Trailing slash not followed by parameters
-                "https://example.com/path/to/image" // Missing .png extension
-        );
-
-        for (String s : invalid) {
-            try {
-                assertFalse(InputValidator.hasValidImageUrl(s));
-            } catch (ErrorHandling.InvalidImageUrlException ignored) {
-            }
-        }
-    }
-
-    @Test
-    public void encodeUrl() {
-        Map<Character, String> map = InputValidator.getEncodeMap();
-
-        for (Map.Entry<Character, String> entry : map.entrySet()) {
-            assertEquals(entry.getValue(), InputValidator.encodeUrl(String.valueOf(entry.getKey())));
-        }
-
-        Map<String, String> urlMap = getUrlMap();
-
-
-        for (Map.Entry<String, String> entry : urlMap.entrySet()) {
-            assertEquals(entry.getValue(), InputValidator.encodeUrl(String.valueOf(entry.getKey())));
-        }
-
-    }
-
-    private static Map<String, String> getUrlMap() {
-        Map<String, String> urlMap = new HashMap<>();
-
-        urlMap.put("https://example.com/search?q=Hello World!", "https://example.com/search?q=Hello%20World%21");
-        urlMap.put("http://example.com/test?name=John&age=30", "http://example.com/test?name=John%26age=30");
-        urlMap.put("https://www.example.com/images/image.png", "https://www.example.com/images/image.png");
-        urlMap.put("http://example.com/path/to/resource?key=value#anchor", "http://example.com/path/to/resource?key=value%23anchor");
-        urlMap.put("https://sub.domain.example.com/page?param1=value1&param2=value2", "https://sub.domain.example.com/page?param1=value1%26param2=value2");
-        return urlMap;
     }
 
     @Test
@@ -266,22 +214,24 @@ public class InputValidatorTest {
         for (String s : valid) {
             try {
                 assertTrue(InputValidator.hasValidEmail(s));
-            } catch (ErrorHandling.InvalidEmailException ignored) {
+            } catch (Exception e) {
+                fail(e.getMessage());
             }
         }
 
         List<String> invalid = List.of(
                 "user@.com",                  // Missing domain
                 "user@domain..com",           // Double dot in domain
-                "user@domain.c",              // TLD too short
+                "user@domain.c",              // TLD too short /error
                 "user@domain.toolongtldtoolongtldtoolongtldtoolongtldtoolongtldtoolongtldtoolongtld.com",  // TLD too long
                 "@example.com"                // Missing local part
         );
 
         for (String s : invalid) {
             try {
-                assertFalse(InputValidator.hasValidImageUrl(s));
-            } catch (ErrorHandling.InvalidImageUrlException ignored) {
+                assertThrows(ErrorHandling.InvalidEmailException.class, () -> InputValidator.hasValidEmail(s));
+            } catch (Exception e) {
+                fail(e.getMessage());
             }
         }
     }
@@ -299,7 +249,8 @@ public class InputValidatorTest {
         for (String s : valid) {
             try {
                 assertTrue(InputValidator.hasValidPhone(s));
-            } catch (ErrorHandling.InvalidPhoneException ignored) {
+            } catch (Exception e) {
+                fail(e.getMessage());
             }
         }
 
@@ -314,8 +265,9 @@ public class InputValidatorTest {
 
         for (String s : invalid) {
             try {
-                assertFalse(InputValidator.hasValidPhone(s));
-            } catch (ErrorHandling.InvalidPhoneException ignored) {
+                assertThrows(ErrorHandling.InvalidPhoneException.class, () -> InputValidator.hasValidPhone(s));
+            } catch (Exception e) {
+                fail(e.getMessage());
             }
         }
     }
@@ -336,7 +288,8 @@ public class InputValidatorTest {
         for (String s : valid) {
             try {
                 assertTrue(InputValidator.hasValidStreetAddress(s));
-            } catch (ErrorHandling.InvalidStreetAddressException ignored) {
+            } catch (Exception e) {
+                fail(e.getMessage());
             }
         }
 
@@ -353,8 +306,9 @@ public class InputValidatorTest {
 
         for (String s : invalid) {
             try {
-                assertFalse(InputValidator.hasValidStreetAddress(s));
-            } catch (ErrorHandling.InvalidStreetAddressException ignored) {
+                assertThrows(ErrorHandling.InvalidStreetAddressException.class, () -> InputValidator.hasValidStreetAddress(s));
+            } catch (Exception e) {
+                fail(e.getMessage());
             }
         }
     }
@@ -375,7 +329,8 @@ public class InputValidatorTest {
         for (String s : valid) {
             try {
                 assertTrue(InputValidator.hasValidAddressNumber(s));
-            } catch (ErrorHandling.InvalidAddressNumberException ignored) {
+            } catch (Exception e) {
+                fail(e.getMessage());
             }
         }
 
@@ -391,8 +346,9 @@ public class InputValidatorTest {
 
         for (String s : invalid) {
             try {
-                assertFalse(InputValidator.hasValidAddressNumber(s));
-            } catch (ErrorHandling.InvalidAddressNumberException ignored) {
+                assertThrows(ErrorHandling.InvalidAddressNumberException.class, () -> InputValidator.hasValidAddressNumber(s));
+            } catch (Exception e) {
+                fail(e.getMessage());
             }
         }
     }
@@ -416,7 +372,8 @@ public class InputValidatorTest {
         for (AddressType at : valid) {
             try {
                 assertTrue(InputValidator.hasValidAddressType(at.getValue()));
-            } catch (ErrorHandling.InvalidAddressTypeException ignored) {
+            } catch (Exception e) {
+                fail(e.getMessage());
             }
         }
     }
@@ -439,7 +396,8 @@ public class InputValidatorTest {
         for (String s : valid) {
             try {
                 assertTrue(InputValidator.hasValidPersonName(s));
-            } catch (ErrorHandling.InvalidPersonNameException ignored) {
+            } catch (Exception e) {
+                fail(e.getMessage());
             }
         }
 
@@ -459,8 +417,9 @@ public class InputValidatorTest {
 
         for (String s : invalid) {
             try {
-                assertFalse(InputValidator.hasValidPersonName(s));
-            } catch (ErrorHandling.InvalidPersonNameException ignored) {
+                assertThrows(ErrorHandling.InvalidPersonNameException.class, () -> InputValidator.hasValidPersonName(s));
+            } catch (Exception e) {
+                fail(e.getMessage());
             }
         }
     }

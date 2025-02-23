@@ -66,9 +66,21 @@ public class Category {
         return updatedAt;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
     public Category updateCategory(Category updatedData) {
         this.name = updatedData.getName();
-        this.description = getDescription();
+        this.description = updatedData.getDescription();
         this.isActive = updatedData.isActive();
 
         return this;
