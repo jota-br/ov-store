@@ -26,8 +26,8 @@ public class EntityManagerHelperTest {
 
         EntityManagerHelper entityManagerHelper = EntityManagerHelper.getEntityManagerHelper();
         EntityManager em = JPAUtil.getEm();
-        try (ProductRepository productRepository = new ProductRepository(em);
-             CategoryRepository categoryRepository = new CategoryRepository(em);
+        try (CategoryRepository categoryRepository = new CategoryRepository(em);
+             ProductRepository productRepository = new ProductRepository(em, categoryRepository);
              ProductImageRepository productImageRepository = new ProductImageRepository(em)) {
 
             CategoryService categoryService = new CategoryService(categoryRepository);

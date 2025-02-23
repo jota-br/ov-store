@@ -29,8 +29,8 @@ public class OrderServiceTest {
                 OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
                 OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
                 UserRepository userRepository = new UserRepository();
-                ProductRepository productRepository = new ProductRepository(em2);
                 CategoryRepository categoryRepository = new CategoryRepository(em2);
+                ProductRepository productRepository = new ProductRepository(em2, categoryRepository);
                 ProductImageRepository productImageRepository = new ProductImageRepository(em2);
                 AddressRepository addressRepository = new AddressRepository()
         ) {
@@ -96,8 +96,8 @@ public class OrderServiceTest {
                 OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
                 OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
                 UserRepository userRepository = new UserRepository();
-                ProductRepository productRepository = new ProductRepository(em2);
                 CategoryRepository categoryRepository = new CategoryRepository(em2);
+                ProductRepository productRepository = new ProductRepository(em2, categoryRepository);
                 ProductImageRepository productImageRepository = new ProductImageRepository(em2);
                 AddressRepository addressRepository = new AddressRepository()
         ) {
@@ -143,8 +143,8 @@ public class OrderServiceTest {
                 OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
                 OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
                 UserRepository userRepository = new UserRepository();
-                ProductRepository productRepository = new ProductRepository(em2);
                 CategoryRepository categoryRepository = new CategoryRepository(em2);
+                ProductRepository productRepository = new ProductRepository(em2, categoryRepository);
                 ProductImageRepository productImageRepository = new ProductImageRepository(em2);
                 AddressRepository addressRepository = new AddressRepository()
         ) {
@@ -190,8 +190,8 @@ public class OrderServiceTest {
                 OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
                 OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
                 UserRepository userRepository = new UserRepository();
-                ProductRepository productRepository = new ProductRepository(em2);
                 CategoryRepository categoryRepository = new CategoryRepository(em2);
+                ProductRepository productRepository = new ProductRepository(em2, categoryRepository);
                 ProductImageRepository productImageRepository = new ProductImageRepository(em2);
                 AddressRepository addressRepository = new AddressRepository()
         ) {

@@ -2,6 +2,7 @@ package test.resources;
 
 import jakarta.persistence.EntityManager;
 import org.junit.Test;
+import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.db.CategoryRepository;
 import ostro.veda.db.ProductImageRepository;
 import ostro.veda.db.ProductRepository;
@@ -22,8 +23,8 @@ public class ProductServiceTest {
         Map<String, Boolean> images = Map.of("http://sub.example.co.uk/images/photo.png", true);
 
         EntityManager em = JPAUtil.getEm();
-        try (ProductRepository productRepository = new ProductRepository(em);
-             CategoryRepository categoryRepository = new CategoryRepository(em);
+        try (CategoryRepository categoryRepository = new CategoryRepository(em);
+             ProductRepository productRepository = new ProductRepository(em, categoryRepository);
              ProductImageRepository productImageRepository = new ProductImageRepository(em)) {
 
             CategoryService categoryService = new CategoryService(categoryRepository);
@@ -40,10 +41,46 @@ public class ProductServiceTest {
                     45.99, 15, false, categories, images));
 
             categories = Map.of(
-                    "Furniture", "High quality handmade", "Woodcraft", "Artisans work"
+                    "Furniture", "High quality handmade", "Woodcraft", "Artisans work",
+                    "Classic", "Classic work"
             );
             assertNotNull(productService.addProduct("New Ultra Chair", "New valid description",
                     49.99, 50, true, categories, images));
+
+        } catch (Exception e) {
+            fail(e.getMessage());
+        } finally {
+            ResetTables.resetTables();
+        }
+    }
+
+    @Test
+    public void updateProduct() {
+        Map<String, String> categories = Map.of(
+                "Furniture", "High quality handmade", "Woodcraft", "Artisans work"
+        );
+        Map<String, Boolean> images = Map.of("http://sub.example.co.uk/images/photo.png", true);
+
+        EntityManager em = JPAUtil.getEm();
+        try (CategoryRepository categoryRepository = new CategoryRepository(em);
+             ProductRepository productRepository = new ProductRepository(em, categoryRepository);
+             ProductImageRepository productImageRepository = new ProductImageRepository(em)) {
+
+            CategoryService categoryService = new CategoryService(categoryRepository);
+            ProductImageService productImageService = new ProductImageService(productImageRepository);
+            ProductService productService = new ProductService(categoryService, productImageService, productRepository);
+
+            ProductDTO productDTO = productService.addProduct("New Ultra Chair", "New valid description",
+                    949.99, 1, true, categories, images);
+
+            categories = Map.of(
+                    "Furniture", "Extraordinary Handmade woodcraft",
+                    "Classic", "Classic work"
+            );
+            images = Map.of("http://sub.example.co.uk/images/photo2.png", true);
+            assertNotNull(productService.updateProduct(productDTO.getProductId(), "Mahogany Chair",
+                    "Exceptional hand made quality in Mahogany wood",
+                    949.99, 2, true, categories, images));
 
         } catch (Exception e) {
             fail(e.getMessage());

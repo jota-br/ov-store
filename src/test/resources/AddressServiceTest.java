@@ -44,8 +44,6 @@ public class AddressServiceTest {
             assertEquals(country, addressDTO.getCountry());
         } catch (Exception e) {
             fail(e.getMessage());
-        } finally {
-            ResetTables.resetTables();
         }
 
         try (AddressRepository addressRepository = new AddressRepository()) {
@@ -83,8 +81,6 @@ public class AddressServiceTest {
                     "userForAddress@google.com", "userForAddress", "userForAddress", "5511000000000", true, ProcessDataType.ADD);
         } catch (Exception e) {
             fail(e.getMessage());
-        } finally {
-            ResetTables.resetTables();
         }
     }
 }

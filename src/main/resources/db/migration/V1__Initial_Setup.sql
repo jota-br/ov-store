@@ -91,7 +91,7 @@ Create Table If Not Exists password_reset_tokens (
 
 Create Table If Not Exists categories (
   category_id Int Primary Key Auto_Increment,
-  name Varchar(255) Not Null,
+  name Varchar(255) Unique Not Null,
   description Varchar(510),
   is_active Boolean Default false,
   created_at Timestamp Default Current_Timestamp,
@@ -100,7 +100,7 @@ Create Table If Not Exists categories (
 
 Create Table If Not Exists products (
   product_id Int Primary Key Auto_Increment,
-  name Varchar(255) Not Null,
+  name Varchar(255) Unique Not Null,
   description Varchar(510),
   price Decimal(10,2) Not Null,
   stock Int Not Null,
@@ -112,7 +112,7 @@ Create Table If Not Exists products (
 
 Create Table If Not Exists product_images (
   product_image_id Int Primary Key Auto_Increment,
-  image_url Varchar(350) Not Null,
+  image_url Varchar(350) Unique Not Null,
   is_main Boolean Default false
 );
 
