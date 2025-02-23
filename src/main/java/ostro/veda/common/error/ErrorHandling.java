@@ -17,7 +17,10 @@ public class ErrorHandling {
         EX_INVALID_PRODUCT_QUANTITY("Invalid Product Quantity"),
         EX_INVALID_ID("Invalid Database Id"),
         EX_INVALID_ORDER_RETURN("Invalid Input for Order Return Request"),
-        EX_INVALID_ORDER_RETURN_DS("Return is unavailable, check product Order Date and Status");
+        EX_INVALID_ORDER_RETURN_DS("Return is unavailable, check product Order Date and Status"),
+        EX_INVALID_IMAGE_URL("Image Url is invalid."),
+        EX_INVALID_NAME("Product name is invalid."),
+        EX_INVALID_DESCRIPTION("Description is invalid.");
 
         private final String message;
 

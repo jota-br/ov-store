@@ -1,12 +1,13 @@
 package ostro.veda.service;
 
 import ostro.veda.common.InputValidator;
-import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.CategoryDTO;
-import ostro.veda.common.error.ErrorHandling;
+import ostro.veda.common.validation.CategoryValidation;
 import ostro.veda.db.CategoryRepository;
 import ostro.veda.loggerService.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class CategoryService {
@@ -17,52 +18,23 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public CategoryDTO processData(Map<EntityType, Integer> entityAndId, String name, String description,
-                                   boolean isActive, ProcessDataType processDataType) {
+    public List<CategoryDTO> addProduct(Map<String, String> categoryAndDescription, boolean isActive) {
 
         try {
-            if (!hasValidInput(name, description, processDataType)) return null;
-            name = InputValidator.stringSanitize(name);
-            description = InputValidator.stringSanitize(description);
-//            if (!hasValidLength(name, description)) return null;
+            List<CategoryDTO> categoryDTOList = new ArrayList<>();
+            for (Map.Entry<String, String> entry : categoryAndDescription.entrySet()) {
+                String name = entry.getKey();
+                String description = entry.getValue();
+                if (!CategoryValidation.hasValidInput(name, description)) continue;
+                name = InputValidator.stringSanitize(name);
+                description = InputValidator.stringSanitize(description);
+                categoryDTOList.add(new CategoryDTO(-1, name, description, isActive, null, null));
+            }
 
-            return performDmlAction(entityAndId, name, description, isActive, processDataType);
+            return categoryDTOList.isEmpty() ? null : categoryDTOList;
         } catch (Exception e) {
             Logger.log(e);
             return null;
-        }
-    }
-
-    private boolean hasValidInput(String name, String description, ProcessDataType processDataType)
-            throws ErrorHandling.InvalidNameException, ErrorHandling.InvalidDescriptionException {
-        return InputValidator.hasValidName(name) &&
-                InputValidator.hasValidDescription(description) &&
-                processDataType != null;
-    }
-
-    private boolean hasValidLength(String name, String description) throws ErrorHandling.InvalidLengthException {
-        int emptyMin = 0;
-        int minimumLength = 1;
-        int nameMaxLength = 255;
-        int descriptionMaxLength = 510;
-
-        return InputValidator.hasValidLength(name, minimumLength, nameMaxLength) &&
-                InputValidator.hasValidLength(description, emptyMin, descriptionMaxLength);
-    }
-
-    private CategoryDTO performDmlAction(Map<EntityType, Integer> entityAndId, String name, String description,
-                                         boolean isActive, ProcessDataType processDataType) {
-        switch (processDataType) {
-            case ADD -> {
-                return this.categoryRepository.addCategory(name, description, isActive);
-            }
-            case UPDATE -> {
-                int id = entityAndId.getOrDefault(EntityType.CATEGORY, -1);
-                return this.categoryRepository.updateCategory(id, name, description, isActive);
-            }
-            default -> {
-                return null;
-            }
         }
     }
 }

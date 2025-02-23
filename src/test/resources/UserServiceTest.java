@@ -66,7 +66,10 @@ public class UserServiceTest {
             assertEquals(firstName, updatedUser.getFirstName());
             assertEquals(lastName, updatedUser.getLastName());
             assertEquals(phone, updatedUser.getPhone());
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            fail(e.getMessage());
+        } finally {
+            ResetTables.resetTables();
         }
     }
 }

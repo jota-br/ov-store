@@ -11,7 +11,6 @@ import ostro.veda.db.*;
 import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.db.helpers.OrderStatus;
 import ostro.veda.db.jpa.Product;
-import ostro.veda.loggerService.Logger;
 import ostro.veda.service.*;
 
 import java.util.List;
@@ -24,14 +23,15 @@ public class OrderServiceTest {
     @Test
     public void addOrder() {
         EntityManager em = JPAUtil.getEm();
+        EntityManager em2 = JPAUtil.getEm();
         try (
                 OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em);
                 OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
                 OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
                 UserRepository userRepository = new UserRepository();
-                ProductRepository productRepository = new ProductRepository();
-                CategoryRepository categoryRepository = new CategoryRepository();
-                ProductImageRepository productImageRepository = new ProductImageRepository();
+                ProductRepository productRepository = new ProductRepository(em2);
+                CategoryRepository categoryRepository = new CategoryRepository(em2);
+                ProductImageRepository productImageRepository = new ProductImageRepository(em2);
                 AddressRepository addressRepository = new AddressRepository()
         ) {
 
@@ -46,7 +46,7 @@ public class OrderServiceTest {
             AddressService addressService = new AddressService(addressRepository);
             AddressDTO addressDTO = getAddressDTO(addressService, user
             );
-            List<String> categories = List.of("Test Category", "Another Test Category");
+            Map<String, String> categories = Map.of("Test Category", "Another Test Category");
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
             int itemOneQty = 1;
@@ -80,7 +80,8 @@ public class OrderServiceTest {
             assertNull(orderDTO);
             assertEquals(remainingStockOne, pOne.getStock());
             assertEquals(remainingStockTwo, pOTwo.getStock());
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            fail(e.getMessage());
         } finally {
             ResetTables.resetTables();
         }
@@ -89,14 +90,15 @@ public class OrderServiceTest {
     @Test
     public void updateOrderStatus() {
         EntityManager em = JPAUtil.getEm();
+        EntityManager em2 = JPAUtil.getEm();
         try (
                 OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em);
                 OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
                 OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
                 UserRepository userRepository = new UserRepository();
-                ProductRepository productRepository = new ProductRepository();
-                CategoryRepository categoryRepository = new CategoryRepository();
-                ProductImageRepository productImageRepository = new ProductImageRepository();
+                ProductRepository productRepository = new ProductRepository(em2);
+                CategoryRepository categoryRepository = new CategoryRepository(em2);
+                ProductImageRepository productImageRepository = new ProductImageRepository(em2);
                 AddressRepository addressRepository = new AddressRepository()
         ) {
 
@@ -111,7 +113,7 @@ public class OrderServiceTest {
             AddressService addressService = new AddressService(addressRepository);
             AddressDTO addressDTO = getAddressDTO(addressService, user
             );
-            List<String> categories = List.of("Test Category", "Another Test Category");
+            Map<String, String> categories = Map.of("Test Category", "Another Test Category");
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
             int itemOneQty = 1;
@@ -128,21 +130,22 @@ public class OrderServiceTest {
 
         } catch (Exception ignored) {
         } finally {
-            ResetTables.resetTables();
+            test.resources.ResetTables.resetTables();
         }
     }
 
     @Test
     public void cancelOrder() {
         EntityManager em = JPAUtil.getEm();
+        EntityManager em2 = JPAUtil.getEm();
         try (
                 OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em);
                 OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
                 OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
                 UserRepository userRepository = new UserRepository();
-                ProductRepository productRepository = new ProductRepository();
-                CategoryRepository categoryRepository = new CategoryRepository();
-                ProductImageRepository productImageRepository = new ProductImageRepository();
+                ProductRepository productRepository = new ProductRepository(em2);
+                CategoryRepository categoryRepository = new CategoryRepository(em2);
+                ProductImageRepository productImageRepository = new ProductImageRepository(em2);
                 AddressRepository addressRepository = new AddressRepository()
         ) {
 
@@ -157,7 +160,7 @@ public class OrderServiceTest {
             AddressService addressService = new AddressService(addressRepository);
             AddressDTO addressDTO = getAddressDTO(addressService, user
             );
-            List<String> categories = List.of("Test Category", "Another Test Category");
+            Map<String, String> categories = Map.of("Test Category", "Another Test Category");
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
             int itemOneQty = 1;
@@ -172,7 +175,7 @@ public class OrderServiceTest {
             assertEquals(orderToBeCancelled.getStatus(), OrderStatus.CANCELLED.getStatus());
 
         } catch (Exception e) {
-            Logger.log(e);
+            fail(e.getMessage());
         } finally {
             ResetTables.resetTables();
         }
@@ -181,14 +184,15 @@ public class OrderServiceTest {
     @Test
     public void returnItem() {
         EntityManager em = JPAUtil.getEm();
+        EntityManager em2 = JPAUtil.getEm();
         try (
                 OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em);
                 OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
                 OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
                 UserRepository userRepository = new UserRepository();
-                ProductRepository productRepository = new ProductRepository();
-                CategoryRepository categoryRepository = new CategoryRepository();
-                ProductImageRepository productImageRepository = new ProductImageRepository();
+                ProductRepository productRepository = new ProductRepository(em2);
+                CategoryRepository categoryRepository = new CategoryRepository(em2);
+                ProductImageRepository productImageRepository = new ProductImageRepository(em2);
                 AddressRepository addressRepository = new AddressRepository()
         ) {
 
@@ -203,7 +207,7 @@ public class OrderServiceTest {
             AddressService addressService = new AddressService(addressRepository);
             AddressDTO addressDTO = getAddressDTO(addressService, user
             );
-            List<String> categories = List.of("Test Category", "Another Test Category");
+            Map<String, String> categories = Map.of("Test Category", "Another Test Category");
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
             int itemOneQty = 1;
@@ -217,7 +221,8 @@ public class OrderServiceTest {
             assertNotNull(orderAndItemToReturn);
             assertEquals(orderAndItemToReturn.getStatus(), OrderStatus.RETURN_REQUESTED.getStatus());
 
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            fail(e.getMessage());
         } finally {
             ResetTables.resetTables();
         }
@@ -236,14 +241,12 @@ public class OrderServiceTest {
                 "Home", "Joinville", "Santa Catarina", "900103041", "Brazil", true, ProcessDataType.ADD);
     }
 
-    private static List<ProductDTO> getProductDTOList(ProductService productService, List<String> categories) {
+    private static List<ProductDTO> getProductDTOList(ProductService productService, Map<String, String> categories) {
         return List.of(
-                productService.processData("Product Test One", "Description One",
-                        45.00, 10, true, categories, null, ProcessDataType.ADD,
-                        null),
-                productService.processData("Product Test Two", "Description Two",
-                        50.00, 5, true, categories, null, ProcessDataType.ADD,
-                        null)
+                productService.addProduct("Product Test One", "Description One",
+                        45.00, 10, true, categories, null),
+                productService.addProduct("Product Test Two", "Description Two",
+                        50.00, 5, true, categories, null)
         );
     }
 }

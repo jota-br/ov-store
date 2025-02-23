@@ -112,7 +112,7 @@ Create Table If Not Exists products (
 
 Create Table If Not Exists product_images (
   product_image_id Int Primary Key Auto_Increment,
-  image_url Varchar(255) Not Null,
+  image_url Varchar(350) Not Null,
   is_main Boolean Default false
 );
 

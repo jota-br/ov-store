@@ -9,13 +9,14 @@ import ostro.veda.service.AddressService;
 import ostro.veda.service.UserService;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class AddressServiceTest {
 
     @Test
     public void processData() {
 
-        int insertAddressId;
+        int insertAddressId = 0;
         createUser();
         try (AddressRepository addressRepository = new AddressRepository()) {
             AddressService addressService = new AddressService(addressRepository);
@@ -41,6 +42,10 @@ public class AddressServiceTest {
             assertEquals(state, addressDTO.getState());
             assertEquals(zipCode, addressDTO.getZipCode());
             assertEquals(country, addressDTO.getCountry());
+        } catch (Exception e) {
+            fail(e.getMessage());
+        } finally {
+            ResetTables.resetTables();
         }
 
         try (AddressRepository addressRepository = new AddressRepository()) {
@@ -63,6 +68,10 @@ public class AddressServiceTest {
             assertEquals(state, addressDTO.getState());
             assertEquals(zipCode, addressDTO.getZipCode());
             assertEquals(country, addressDTO.getCountry());
+        } catch (Exception e) {
+            fail(e.getMessage());
+        } finally {
+            ResetTables.resetTables();
         }
     }
 
@@ -72,7 +81,10 @@ public class AddressServiceTest {
             UserService userService = new UserService(userRepository);
             userService.processData(-1, "userForAddress", "userForAddress@w",
                     "userForAddress@google.com", "userForAddress", "userForAddress", "5511000000000", true, ProcessDataType.ADD);
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            fail(e.getMessage());
+        } finally {
+            ResetTables.resetTables();
         }
     }
 }

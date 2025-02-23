@@ -148,6 +148,7 @@ public class Product {
         List<ProductImageDTO> images = new ArrayList<>();
         if (this.images != null) {
             for (ProductImage pi : this.getImages()) {
+                if (pi == null) continue;
                 images.add(pi.transformToDto());
             }
         }
@@ -155,6 +156,7 @@ public class Product {
         List<CategoryDTO> categories = new ArrayList<>();
         if (this.categories != null) {
             for (Category c : this.getCategories()) {
+                if (c == null) continue;
                 categories.add(c.transformToDto());
             }
         }
