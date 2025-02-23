@@ -20,6 +20,15 @@ public class CategoryDTO {
         this.updatedAt = updatedAt;
     }
 
+    public CategoryDTO(int categoryId, String name, String description, boolean isActive) {
+        this.categoryId = categoryId;
+        this.name = name;
+        this.description = description;
+        this.isActive = isActive;
+        this.createdAt = null;
+        this.updatedAt = null;
+    }
+
     public int getCategoryId() {
         return categoryId;
     }

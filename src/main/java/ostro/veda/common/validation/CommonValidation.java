@@ -30,4 +30,13 @@ public class CommonValidation {
                 "description:" + input
         );
     }
+
+    public static boolean hasValidId(int id) throws ErrorHandling.InvalidInputException {
+        if (id > 0 || id == -1) return true;
+
+        throw new ErrorHandling.InvalidInputException(
+                ErrorHandling.InputExceptionMessage.EX_INVALID_ID,
+                "id:" + id
+        );
+    }
 }

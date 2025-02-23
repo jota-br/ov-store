@@ -26,7 +26,7 @@ public class OrderService {
      * @param shippingAddress user shipping address
      * @param billingAddress user billing address
      * @param productAndQuantity Product and Quantity sold.
-     * @return the OrderDTO after persisted.
+     * @return OrderDTO
      */
     public OrderDTO addOrder(int userId, double totalAmount, String status,
                              AddressDTO shippingAddress, AddressDTO billingAddress,
@@ -44,7 +44,7 @@ public class OrderService {
      *
      * @param orderId will be used to find the order and create the DAO to persist the new order status
      * @param newStatus the new status value to be persisted
-     * @return updated OrderDTO
+     * @return OrderDTO
      * @throws ErrorHandling.InvalidInputException input is invalid and a customized Exception in returned with
      * the Exception message and the reject input.
      */
@@ -57,7 +57,7 @@ public class OrderService {
     /**
      * Requires single EntityManager injection
      * @param orderId requires a valid orderId
-     * @return returns an OrderDTO with updated data
+     * @return OrderDTO
      */
     public OrderDTO cancelOrder(int orderId) {
         try {
@@ -73,7 +73,7 @@ public class OrderService {
      * orderId will be used to check the OrderDetail, product bought and quantity
      * @param orderId order identifier from the returning product
      * @param productAndQuantity product and quantity to be returned
-     * @return returns the updated OrderDTO
+     * @return OrderDTO
      */
     public OrderDTO returnItem(int orderId, Map<ProductDTO, Integer> productAndQuantity) {
         try {

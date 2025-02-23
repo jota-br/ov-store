@@ -10,7 +10,6 @@ import ostro.veda.db.ProductRepository;
 import ostro.veda.loggerService.Logger;
 
 import java.util.List;
-import java.util.Map;
 
 public class ProductService {
 
@@ -25,54 +24,58 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public ProductDTO addProduct(String nameProduct, String descriptionProduct, double priceProduct, int stockProduct, boolean isActiveProduct,
-                                 Map<String, String> categoryAndDescription, Map<String, Boolean> images) {
+    public ProductDTO addProduct(String nameProduct, String descriptionProduct, double priceProduct, int stockProduct,
+                                 boolean isActiveProduct,
+                                 List<CategoryDTO> nameAndDescription, List<ProductImageDTO> images) {
         try {
             if (!ProductValidation.hasValidInput(nameProduct, descriptionProduct, priceProduct, stockProduct))
                 return null;
             nameProduct = StringSanitize.stringSanitize(nameProduct);
             descriptionProduct = StringSanitize.stringSanitize(descriptionProduct);
 
-            List<CategoryDTO> categoriesList = getCategoryDTOList(categoryAndDescription, isActiveProduct);
+            List<CategoryDTO> categoriesList = getCategoryDTOList(nameAndDescription);
             List<ProductImageDTO> imagesList = getImageDTOList(images);
 
-            return this.productRepository.addProduct(nameProduct, descriptionProduct, priceProduct, stockProduct, isActiveProduct, categoriesList, imagesList);
+            return this.productRepository.addProduct(nameProduct, descriptionProduct, priceProduct, stockProduct,
+                    isActiveProduct, categoriesList, imagesList);
         } catch (Exception e) {
             Logger.log(e);
             return null;
         }
     }
 
-    public ProductDTO updateProduct(int productId, String nameProduct, String descriptionProduct, double priceProduct, int stockProduct, boolean isActiveProduct,
-                                    Map<String, String> categoryAndDescription, Map<String, Boolean> images) {
+    public ProductDTO updateProduct(int productId, String nameProduct, String descriptionProduct, double priceProduct,
+                                    int stockProduct, boolean isActiveProduct,
+                                    List<CategoryDTO> nameAndDescription, List<ProductImageDTO> images) {
         try {
             if (!ProductValidation.hasValidInput(nameProduct, descriptionProduct, priceProduct, stockProduct))
                 return null;
             nameProduct = StringSanitize.stringSanitize(nameProduct);
             descriptionProduct = StringSanitize.stringSanitize(descriptionProduct);
 
-            List<CategoryDTO> categoriesList = getCategoryDTOList(categoryAndDescription, isActiveProduct);
+            List<CategoryDTO> categoriesList = getCategoryDTOList(nameAndDescription);
             List<ProductImageDTO> imagesList = getImageDTOList(images);
 
-            return this.productRepository.updateProduct(productId, nameProduct, descriptionProduct, priceProduct, stockProduct, isActiveProduct, categoriesList, imagesList);
+            return this.productRepository.updateProduct(productId, nameProduct, descriptionProduct, priceProduct,
+                    stockProduct, isActiveProduct, categoriesList, imagesList);
         } catch (Exception e) {
             Logger.log(e);
             return null;
         }
     }
 
-    private List<ProductImageDTO> getImageDTOList(Map<String, Boolean> images) {
+    private List<ProductImageDTO> getImageDTOList(List<ProductImageDTO> images) {
         if (images == null) {
             return null;
         }
         return this.productImageService.addProduct(images);
     }
 
-    private List<CategoryDTO> getCategoryDTOList(Map<String, String> categoryAndDescription, boolean isActiveProduct)
+    private List<CategoryDTO> getCategoryDTOList(List<CategoryDTO> nameAndDescription)
             throws ErrorHandling.InvalidInputException {
-        if (categoryAndDescription == null) {
+        if (nameAndDescription == null) {
             return null;
         }
-        return this.categoryService.addProduct(categoryAndDescription, isActiveProduct);
+        return this.categoryService.addProduct(nameAndDescription);
     }
 }

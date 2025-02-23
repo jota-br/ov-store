@@ -71,8 +71,7 @@ public class ProductRepository extends Repository {
         List<ProductImage> imagesList = getImagesList(images);
 
         List<Boolean> booleanList = new ArrayList<>(categoriesList.size());
-        Map<Integer, List<Map<String, String>>> idNameAndDescription = getIdNameAndDescription(isActive, categoriesList, booleanList);
-        categoryRepository.updateProduct(idNameAndDescription, booleanList);
+        categoryRepository.updateProduct(categories);
 
         product.updateProduct(new Product(name, description, price, stock, isActive, categoriesList, imagesList));
 
@@ -82,22 +81,6 @@ public class ProductRepository extends Repository {
         }
 
         return product.transformToDto();
-    }
-
-    private static Map<Integer, List<Map<String, String>>> getIdNameAndDescription(boolean isActive, List<Category> categoriesList, List<Boolean> booleanList) {
-        Map<Integer, List<Map<String, String>>> idNameAndDescription = new HashMap<>();
-
-        for (Category category : categoriesList) {
-            List<Map<String, String>> list = new ArrayList<>();
-            Map<String, String> map = new HashMap<>();
-            list.add(map);
-
-            map.put(category.getName(), category.getDescription());
-            idNameAndDescription.put(category.getCategoryId(), list);
-
-            booleanList.add(isActive);
-        }
-        return idNameAndDescription;
     }
 
     private List<Category> getCategoriesList(List<CategoryDTO> categories) {

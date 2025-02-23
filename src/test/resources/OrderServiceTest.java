@@ -3,10 +3,7 @@ package test.resources;
 import jakarta.persistence.EntityManager;
 import org.junit.Test;
 import ostro.veda.common.ProcessDataType;
-import ostro.veda.common.dto.AddressDTO;
-import ostro.veda.common.dto.OrderDTO;
-import ostro.veda.common.dto.ProductDTO;
-import ostro.veda.common.dto.UserDTO;
+import ostro.veda.common.dto.*;
 import ostro.veda.db.*;
 import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.db.helpers.OrderStatus;
@@ -46,7 +43,7 @@ public class OrderServiceTest {
             AddressService addressService = new AddressService(addressRepository);
             AddressDTO addressDTO = getAddressDTO(addressService, user
             );
-            Map<String, String> categories = Map.of("Test Category", "Another Test Category");
+            List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
             int itemOneQty = 1;
@@ -113,7 +110,7 @@ public class OrderServiceTest {
             AddressService addressService = new AddressService(addressRepository);
             AddressDTO addressDTO = getAddressDTO(addressService, user
             );
-            Map<String, String> categories = Map.of("Test Category", "Another Test Category");
+            List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
             int itemOneQty = 1;
@@ -160,7 +157,7 @@ public class OrderServiceTest {
             AddressService addressService = new AddressService(addressRepository);
             AddressDTO addressDTO = getAddressDTO(addressService, user
             );
-            Map<String, String> categories = Map.of("Test Category", "Another Test Category");
+            List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
             int itemOneQty = 1;
@@ -207,7 +204,7 @@ public class OrderServiceTest {
             AddressService addressService = new AddressService(addressRepository);
             AddressDTO addressDTO = getAddressDTO(addressService, user
             );
-            Map<String, String> categories = Map.of("Test Category", "Another Test Category");
+            List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
             int itemOneQty = 1;
@@ -241,7 +238,7 @@ public class OrderServiceTest {
                 "Home", "Joinville", "Santa Catarina", "900103041", "Brazil", true, ProcessDataType.ADD);
     }
 
-    private static List<ProductDTO> getProductDTOList(ProductService productService, Map<String, String> categories) {
+    private static List<ProductDTO> getProductDTOList(ProductService productService, List<CategoryDTO> categories) {
         return List.of(
                 productService.addProduct("Product Test One", "Description One",
                         45.00, 10, true, categories, null),

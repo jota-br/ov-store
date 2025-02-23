@@ -2,7 +2,9 @@ package test.resources;
 
 import jakarta.persistence.EntityManager;
 import org.junit.Test;
+import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.dto.ProductDTO;
+import ostro.veda.common.dto.ProductImageDTO;
 import ostro.veda.db.CategoryRepository;
 import ostro.veda.db.ProductImageRepository;
 import ostro.veda.db.ProductRepository;
@@ -34,8 +36,8 @@ public class EntityManagerHelperTest {
             ProductImageService productImageService = new ProductImageService(productImageRepository);
             ProductService productService = new ProductService(categoryService, productImageService, productRepository);
 
-            Map<String, String> categories = Map.of("Furniture", "High Quality Hand Made");
-            Map<String, Boolean> images = Map.of("http://sub.example.co.uk/images/photo.png", true);
+            List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
+            List<ProductImageDTO> images = TestHelper.getProductImageDTOS();
 
             String name = "Ultra Chair Classic";
             String description = "Valid Product Description";
