@@ -35,6 +35,9 @@ public class JPAUtil {
         properties.put("jakarta.persistence.jdbc.url", dbUrl);
         properties.put("jakarta.persistence.jdbc.user", dbUser);
         properties.put("jakarta.persistence.jdbc.password", dbPassword);
+        properties.put("hibernate.show_sql", true);
+        properties.put("hibernate.format_sql", true);
+        properties.put("hibernate.use_sql_comments", true);
         return properties;
     }
 

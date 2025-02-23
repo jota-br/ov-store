@@ -3,7 +3,6 @@ package ostro.veda.db;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.OptimisticLockException;
 import ostro.veda.common.dto.OrderDetailDTO;
-import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.common.validation.OrderValidation;
 import ostro.veda.db.jpa.Order;
@@ -11,7 +10,6 @@ import ostro.veda.db.jpa.OrderDetail;
 import ostro.veda.db.jpa.Product;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,23 +34,18 @@ public class OrderDetailRepository extends Repository {
      * @throws ErrorHandling.InvalidInputException input is invalid and a customized Exception in returned with
      * the Exception message and the reject input.
      */
-    public List<OrderDetailDTO> addOrder(Map<ProductDTO, Integer> productAndQuantity, Order order)
+    public List<OrderDetailDTO> addOrderDetail(Map<Product, Integer> productAndQuantity, Order order, Calculation calculation)
             throws OptimisticLockException, ErrorHandling.InvalidInputException {
 
         List<OrderDetail> orderDetailList = new ArrayList<>();
-        Map<Product, Integer> productDaoAndQuantity = new HashMap<>();
+        inventoryValidation(productAndQuantity);
+        List<Product> mergeList = updateProductInventory(productAndQuantity, calculation);
 
-        // Updates and put's Product, Quantity to the productDaoAndQuantity map
-        inventoryValidation(productAndQuantity, productDaoAndQuantity);
-        // Updates the DAO entity with the new stock value Adding or Subtracting (see Calculation enum)
-        // and adds the updated object to the mergeList
-        List<Product> mergeList = updateProductInventory(productDaoAndQuantity, Calculation.SUBTRACTION);
-        // If merge was successful and Product list is returned
         for (Product product : mergeList) {
             this.em.persist(product);
         }
 
-        for (Map.Entry<Product, Integer> entry : productDaoAndQuantity.entrySet()) {
+        for (Map.Entry<Product, Integer> entry : productAndQuantity.entrySet()) {
             Product product = entry.getKey();
             int quantity = entry.getValue();
             orderDetailList.add(new OrderDetail(order, product, quantity, product.getPrice()));
@@ -73,35 +66,32 @@ public class OrderDetailRepository extends Repository {
     }
 
     /**
-     *
-     * @param productAndQuantity ProductDTO is used to get the most up-to-date Product information
-     *                           required to check stock value and validate the order quantity against.
-     * @param productDaoAndQuantity Map containing the Product DAO entity to be updated and merged
+     * @param productAndQuantity Map containing the Product DAO entity to be updated and merged
      *                              with sold quantity.
      *                              While this method returns no value, the Map<Product, Integer> is a reference
      *                              to the map with the same name in addOrderStatusHistory.
      * @throws ErrorHandling.InvalidInputException input is invalid and a customized Exception in returned with
      * the Exception message and the reject input.
      */
-    private void inventoryValidation(Map<ProductDTO, Integer> productAndQuantity, Map<Product, Integer> productDaoAndQuantity)
+    private void inventoryValidation(Map<Product, Integer> productAndQuantity)
             throws ErrorHandling.InvalidInputException {
-        for (Map.Entry<ProductDTO, Integer> entry : productAndQuantity.entrySet()) {
-            Product product = this.em.find(Product.class, entry.getKey().getProductId());
+        for (Map.Entry<Product, Integer> entry : productAndQuantity.entrySet()) {
+            Product product = entry.getKey();
             int quantity = entry.getValue();
             if (!OrderValidation.hasValidInput(product, quantity)) continue;
-            productDaoAndQuantity.put(product, quantity);
+            productAndQuantity.put(product, quantity);
         }
     }
 
     /**
      *
-     * @param productDaoAndQuantity Entity to be updated and new updated value.
+     * @param productAndQuantity Entity to be updated and new updated value.
      * @param calculation If a new order is placed the Calculation is a SUM
      *                    if it's a cancellation the Calculation is a SUBTRACTION
      */
-    private List<Product> updateProductInventory(Map<Product, Integer> productDaoAndQuantity, Calculation calculation) {
+    private List<Product> updateProductInventory(Map<Product, Integer> productAndQuantity, Calculation calculation) {
         List<Product> mergeList = new ArrayList<>();
-        for (Map.Entry<Product, Integer> entry : productDaoAndQuantity.entrySet()) {
+        for (Map.Entry<Product, Integer> entry : productAndQuantity.entrySet()) {
             Product product = entry.getKey();
             int newStock = product.getStock();
             switch (calculation) {
@@ -126,9 +116,5 @@ public class OrderDetailRepository extends Repository {
             orderDetailDTOList.add(orderDetail.transformToDto());
         }
         return orderDetailDTOList;
-    }
-
-    private void undoInventoryChanges(Map<Product, Integer> productAndQuantityUpdated) {
-        updateProductInventory(productAndQuantityUpdated, Calculation.SUM);
     }
 }

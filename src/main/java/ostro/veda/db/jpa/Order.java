@@ -2,6 +2,7 @@ package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import ostro.veda.common.dto.OrderDTO;
 import ostro.veda.common.dto.OrderDetailDTO;
 import ostro.veda.common.dto.OrderStatusHistoryDTO;
@@ -43,8 +44,12 @@ public class Order {
     @JoinColumn(name = "billing_address_id", referencedColumnName = "address_id")
     private Address billingAddress;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<OrderStatusHistory> orderStatusHistory = new ArrayList<>();
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     public Order() {
     }
@@ -95,6 +100,10 @@ public class Order {
         return orderStatusHistory;
     }
 
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
     public Order updateOrderStatus(String status) {
         this.status = status;
         return this;
@@ -116,6 +125,6 @@ public class Order {
         }
 
         return new OrderDTO(this.getOrderId(), this.getUserId(), this.getOrderDate(), this.getTotalAmount(), this.getStatus(),
-                orderDetailDTOList, this.getShippingAddress(), this.getBillingAddress(), orderStatusHistoryDTOList);
+                orderDetailDTOList, this.getShippingAddress(), this.getBillingAddress(), orderStatusHistoryDTOList, this.getUpdatedAt());
     }
 }
