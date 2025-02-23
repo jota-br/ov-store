@@ -1,5 +1,6 @@
 package ostro.veda.common;
 
+import org.apache.commons.validator.routines.EmailValidator;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.helpers.AddressType;
 
@@ -110,9 +111,8 @@ public class InputValidator {
     }
 
     public static boolean hasValidEmail(String input) throws ErrorHandling.InvalidEmailException {
-        Pattern validPattern = Pattern.compile("^(?=.{2,255}$)(?:[a-zA-Z0-9_'^&amp;/+-])+(?:\\.[a-zA-Z0-9_'^&amp;/+-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]+$");
-        Matcher matcher = validPattern.matcher(input);
-        if (matcher.matches()) {
+        EmailValidator emailValidator = EmailValidator.getInstance();
+        if (emailValidator.isValid(input)) {
             return true;
         }
         throw new ErrorHandling.InvalidEmailException();
