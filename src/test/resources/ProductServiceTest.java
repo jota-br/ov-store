@@ -2,7 +2,9 @@ package test.resources;
 
 import jakarta.persistence.EntityManager;
 import org.junit.Test;
+import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.dto.ProductDTO;
+import ostro.veda.common.dto.ProductImageDTO;
 import ostro.veda.db.CategoryRepository;
 import ostro.veda.db.ProductImageRepository;
 import ostro.veda.db.ProductRepository;
@@ -11,7 +13,7 @@ import ostro.veda.service.CategoryService;
 import ostro.veda.service.ProductImageService;
 import ostro.veda.service.ProductService;
 
-import java.util.Map;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -19,9 +21,6 @@ public class ProductServiceTest {
 
     @Test
     public void addProduct() {
-        Map<String, String> categories = Map.of("Furniture", "High quality handmade");
-        Map<String, Boolean> images = Map.of("http://sub.example.co.uk/images/photo.png", true);
-
         EntityManager em = JPAUtil.getEm();
         try (CategoryRepository categoryRepository = new CategoryRepository(em);
              ProductRepository productRepository = new ProductRepository(em, categoryRepository);
@@ -30,6 +29,9 @@ public class ProductServiceTest {
             CategoryService categoryService = new CategoryService(categoryRepository);
             ProductImageService productImageService = new ProductImageService(productImageRepository);
             ProductService productService = new ProductService(categoryService, productImageService, productRepository);
+
+            List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
+            List<ProductImageDTO> images = TestHelper.getProductImageDTOS();
 
             assertNull(productService.addProduct("Mega Box", "valid description",
                     -1, 15, true, categories, images));
@@ -40,10 +42,9 @@ public class ProductServiceTest {
             assertNotNull(productService.addProduct("Ultra Chair", "valid description",
                     45.99, 15, false, categories, images));
 
-            categories = Map.of(
-                    "Furniture", "High quality handmade", "Woodcraft", "Artisans work",
-                    "Classic", "Classic work"
-            );
+            categories.add(new CategoryDTO(categories.get(0).getCategoryId(), "New Name Modified", "New Description", false));
+            categories.remove(0);
+
             assertNotNull(productService.addProduct("New Ultra Chair", "New valid description",
                     49.99, 50, true, categories, images));
 
@@ -56,10 +57,8 @@ public class ProductServiceTest {
 
     @Test
     public void updateProduct() {
-        Map<String, String> categories = Map.of(
-                "Furniture", "High quality handmade", "Woodcraft", "Artisans work"
-        );
-        Map<String, Boolean> images = Map.of("http://sub.example.co.uk/images/photo.png", true);
+        List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
+        List<ProductImageDTO> images = TestHelper.getProductImageDTOS();
 
         EntityManager em = JPAUtil.getEm();
         try (CategoryRepository categoryRepository = new CategoryRepository(em);
@@ -73,11 +72,12 @@ public class ProductServiceTest {
             ProductDTO productDTO = productService.addProduct("New Ultra Chair", "New valid description",
                     949.99, 1, true, categories, images);
 
-            categories = Map.of(
-                    "Furniture", "Extraordinary Handmade woodcraft",
-                    "Classic", "Classic work"
-            );
-            images = Map.of("http://sub.example.co.uk/images/photo2.png", true);
+            categories.add(new CategoryDTO(categories.get(0).getCategoryId(), "New Name Modified", "New Description", false));
+            categories.remove(0);
+
+            images.add(new ProductImageDTO(images.get(0).getProductImageId(), "http://sub.example.co.uk/images/photo2.png", true));
+            images.remove(0);
+
             assertNotNull(productService.updateProduct(productDTO.getProductId(), "Mahogany Chair",
                     "Exceptional hand made quality in Mahogany wood",
                     949.99, 2, true, categories, images));

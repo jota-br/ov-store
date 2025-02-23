@@ -18,19 +18,13 @@ public class CategoryRepository extends Repository {
         super(em);
     }
 
-    /**
-     * Persist new Category if the category name is unique.
-     * @param categoryAndDescription Contains Category name and description.
-     * @param isActive True if the Category is active or false otherwise.
-     * @return Returns List containing all CategoryDTO which were persisted, or null if none.
-     */
-    public List<CategoryDTO> addCategory(Map<String, String> categoryAndDescription, List<Boolean> isActive) {
+    public List<CategoryDTO> addCategory(List<CategoryDTO> nameAndDescription) {
 
         List<CategoryDTO> categoryDTOList = new ArrayList<>();
-        int i = 0;
-        for (Map.Entry<String, String> entry : categoryAndDescription.entrySet()) {
-            String name = entry.getKey();
-            String description = entry.getValue();
+        for (CategoryDTO entity : nameAndDescription) {
+            String name = entity.getName();
+            String description = entity.getDescription();
+            boolean isActive = entity.isActive();
 
             List<Category> result = this.entityManagerHelper.findByFields(this.em, Category.class,
                     Map.of(CategoryColumns.NAME.getColumnName(), name));
@@ -38,88 +32,64 @@ public class CategoryRepository extends Repository {
             if (result != null && !result.isEmpty()) {
                 // If the Category name is already in use it will not be persisted to the DB.
                 // Next in the List - if any - will be checked.
-                i++;
                 continue;
             } else {
-                category = new Category(name, description, isActive.get(i));
+                category = new Category(name, description, isActive);
+                categoryDTOList.add(category.transformToDto());
             }
 
             boolean isInserted = this.entityManagerHelper.executePersist(this.em, category);
             if (!isInserted) {
                 return null;
             }
-            categoryDTOList.add(category.transformToDto());
-            i++;
         }
 
         return categoryDTOList.isEmpty() ? null : categoryDTOList;
     }
 
-    public List<CategoryDTO> updateProduct(Map<Integer, List<Map<String, String>>> idNameAndDescription, List<Boolean> isActive) {
+    public List<CategoryDTO> updateProduct(List<CategoryDTO> categories) {
 
         List<CategoryDTO> categoryDTOList = new ArrayList<>();
+        for (CategoryDTO entity : categories) {
 
-        int i = 0;
-        for (Map.Entry<Integer, List<Map<String, String>>> entrySet : idNameAndDescription.entrySet()) {
-            int categoryId = entrySet.getKey();
-            for (Map<String, String> e : entrySet.getValue()) {
-                for (Map.Entry<String, String> entry : e.entrySet()) {
+            int categoryId = entity.getCategoryId();
+            String name = entity.getName();
+            String description = entity.getDescription();
+            boolean active = entity.isActive();
 
-                    String name = entry.getKey();
-                    String description = entry.getValue();
-                    boolean active = isActive.get(i);
+            Category category = this.em.find(Category.class, categoryId);
+            if (category == null) continue;
 
-                    Category category = this.em.find(Category.class, categoryId);
-                    if (category == null) continue;
+            category.updateCategory(new Category(name, description, active));
+            boolean isInserted = this.entityManagerHelper.executeMerge(this.em, category);
 
-                    category.updateCategory(new Category(name, description, active));
-                    boolean isInserted = this.entityManagerHelper.executeMerge(this.em, category);
-
-                    if (isInserted) {
-                        categoryDTOList.add(category.transformToDto());
-                    }
-                }
+            if (isInserted) {
+                categoryDTOList.add(category.transformToDto());
             }
-            i++;
         }
 
         return categoryDTOList.isEmpty() ? null : categoryDTOList;
     }
 
-    /**
-     * Update existing categories with new data.
-     * @param idNameAndDescription Contains Map with id (key) and Value List<Map<k, v>>,
-     *                             the second Map contains name and description for the Category
-     *                             id that will be updated.
-     * @param isActive defines if the category is active.
-     * @return Returns List containing all CategoryDTO which were persisted, or null if none.
-     */
-    public List<CategoryDTO> updateCategory(Map<Integer, List<Map<String, String>>> idNameAndDescription, List<Boolean> isActive) {
+    public List<CategoryDTO> updateCategory(List<CategoryDTO> categories) {
 
         List<CategoryDTO> categoryDTOList = new ArrayList<>();
 
-        int i = 0;
-        for (Map.Entry<Integer, List<Map<String, String>>> entrySet : idNameAndDescription.entrySet()) {
-            int categoryId = entrySet.getKey();
-            for (Map<String, String> e : entrySet.getValue()) {
-                for (Map.Entry<String, String> entry : e.entrySet()) {
+        for (CategoryDTO entity : categories) {
+            int categoryId = entity.getCategoryId();
+            String name = entity.getName();
+            String description = entity.getDescription();
+            boolean active = entity.isActive();
 
-                    String name = entry.getKey();
-                    String description = entry.getValue();
-                    boolean active = isActive.get(i);
+            Category category = this.em.find(Category.class, categoryId);
+            if (category == null) continue;
 
-                    Category category = this.em.find(Category.class, categoryId);
-                    if (category == null) continue;
+            category.updateCategory(new Category(name, description, active));
+            boolean isInserted = this.entityManagerHelper.executeMerge(this.em, category);
 
-                    category.updateCategory(new Category(name, description, active));
-                    boolean isInserted = this.entityManagerHelper.executeMerge(this.em, category);
-
-                    if (isInserted) {
-                        categoryDTOList.add(category.transformToDto());
-                    }
-                }
+            if (isInserted) {
+                categoryDTOList.add(category.transformToDto());
             }
-            i++;
         }
 
         return categoryDTOList.isEmpty() ? null : categoryDTOList;

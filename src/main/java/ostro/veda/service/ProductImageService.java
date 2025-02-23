@@ -8,7 +8,6 @@ import ostro.veda.loggerService.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ProductImageService {
 
@@ -18,12 +17,17 @@ public class ProductImageService {
         this.productImageRepository = productImageRepository;
     }
 
-    public List<ProductImageDTO> addProduct(Map<String, Boolean> images) {
+    /**
+     * Validates Image data to be persisted with Product. Called by ProductService.
+     * @param images
+     * @return List<ProductImageDTO>
+     */
+    public List<ProductImageDTO> addProduct(List<ProductImageDTO> images) {
         try {
             List<ProductImageDTO> productImageDTOList = new ArrayList<>();
-            for (Map.Entry<String, Boolean> entry : images.entrySet()) {
-                String url = entry.getKey();
-                boolean isMain = entry.getValue();
+            for (ProductImageDTO entity : images) {
+                String url = entity.getImageUrl();
+                boolean isMain = entity.isMain();
                 if (!ProductValidation.hasValidInput(url)) continue;
                 url = UrlEncoder.encodeUrl(url);
                 productImageDTOList.add(new ProductImageDTO(-1, url, isMain));
