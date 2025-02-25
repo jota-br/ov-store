@@ -3,9 +3,14 @@ package ostro.veda.common.validation;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StringSanitize {
+public class StringSanitizer {
 
-    public static String stringSanitize(String input) {
+    /**
+     * Sanitize String using getSanitizeMap.
+     * @param input String.
+     * @return Sanitized String.
+     */
+    public static String sanitize(String input) {
         Map<Character, String> sanitize = getSanitizeMap();
 
         StringBuilder sb = new StringBuilder();
@@ -15,6 +20,10 @@ public class StringSanitize {
         return sb.toString();
     }
 
+    /**
+     * Sanitize Characters Map.
+     * @return Map with to be sanitized Character and clean String.
+     */
     private static Map<Character, String> getSanitizeMap() {
         Map<Character, String> sanitize = new HashMap<>();
         sanitize.put('\'', "&apos;");

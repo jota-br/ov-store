@@ -11,6 +11,15 @@ public class CategoryDTO {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
+    /**
+     *
+     * @param categoryId int
+     * @param name String
+     * @param description String
+     * @param isActive boolean
+     * @param createdAt LocalDateTime
+     * @param updatedAt LocalDateTime
+     */
     public CategoryDTO(int categoryId, String name, String description, boolean isActive, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.categoryId = categoryId;
         this.name = name;
@@ -20,15 +29,34 @@ public class CategoryDTO {
         this.updatedAt = updatedAt;
     }
 
+    // WHEN DTO HAS AN VALID ID
+
+    /**
+     *
+     * @param categoryId int
+     * @param name String
+     * @param description String
+     * @param isActive boolean
+     */
     public CategoryDTO(int categoryId, String name, String description, boolean isActive) {
-        this.categoryId = categoryId;
-        this.name = name;
-        this.description = description;
-        this.isActive = isActive;
-        this.createdAt = null;
-        this.updatedAt = null;
+        this(categoryId, name, description, isActive, null, null);
     }
 
+    // WHEN DTO HAS NO ID
+    // USUALLY FOR NEW ENTITY
+
+    /**
+     *
+     * @param name String
+     * @param description String
+     * @param isActive boolean
+     */
+    public CategoryDTO(String name, String description, boolean isActive) {
+        this(-1, name, description, isActive, null, null);
+    }
+
+
+    // GETTERS
     public int getCategoryId() {
         return categoryId;
     }

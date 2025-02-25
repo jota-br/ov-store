@@ -28,14 +28,11 @@ public class OrderServiceTest {
                 UserRepository userRepository = new UserRepository();
                 CategoryRepository categoryRepository = new CategoryRepository(em2);
                 ProductRepository productRepository = new ProductRepository(em2, categoryRepository);
-                ProductImageRepository productImageRepository = new ProductImageRepository(em2);
                 AddressRepository addressRepository = new AddressRepository()
         ) {
 
             UserService userService = new UserService(userRepository);
-            CategoryService categoryService = new CategoryService(categoryRepository);
-            ProductImageService productImageService = new ProductImageService(productImageRepository);
-            ProductService productService = new ProductService(categoryService, productImageService, productRepository);
+            ProductService productService = new ProductService(productRepository);
             OrderService orderService = new OrderService(orderRepository);
 
             UserDTO user = getUserDTO(userService, "username1", "password99*", "email@email.com",
@@ -95,14 +92,11 @@ public class OrderServiceTest {
                 UserRepository userRepository = new UserRepository();
                 CategoryRepository categoryRepository = new CategoryRepository(em2);
                 ProductRepository productRepository = new ProductRepository(em2, categoryRepository);
-                ProductImageRepository productImageRepository = new ProductImageRepository(em2);
                 AddressRepository addressRepository = new AddressRepository()
         ) {
 
             UserService userService = new UserService(userRepository);
-            CategoryService categoryService = new CategoryService(categoryRepository);
-            ProductImageService productImageService = new ProductImageService(productImageRepository);
-            ProductService productService = new ProductService(categoryService, productImageService, productRepository);
+            ProductService productService = new ProductService(productRepository);
             OrderService orderService = new OrderService(orderRepository);
 
             UserDTO user = getUserDTO(userService, "username12", "password99*", "email2@email.com",
@@ -142,14 +136,11 @@ public class OrderServiceTest {
                 UserRepository userRepository = new UserRepository();
                 CategoryRepository categoryRepository = new CategoryRepository(em2);
                 ProductRepository productRepository = new ProductRepository(em2, categoryRepository);
-                ProductImageRepository productImageRepository = new ProductImageRepository(em2);
                 AddressRepository addressRepository = new AddressRepository()
         ) {
 
             UserService userService = new UserService(userRepository);
-            CategoryService categoryService = new CategoryService(categoryRepository);
-            ProductImageService productImageService = new ProductImageService(productImageRepository);
-            ProductService productService = new ProductService(categoryService, productImageService, productRepository);
+            ProductService productService = new ProductService(productRepository);
             OrderService orderService = new OrderService(orderRepository);
 
             UserDTO user = getUserDTO(userService, "username123", "password99*33", "email23@email.com",
@@ -194,9 +185,7 @@ public class OrderServiceTest {
         ) {
 
             UserService userService = new UserService(userRepository);
-            CategoryService categoryService = new CategoryService(categoryRepository);
-            ProductImageService productImageService = new ProductImageService(productImageRepository);
-            ProductService productService = new ProductService(categoryService, productImageService, productRepository);
+            ProductService productService = new ProductService(productRepository);
             OrderService orderService = new OrderService(orderRepository);
 
             UserDTO user = getUserDTO(userService, "username123", "password99*33", "email23@email.com",
@@ -240,10 +229,10 @@ public class OrderServiceTest {
 
     private static List<ProductDTO> getProductDTOList(ProductService productService, List<CategoryDTO> categories) {
         return List.of(
-                productService.addProduct("Product Test One", "Description One",
-                        45.00, 10, true, categories, null),
-                productService.addProduct("Product Test Two", "Description Two",
-                        50.00, 5, true, categories, null)
+                productService.addProduct(new ProductDTO("Product Test One", "Description One",
+                        45.00, 10, true, categories, null)),
+                productService.addProduct(new ProductDTO("Product Test Two", "Description Two",
+                        50.00, 5, true, categories, null))
         );
     }
 }

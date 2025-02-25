@@ -1,6 +1,7 @@
 package ostro.veda.common.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDTO {
@@ -17,6 +18,20 @@ public class ProductDTO {
     private final LocalDateTime updatedAt;
     private final int version;
 
+    /**
+     *
+     * @param productId int
+     * @param name String
+     * @param description String
+     * @param price double
+     * @param stock int
+     * @param isActive boolean
+     * @param categories List CategoryDTO
+     * @param images List ProductImageDTO
+     * @param createdAt LocalDateTime
+     * @param updatedAt LocalDateTime
+     * @param version Optimistic Locking
+     */
     public ProductDTO(int productId, String name, String description, double price, int stock, boolean isActive,
                       List<CategoryDTO> categories, List<ProductImageDTO> images, LocalDateTime createdAt, LocalDateTime updatedAt,
                       int version) {
@@ -26,13 +41,45 @@ public class ProductDTO {
         this.price = price;
         this.stock = stock;
         this.isActive = isActive;
-        this.categories = categories;
-        this.images = images;
+        this.categories = categories == null ? new ArrayList<>() : categories;
+        this.images = images == null ? new ArrayList<>() : images;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.version = version;
     }
 
+    /**
+     *
+     * @param productId int
+     * @param name String
+     * @param description String
+     * @param price double
+     * @param stock int
+     * @param isActive boolean
+     * @param categories List CategoryDTO
+     * @param images List ProductImageDTO
+     */
+    public ProductDTO(int productId, String name, String description, double price, int stock, boolean isActive,
+                      List<CategoryDTO> categories, List<ProductImageDTO> images) {
+        this(productId, name, description, price, stock, isActive, categories, images, null, null, 0);
+    }
+
+    /**
+     *
+     * @param name String
+     * @param description String
+     * @param price double
+     * @param stock int
+     * @param isActive boolean
+     * @param categories List CategoryDTO
+     * @param images List ProductImageDTO
+     */
+    public ProductDTO(String name, String description, double price, int stock, boolean isActive,
+                      List<CategoryDTO> categories, List<ProductImageDTO> images) {
+        this(-1, name, description, price, stock, isActive, categories, images, null, null, 0);
+    }
+
+    // GETTERS
     public int getProductId() {
         return productId;
     }

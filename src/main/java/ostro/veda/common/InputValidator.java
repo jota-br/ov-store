@@ -61,7 +61,6 @@ public class InputValidator {
     }
 
     public static String stringSanitize(String input) {
-//        String characters = "[<>\"'&;/\\\\(){}%|^$]";
         Map<Character, String> sanitize = getSanitizeMap();
 
         StringBuilder sb = new StringBuilder();
