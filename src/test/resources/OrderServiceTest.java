@@ -8,10 +8,12 @@ import ostro.veda.db.*;
 import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.db.helpers.OrderStatus;
 import ostro.veda.db.jpa.Product;
-import ostro.veda.service.*;
+import ostro.veda.service.AddressService;
+import ostro.veda.service.OrderService;
+import ostro.veda.service.ProductService;
+import ostro.veda.service.UserService;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -43,37 +45,22 @@ public class OrderServiceTest {
             List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
-            int itemOneQty = 1;
-            int itemTwoQty = 1;
-            double total = (productDTOList.get(0).getPrice() * itemOneQty) + (productDTOList.get(1).getPrice() * itemTwoQty);
-            int remainingStockOne = productDTOList.get(0).getStock() - itemOneQty;
-            int remainingStockTwo = productDTOList.get(1).getStock() - itemTwoQty;
+            OrderDetailBasic orderDetailBasic = new OrderDetailBasic(
+                    productDTOList.get(0).getProductId(), 5);
+            OrderBasic orderBasic = new OrderBasic(user.getUserId(), OrderStatus.DELIVERED.getStatus(),
+                    addressDTO.getAddressId(), addressDTO.getAddressId(), List.of(orderDetailBasic));
 
-            OrderDTO orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.PENDING_PAYMENT.getStatus(), addressDTO, addressDTO,
-                    Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty));
+            OrderDTO orderDTO = orderService.addOrder(orderBasic);
             assertNotNull(orderDTO);
 
-            itemOneQty = 2;
-            itemTwoQty = 2;
-            total = (productDTOList.get(0).getPrice() * itemOneQty) + (productDTOList.get(1).getPrice() * itemTwoQty);
-            remainingStockOne = remainingStockOne - itemOneQty;
-            remainingStockTwo = remainingStockTwo - itemTwoQty;
-            orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.DRAFT.getStatus(), addressDTO, addressDTO,
-                    Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty));
+            orderDTO = orderService.addOrder(orderBasic);
             assertNotNull(orderDTO);
 
-            // Product Test Two has no sufficient inventory for this transaction
-            itemOneQty = 3;
-            itemTwoQty = 3;
-            total = (productDTOList.get(0).getPrice() * itemOneQty) + (productDTOList.get(1).getPrice() * itemTwoQty);
-            orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.PENDING_PAYMENT.getStatus(), addressDTO, addressDTO,
-                    Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty));
+            orderDTO = orderService.addOrder(orderBasic);
             Product pOne = orderRepository.getEm().find(Product.class, productDTOList.get(0).getProductId());
-            Product pOTwo = orderRepository.getEm().find(Product.class, productDTOList.get(1).getProductId());
 
             assertNull(orderDTO);
-            assertEquals(remainingStockOne, pOne.getStock());
-            assertEquals(remainingStockTwo, pOTwo.getStock());
+            assertEquals(2, pOne.getStock());
         } catch (Exception e) {
             fail(e.getMessage());
         } finally {
@@ -107,12 +94,12 @@ public class OrderServiceTest {
             List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
-            int itemOneQty = 1;
-            int itemTwoQty = 1;
-            double total = (productDTOList.get(0).getPrice() * itemOneQty) + (productDTOList.get(1).getPrice() * itemTwoQty);
+            OrderDetailBasic orderDetailBasic = new OrderDetailBasic(
+                    productDTOList.get(0).getProductId(), productDTOList.get(0).getStock());
+            OrderBasic orderBasic = new OrderBasic(user.getUserId(), OrderStatus.DELIVERED.getStatus(),
+                    addressDTO.getAddressId(), addressDTO.getAddressId(), List.of(orderDetailBasic));
 
-            OrderDTO orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.PENDING_PAYMENT.getStatus(), addressDTO, addressDTO,
-                    Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty));
+            OrderDTO orderDTO = orderService.addOrder(orderBasic);
             assertNotNull(orderDTO);
 
             orderDTO = orderService.updateOrderStatus(1, OrderStatus.PROCESSING.getStatus());
@@ -151,11 +138,15 @@ public class OrderServiceTest {
             List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
+            OrderDetailBasic orderDetailBasic = new OrderDetailBasic(
+                    productDTOList.get(0).getProductId(), productDTOList.get(0).getStock());
+            OrderBasic orderBasic = new OrderBasic(user.getUserId(), OrderStatus.DELIVERED.getStatus(),
+                    addressDTO.getAddressId(), addressDTO.getAddressId(), List.of(orderDetailBasic));
+
             int itemOneQty = 1;
             int itemTwoQty = 1;
             double total = (productDTOList.get(0).getPrice() * itemOneQty) + (productDTOList.get(1).getPrice() * itemTwoQty);
-            OrderDTO orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.PENDING_PAYMENT.getStatus(), addressDTO, addressDTO,
-                    Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty));
+            OrderDTO orderDTO = orderService.addOrder(orderBasic);
             assertNotNull(orderDTO);
 
             OrderDTO orderToBeCancelled = orderService.cancelOrder(orderDTO.getOrderId());
@@ -196,14 +187,20 @@ public class OrderServiceTest {
             List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
-            int itemOneQty = 1;
-            int itemTwoQty = 1;
-            double total = (productDTOList.get(0).getPrice() * itemOneQty) + (productDTOList.get(1).getPrice() * itemTwoQty);
-            OrderDTO orderDTO = orderService.addOrder(user.getUserId(), total, OrderStatus.DELIVERED.getStatus(), addressDTO, addressDTO,
-                    Map.of(productDTOList.get(0), itemOneQty, productDTOList.get(1), itemTwoQty));
+            OrderDetailBasic orderDetailBasic = new OrderDetailBasic(
+                    productDTOList.get(0).getProductId(), productDTOList.get(0).getStock());
+            OrderBasic orderBasic = new OrderBasic(user.getUserId(), OrderStatus.DELIVERED.getStatus(),
+                    addressDTO.getAddressId(), addressDTO.getAddressId(), List.of(orderDetailBasic));
+
+            OrderDTO orderDTO = orderService.addOrder(orderBasic);
+
+            orderDetailBasic = new OrderDetailBasic(
+                    orderDTO.getOrderDetails().get(0).getProduct().getProductId(), orderDTO.getOrderDetails().get(0).getQuantity());
+            orderBasic = new OrderBasic(user.getUserId(), orderDTO.getOrderId(), orderDTO.getStatus(),
+                    orderDTO.getBillingAddress().getAddressId(), orderDTO.getShippingAddress().getAddressId(), List.of(orderDetailBasic));
             assertNotNull(orderDTO);
 
-            OrderDTO orderAndItemToReturn = orderService.returnItem(orderDTO.getOrderId(), Map.of(productDTOList.get(0), 1));
+            OrderDTO orderAndItemToReturn = orderService.returnItem(orderBasic);
             assertNotNull(orderAndItemToReturn);
             assertEquals(orderAndItemToReturn.getStatus(), OrderStatus.RETURN_REQUESTED.getStatus());
 

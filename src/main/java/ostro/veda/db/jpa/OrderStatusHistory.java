@@ -34,6 +34,10 @@ public class OrderStatusHistory {
         this.status = status;
     }
 
+    public OrderStatusHistory(String status) {
+        this(null , status);
+    }
+
     public int getOrderStatusHistoryId() {
         return orderStatusHistoryId;
     }

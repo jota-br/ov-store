@@ -54,13 +54,35 @@ public class Order {
     public Order() {
     }
 
-    public Order(int userId, double totalAmount, String status,
-                 Address shippingAddress, Address billingAddress) {
+    public Order(int orderId, int userId, LocalDateTime orderDate, double totalAmount, String status,
+                 List<OrderDetail> orderDetails, Address shippingAddress, Address billingAddress,
+                 List<OrderStatusHistory> orderStatusHistory, LocalDateTime updatedAt) {
+        this.orderId = orderId;
         this.userId = userId;
+        this.orderDate = orderDate;
         this.totalAmount = totalAmount;
         this.status = status;
+        this.orderDetails = orderDetails == null ? new ArrayList<>() : orderDetails;
         this.shippingAddress = shippingAddress;
         this.billingAddress = billingAddress;
+        this.orderStatusHistory = orderStatusHistory == null ? new ArrayList<>() : orderStatusHistory;
+        this.updatedAt = updatedAt;
+    }
+
+    public Order(int userId, double totalAmount, String status, List<OrderDetail> orderDetails,
+                 Address shippingAddress, Address billingAddress, List<OrderStatusHistory> orderStatusHistory) {
+        this(-1, userId, null, totalAmount, status, orderDetails,shippingAddress, billingAddress,
+                orderStatusHistory, null);
+    }
+
+    public Order(int userId, double totalAmount, String status, Address shippingAddress, Address billingAddress) {
+        this(-1, userId, null, totalAmount, status, null, shippingAddress, billingAddress,
+                null, null);
+    }
+
+    public Order(int userId, double totalAmount, String status, List<OrderDetail> orderDetails, Address shippingAddress, Address billingAddress) {
+        this(-1, userId, null, totalAmount, status, orderDetails, shippingAddress, billingAddress,
+                null, null);
     }
 
     public int getOrderId() {
@@ -124,6 +146,6 @@ public class Order {
         }
 
         return new OrderDTO(this.getOrderId(), this.getUserId(), this.getOrderDate(), this.getTotalAmount(), this.getStatus(),
-                orderDetailDTOList, this.getShippingAddress(), this.getBillingAddress(), orderStatusHistoryDTOList, this.getUpdatedAt());
+                orderDetailDTOList, this.getShippingAddress().transformToDto(), this.getBillingAddress().transformToDto(), orderStatusHistoryDTOList, this.getUpdatedAt());
     }
 }

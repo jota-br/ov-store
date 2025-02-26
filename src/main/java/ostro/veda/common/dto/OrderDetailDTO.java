@@ -1,17 +1,14 @@
 package ostro.veda.common.dto;
 
-import ostro.veda.db.jpa.Order;
-import ostro.veda.db.jpa.Product;
-
 public class OrderDetailDTO {
 
     private final int orderDetailId;
-    private final Order order;
-    private final Product product;
+    private final OrderDTO order;
+    private final ProductDTO product;
     private final int quantity;
     private final double unitPrice;
 
-    public OrderDetailDTO(int orderDetailId, Order order, Product product, int quantity, double unitPrice) {
+    public OrderDetailDTO(int orderDetailId, OrderDTO order, ProductDTO product, int quantity, double unitPrice) {
         this.orderDetailId = orderDetailId;
         this.order = order;
         this.product = product;
@@ -19,15 +16,19 @@ public class OrderDetailDTO {
         this.unitPrice = unitPrice;
     }
 
+    public OrderDetailDTO(OrderDTO order, ProductDTO product, int quantity, double unitPrice) {
+        this(-1, order, product, quantity, unitPrice);
+    }
+
     public int getOrderDetailId() {
         return orderDetailId;
     }
 
-    public Order getOrder() {
+    public OrderDTO getOrder() {
         return order;
     }
 
-    public Product getProduct() {
+    public ProductDTO getProduct() {
         return product;
     }
 
