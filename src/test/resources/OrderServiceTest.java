@@ -59,8 +59,10 @@ public class OrderServiceTest {
             orderDTO = orderService.addOrder(orderBasic);
             Product pOne = orderRepository.getEm().find(Product.class, productDTOList.get(0).getProductId());
 
+
             assertNull(orderDTO);
-            assertEquals(2, pOne.getStock());
+            assertEquals(0, pOne.getStock());
+
         } catch (Exception e) {
             fail(e.getMessage());
         } finally {

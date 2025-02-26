@@ -6,10 +6,7 @@ import ostro.veda.common.dto.*;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.db.helpers.OrderStatus;
-import ostro.veda.db.jpa.Address;
-import ostro.veda.db.jpa.Order;
-import ostro.veda.db.jpa.OrderDetail;
-import ostro.veda.db.jpa.Product;
+import ostro.veda.db.jpa.*;
 import ostro.veda.loggerService.Logger;
 
 import java.time.LocalDateTime;
@@ -41,7 +38,7 @@ public class OrderRepository extends Repository {
 
             this.em.persist(order);
             List<OrderDetail> orderDetailList = getOrderDetail(order, orderBasic);
-            List<OrderDetailDTO> orderDetailDTOList = orderDetailRepository.addOrderDetail(order, orderDetailList);
+            List<OrderDetailDTO> orderDetailDTOList = orderDetailRepository.addOrderDetail(order, orderDetailList, OrderDetailRepository.OrderOperation.DECREASE);
             OrderStatusHistoryDTO orderStatusHistoryDTO = orderStatusHistoryRepository.addOrderStatusHistory(order);
 
             transaction.commit();
@@ -113,7 +110,7 @@ public class OrderRepository extends Repository {
 
             this.getEm().persist(order);
             OrderStatusHistoryDTO orderStatusHistory = orderStatusHistoryRepository.addOrderStatusHistory(order);
-            orderDetailRepository.addOrderDetail(order, orderDetailList);
+            orderDetailRepository.addOrderDetail(order, orderDetailList, OrderDetailRepository.OrderOperation.INCREASE);
 
             transaction.commit();
             OrderDTO orderDTO = order.transformToDto();
@@ -143,7 +140,7 @@ public class OrderRepository extends Repository {
 
             this.getEm().persist(order);
             OrderStatusHistoryDTO orderStatusHistory = orderStatusHistoryRepository.addOrderStatusHistory(order);
-            orderDetailRepository.addOrderDetail(order, order.getOrderDetails());
+            orderDetailRepository.addOrderDetail(order, order.getOrderDetails(), OrderDetailRepository.OrderOperation.INCREASE);
 
             transaction.commit();
             OrderDTO orderDTO = order.transformToDto();

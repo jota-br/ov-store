@@ -33,8 +33,8 @@ public class Order {
     @Column(name = "status")
     private String status;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<OrderDetail> orderDetails = new ArrayList<>();
+    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderDetail> orderDetails;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shipping_address_id", referencedColumnName = "address_id")
@@ -44,8 +44,8 @@ public class Order {
     @JoinColumn(name = "billing_address_id", referencedColumnName = "address_id")
     private Address billingAddress;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<OrderStatusHistory> orderStatusHistory = new ArrayList<>();
+    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderStatusHistory> orderStatusHistory;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
@@ -62,10 +62,10 @@ public class Order {
         this.orderDate = orderDate;
         this.totalAmount = totalAmount;
         this.status = status;
-        this.orderDetails = orderDetails;
+        this.orderDetails = orderDetails == null ? new ArrayList<>() : orderDetails;
         this.shippingAddress = shippingAddress;
         this.billingAddress = billingAddress;
-        this.orderStatusHistory = orderStatusHistory;
+        this.orderStatusHistory = orderStatusHistory == null ? new ArrayList<>() : orderStatusHistory;
         this.updatedAt = updatedAt;
     }
 

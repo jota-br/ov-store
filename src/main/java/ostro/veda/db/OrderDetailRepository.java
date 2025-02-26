@@ -16,13 +16,18 @@ public class OrderDetailRepository extends Repository {
         super(em);
     }
 
-    public List<OrderDetailDTO> addOrderDetail(Order order, List<OrderDetail> orderDetailList)
+    enum OrderOperation {
+        INCREASE,
+        DECREASE;
+    }
+
+    public List<OrderDetailDTO> addOrderDetail(Order order, List<OrderDetail> orderDetailList, OrderOperation orderOperation)
             throws OptimisticLockException {
 
-        boolean isUpdated = updateProductInventory(orderDetailList);
-        if (!isUpdated) return null;
+        List<OrderDetail> newOrderDetailList = updateProductInventory(order, orderDetailList, orderOperation);
+        if (newOrderDetailList == null) return null;
 
-        for (OrderDetail orderDetail : orderDetailList) {
+        for (OrderDetail orderDetail : newOrderDetailList.isEmpty() ? orderDetailList : newOrderDetailList) {
             this.em.persist(orderDetail.getProduct());
             this.em.persist(orderDetail);
         }
@@ -30,20 +35,27 @@ public class OrderDetailRepository extends Repository {
         return getOrderDetailDTOList(orderDetailList);
     }
 
-    private boolean updateProductInventory(List<OrderDetail> orderDetailList) {
+    private List<OrderDetail> updateProductInventory(Order order, List<OrderDetail> orderDetailList, OrderOperation orderOperation) {
+
+        List<OrderDetail> newOrderDetailList = new ArrayList<>();
         for (OrderDetail orderDetail : orderDetailList) {
 
             Product product = orderDetail.getProduct();
             int newStock = product.getStock();
             int quantity = orderDetail.getQuantity();
 
-            if (!hasStock(newStock, quantity)) return false;
 
-            newStock = newStock + quantity;
+            if (orderOperation.equals(OrderOperation.INCREASE)) {
+                newStock = newStock + quantity;
+                newOrderDetailList.add(new OrderDetail(order, product, -quantity, product.getPrice()));
+            } else {
+                if (!hasStock(newStock, quantity)) return null;
+                newStock = newStock - quantity;
+            }
 
             product.updateStock(newStock);
         }
-        return true;
+        return newOrderDetailList;
     }
 
     private boolean hasStock(int stock, int quantity) {
