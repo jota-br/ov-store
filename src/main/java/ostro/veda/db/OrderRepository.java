@@ -40,7 +40,8 @@ public class OrderRepository extends Repository {
             transaction.begin();
 
             this.em.persist(order);
-            List<OrderDetailDTO> orderDetailDTOList = orderDetailRepository.addOrderDetail(order);
+            List<OrderDetail> orderDetailList = getOrderDetail(order, orderBasic);
+            List<OrderDetailDTO> orderDetailDTOList = orderDetailRepository.addOrderDetail(order, orderDetailList);
             OrderStatusHistoryDTO orderStatusHistoryDTO = orderStatusHistoryRepository.addOrderStatusHistory(order);
 
             transaction.commit();
@@ -97,7 +98,9 @@ public class OrderRepository extends Repository {
      * @return will return OrderDTO with updated data
      */
     public OrderDTO cancelOrder(int orderId) throws UnsupportedOperationException {
-        Order order = getOrder(orderId);
+        Order order = this.getEm().find(Order.class, orderId);
+        List<OrderDetail> orderDetailList = this.getEntityManagerHelper().findByFieldId(this.getEm(),
+                        OrderDetail.class, Map.of("order.orderId", orderId));
 
         if (!isCancellationAvailable(order.getStatus())) return null;
 
@@ -110,7 +113,7 @@ public class OrderRepository extends Repository {
 
             this.getEm().persist(order);
             OrderStatusHistoryDTO orderStatusHistory = orderStatusHistoryRepository.addOrderStatusHistory(order);
-            orderDetailRepository.addOrderDetail(order);
+            orderDetailRepository.addOrderDetail(order, orderDetailList);
 
             transaction.commit();
             OrderDTO orderDTO = order.transformToDto();
@@ -140,7 +143,7 @@ public class OrderRepository extends Repository {
 
             this.getEm().persist(order);
             OrderStatusHistoryDTO orderStatusHistory = orderStatusHistoryRepository.addOrderStatusHistory(order);
-            orderDetailRepository.addOrderDetail(order);
+            orderDetailRepository.addOrderDetail(order, order.getOrderDetails());
 
             transaction.commit();
             OrderDTO orderDTO = order.transformToDto();
@@ -206,8 +209,6 @@ public class OrderRepository extends Repository {
 
         double totalAmount = 0.0;
 
-        List<OrderDetail> orderDetailList = new ArrayList<>();
-
         for (OrderDetailBasic orderDetailBasic : orderBasic.getOrderDetails()) {
             Product product = this.getEm().find(Product.class, orderDetailBasic.getProductId());
 
@@ -216,15 +217,24 @@ public class OrderRepository extends Repository {
 
             double price = product.getPrice();
             totalAmount += totalAmount + (price * quantity);
-
-            orderDetailList.add(new OrderDetail(product, quantity, price));
         }
 
         Address shipping = this.em.find(Address.class, orderBasic.getShippingAddressId());
         Address billing = this.em.find(Address.class, orderBasic.getBillingAddressId());
 
-        return new Order(orderBasic.getUserId(), totalAmount, orderBasic.getStatus(), orderDetailList,
+        return new Order(orderBasic.getUserId(), totalAmount, orderBasic.getStatus(),
                 shipping, billing);
+    }
+
+    private List<OrderDetail> getOrderDetail(Order order, OrderBasic orderBasic) {
+        List<OrderDetail> orderDetailList = new ArrayList<>();
+        for (OrderDetailBasic orderDetailBasic : orderBasic.getOrderDetails()) {
+            Product product = this.getEm().find(Product.class, orderDetailBasic.getProductId());
+            int quantity = orderDetailBasic.getQuantity();
+            double price = product.getPrice();
+            orderDetailList.add(new OrderDetail(order, product, quantity, price));
+        }
+        return orderDetailList;
     }
 
     /**
@@ -234,12 +244,6 @@ public class OrderRepository extends Repository {
      * @return Order
      */
     private Order getOrder(int orderId) {
-        List<OrderDetail> orderDetail = this.getEntityManagerHelper().findByFieldId(this.getEm(),
-                OrderDetail.class, Map.of("order.orderId", orderId));
-
-        Order order = this.getEm().find(Order.class, orderId);
-        order.getOrderDetails().addAll(orderDetail);
-
-        return order;
+        return this.getEm().find(Order.class, orderId);
     }
 }

@@ -62,27 +62,27 @@ public class Order {
         this.orderDate = orderDate;
         this.totalAmount = totalAmount;
         this.status = status;
-        this.orderDetails = orderDetails == null ? new ArrayList<>() : orderDetails;
+        this.orderDetails = orderDetails;
         this.shippingAddress = shippingAddress;
         this.billingAddress = billingAddress;
-        this.orderStatusHistory = orderStatusHistory == null ? new ArrayList<>() : orderStatusHistory;
+        this.orderStatusHistory = orderStatusHistory;
         this.updatedAt = updatedAt;
     }
 
     public Order(int userId, double totalAmount, String status, List<OrderDetail> orderDetails,
                  Address shippingAddress, Address billingAddress, List<OrderStatusHistory> orderStatusHistory) {
-        this(-1, userId, null, totalAmount, status, orderDetails,shippingAddress, billingAddress,
+        this(0, userId, null, totalAmount, status, orderDetails,shippingAddress, billingAddress,
                 orderStatusHistory, null);
     }
 
     public Order(int userId, double totalAmount, String status, Address shippingAddress, Address billingAddress) {
-        this(-1, userId, null, totalAmount, status, null, shippingAddress, billingAddress,
-                null, null);
+        this(0, userId, null, totalAmount, status, List.of(), shippingAddress, billingAddress,
+                List.of(), null);
     }
 
     public Order(int userId, double totalAmount, String status, List<OrderDetail> orderDetails, Address shippingAddress, Address billingAddress) {
-        this(-1, userId, null, totalAmount, status, orderDetails, shippingAddress, billingAddress,
-                null, null);
+        this(0, userId, null, totalAmount, status, orderDetails, shippingAddress, billingAddress,
+                List.of(), null);
     }
 
     public int getOrderId() {

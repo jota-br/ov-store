@@ -139,13 +139,10 @@ public class OrderServiceTest {
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
             OrderDetailBasic orderDetailBasic = new OrderDetailBasic(
-                    productDTOList.get(0).getProductId(), productDTOList.get(0).getStock());
-            OrderBasic orderBasic = new OrderBasic(user.getUserId(), OrderStatus.DELIVERED.getStatus(),
+                    productDTOList.get(0).getProductId(), 10);
+            OrderBasic orderBasic = new OrderBasic(user.getUserId(), OrderStatus.PROCESSING.getStatus(),
                     addressDTO.getAddressId(), addressDTO.getAddressId(), List.of(orderDetailBasic));
 
-            int itemOneQty = 1;
-            int itemTwoQty = 1;
-            double total = (productDTOList.get(0).getPrice() * itemOneQty) + (productDTOList.get(1).getPrice() * itemTwoQty);
             OrderDTO orderDTO = orderService.addOrder(orderBasic);
             assertNotNull(orderDTO);
 

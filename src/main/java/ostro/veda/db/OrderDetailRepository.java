@@ -16,10 +16,8 @@ public class OrderDetailRepository extends Repository {
         super(em);
     }
 
-    public List<OrderDetailDTO> addOrderDetail(Order order)
+    public List<OrderDetailDTO> addOrderDetail(Order order, List<OrderDetail> orderDetailList)
             throws OptimisticLockException {
-
-        List<OrderDetail> orderDetailList = order.getOrderDetails();
 
         boolean isUpdated = updateProductInventory(orderDetailList);
         if (!isUpdated) return null;

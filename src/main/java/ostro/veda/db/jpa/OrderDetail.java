@@ -64,4 +64,17 @@ public class OrderDetail {
         return new OrderDetailDTO(this.getOrderDetailId(), this.getOrder().transformToDto(), this.getProduct().transformToDto(), this.getQuantity(),
                 this.getUnitPrice());
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OrderDetail that = (OrderDetail) o;
+        return orderDetailId == that.orderDetailId;
+    }
+
+    @Override
+    public int hashCode() {
+        return orderDetailId;
+    }
 }
