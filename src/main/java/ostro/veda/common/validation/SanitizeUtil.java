@@ -3,6 +3,7 @@ package ostro.veda.common.validation;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.dto.ProductImageDTO;
+import ostro.veda.common.dto.UserDTO;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,6 +58,10 @@ public class SanitizeUtil {
             cleanProductImageList.add(new ProductImageDTO(productImageId, url, productImage.isMain()));
         }
         return cleanProductImageList;
+    }
+
+    public static UserDTO sanitizeUser(UserDTO userDTO) {
+        return null;
     }
 
     public static String sanitize(String input) {
