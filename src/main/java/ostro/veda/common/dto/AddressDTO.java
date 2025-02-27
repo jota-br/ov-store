@@ -33,6 +33,12 @@ public class AddressDTO {
         this.updatedAt = updatedAt;
     }
 
+    public AddressDTO(int userId, String streetAddress, String addressNumber, String addressType,
+                      String city, String state, String zipCode, String country, boolean isActive) {
+        this(0, userId, streetAddress, addressNumber, addressType, city, state, zipCode,
+                country, isActive, null, null);
+    }
+
     public int getAddressId() {
         return addressId;
     }

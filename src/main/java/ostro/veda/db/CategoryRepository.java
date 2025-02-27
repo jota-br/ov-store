@@ -14,14 +14,23 @@ public class CategoryRepository extends Repository {
     public CategoryRepository() {
     }
 
+    /**
+     *
+     * @param em EntityManager
+     */
     public CategoryRepository(EntityManager em) {
         super(em);
     }
 
-    public List<CategoryDTO> addCategory(List<CategoryDTO> nameAndDescription) {
+    /**
+     *
+     * @param categories List with CategoryDTO.
+     * @return List with CategoryDTO.
+     */
+    public List<CategoryDTO> addCategory(List<CategoryDTO> categories) {
 
         List<CategoryDTO> categoryDTOList = new ArrayList<>();
-        for (CategoryDTO entity : nameAndDescription) {
+        for (CategoryDTO entity : categories) {
             String name = entity.getName();
             String description = entity.getDescription();
             boolean isActive = entity.isActive();
@@ -47,30 +56,11 @@ public class CategoryRepository extends Repository {
         return categoryDTOList.isEmpty() ? null : categoryDTOList;
     }
 
-    public List<CategoryDTO> updateProduct(List<CategoryDTO> categories) {
-
-        List<CategoryDTO> categoryDTOList = new ArrayList<>();
-        for (CategoryDTO entity : categories) {
-
-            int categoryId = entity.getCategoryId();
-            String name = entity.getName();
-            String description = entity.getDescription();
-            boolean active = entity.isActive();
-
-            Category category = this.em.find(Category.class, categoryId);
-            if (category == null) continue;
-
-            category.updateCategory(new Category(name, description, active));
-            boolean isInserted = this.entityManagerHelper.executeMerge(this.em, category);
-
-            if (isInserted) {
-                categoryDTOList.add(category.transformToDto());
-            }
-        }
-
-        return categoryDTOList.isEmpty() ? null : categoryDTOList;
-    }
-
+    /**
+     *
+     * @param categories List with CategoryDTO.
+     * @return List with CategoryDTO.
+     */
     public List<CategoryDTO> updateCategory(List<CategoryDTO> categories) {
 
         List<CategoryDTO> categoryDTOList = new ArrayList<>();

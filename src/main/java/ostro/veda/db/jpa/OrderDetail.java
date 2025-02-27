@@ -36,6 +36,10 @@ public class OrderDetail {
         this.unitPrice = unitPrice;
     }
 
+    public OrderDetail(Product product, int quantity, double unitPrice) {
+        this(null, product, quantity, unitPrice);
+    }
+
     public int getOrderDetailId() {
         return orderDetailId;
     }
@@ -57,7 +61,20 @@ public class OrderDetail {
     }
 
     public OrderDetailDTO transformToDto() {
-        return new OrderDetailDTO(this.getOrderDetailId(), null, this.getProduct(), this.getQuantity(),
+        return new OrderDetailDTO(this.getOrderDetailId(), this.getOrder().transformToDto(), this.getProduct().transformToDto(), this.getQuantity(),
                 this.getUnitPrice());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OrderDetail that = (OrderDetail) o;
+        return orderDetailId == that.orderDetailId;
+    }
+
+    @Override
+    public int hashCode() {
+        return orderDetailId;
     }
 }

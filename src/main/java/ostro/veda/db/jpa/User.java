@@ -3,9 +3,11 @@ package ostro.veda.db.jpa;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.common.dto.UserDTO;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -72,6 +74,7 @@ public class User {
         this.phone = phone;
         this.isActive = isActive;
         this.role = role;
+        this.addresses = new ArrayList<>();
     }
 
     public User(String username, String salt, String hash, String email, String firstName,
@@ -85,7 +88,7 @@ public class User {
         this.phone = phone;
         this.isActive = isActive;
         this.role = role;
-        this.addresses = addresses;
+        this.addresses = addresses == null ? new ArrayList<>() : addresses;
     }
 
     public int getUserId() {
@@ -155,7 +158,15 @@ public class User {
     }
 
     public UserDTO transformToDto() {
+        List<AddressDTO> addressDTOList = new ArrayList<>();
+        if (this.getAddresses().isEmpty()) {
+            for (Address address : this.getAddresses()) {
+                addressDTOList.add(new AddressDTO(address.getAddressId(), address.getUserId(), address.getStreetAddress(),
+                        address.getAddressNumber(), address.getAddressType(), address.getCity(), address.getState(),
+                        address.getZipCode(), address.getCountry(), address.isActive(), address.getCreatedAt(), address.getUpdatedAt()));
+            }
+        }
         return new UserDTO(this.getUserId(), this.getUsername(), this.getSalt(), this.getHash(), this.getEmail(), this.getFirstName(), this.getLastName(),
-                this.getPhone(), this.isActive(), this.getRole(), this.getAddresses(), this.getCreatedAt(), this.getUpdatedAt());
+                this.getPhone(), this.isActive(), this.getRole(), addressDTOList, this.getCreatedAt(), this.getUpdatedAt());
     }
 }

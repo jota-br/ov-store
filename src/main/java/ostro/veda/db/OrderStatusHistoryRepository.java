@@ -11,18 +11,9 @@ public class OrderStatusHistoryRepository extends Repository {
         super(em);
     }
 
-    /**
-     * This method is exclusively called by OrderRepository
-     * when using this method, it needs to have the same EntityManager as the OrderRepository,
-     * for single transaction and data integrity.
-     *
-     * @param order  is validated at OrderService. Order to create the status history trace.
-     * @param status is validated at OrderService. OrderStatus enum String value.
-     * @return returns OrderStatusHistoryDTO entity to be added to the Order statusHistory List.
-     */
-    public OrderStatusHistoryDTO addOrderStatusHistory(Order order, String status) {
+    public OrderStatusHistoryDTO addOrderStatusHistory(Order order) {
 
-        OrderStatusHistory orderStatusHistory = new OrderStatusHistory(order, status);
+        OrderStatusHistory orderStatusHistory = new OrderStatusHistory(order, order.getStatus());
         this.em.persist(orderStatusHistory);
         return orderStatusHistory.transformToDto();
     }

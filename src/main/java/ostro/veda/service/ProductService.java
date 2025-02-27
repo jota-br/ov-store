@@ -1,81 +1,44 @@
 package ostro.veda.service;
 
-import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.dto.ProductDTO;
-import ostro.veda.common.dto.ProductImageDTO;
 import ostro.veda.common.error.ErrorHandling;
-import ostro.veda.common.validation.ProductValidation;
-import ostro.veda.common.validation.StringSanitize;
+import ostro.veda.common.validation.SanitizeUtil;
+import ostro.veda.common.validation.ValidateUtil;
 import ostro.veda.db.ProductRepository;
 import ostro.veda.loggerService.Logger;
 
-import java.util.List;
-
 public class ProductService {
 
-    private final CategoryService categoryService;
-    private final ProductImageService productImageService;
     private final ProductRepository productRepository;
 
-    public ProductService(CategoryService categoryService,
-                          ProductImageService productImageService, ProductRepository productRepository) {
-        this.categoryService = categoryService;
-        this.productImageService = productImageService;
+    public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
-    public ProductDTO addProduct(String nameProduct, String descriptionProduct, double priceProduct, int stockProduct,
-                                 boolean isActiveProduct,
-                                 List<CategoryDTO> nameAndDescription, List<ProductImageDTO> images) {
+    /**
+     * Add new Product.
+     * @param product ProductDTO
+     * @return ProductDTO
+     */
+    public ProductDTO addProduct(ProductDTO product) {
         try {
-            if (!ProductValidation.hasValidInput(nameProduct, descriptionProduct, priceProduct, stockProduct))
-                return null;
-            nameProduct = StringSanitize.stringSanitize(nameProduct);
-            descriptionProduct = StringSanitize.stringSanitize(descriptionProduct);
-
-            List<CategoryDTO> categoriesList = getCategoryDTOList(nameAndDescription);
-            List<ProductImageDTO> imagesList = getImageDTOList(images);
-
-            return this.productRepository.addProduct(nameProduct, descriptionProduct, priceProduct, stockProduct,
-                    isActiveProduct, categoriesList, imagesList);
-        } catch (Exception e) {
+            ValidateUtil.validateProduct(product);
+            ProductDTO productDTO = SanitizeUtil.sanitizeProduct(product);
+            return this.productRepository.addProduct(productDTO);
+        } catch (ErrorHandling.InvalidInputException e) {
             Logger.log(e);
             return null;
         }
     }
 
-    public ProductDTO updateProduct(int productId, String nameProduct, String descriptionProduct, double priceProduct,
-                                    int stockProduct, boolean isActiveProduct,
-                                    List<CategoryDTO> nameAndDescription, List<ProductImageDTO> images) {
+    public ProductDTO updateProduct(ProductDTO product) {
         try {
-            if (!ProductValidation.hasValidInput(nameProduct, descriptionProduct, priceProduct, stockProduct))
-                return null;
-            nameProduct = StringSanitize.stringSanitize(nameProduct);
-            descriptionProduct = StringSanitize.stringSanitize(descriptionProduct);
-
-            List<CategoryDTO> categoriesList = getCategoryDTOList(nameAndDescription);
-            List<ProductImageDTO> imagesList = getImageDTOList(images);
-
-            return this.productRepository.updateProduct(productId, nameProduct, descriptionProduct, priceProduct,
-                    stockProduct, isActiveProduct, categoriesList, imagesList);
+            ValidateUtil.validateProduct(product);
+            ProductDTO productDTO = SanitizeUtil.sanitizeProduct(product);
+            return this.productRepository.updateProduct(productDTO);
         } catch (Exception e) {
             Logger.log(e);
             return null;
         }
-    }
-
-    private List<ProductImageDTO> getImageDTOList(List<ProductImageDTO> images) {
-        if (images == null) {
-            return null;
-        }
-        return this.productImageService.addProduct(images);
-    }
-
-    private List<CategoryDTO> getCategoryDTOList(List<CategoryDTO> nameAndDescription)
-            throws ErrorHandling.InvalidInputException {
-        if (nameAndDescription == null) {
-            return null;
-        }
-        return this.categoryService.addProduct(nameAndDescription);
     }
 }
