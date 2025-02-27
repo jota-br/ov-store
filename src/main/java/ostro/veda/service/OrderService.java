@@ -2,7 +2,7 @@ package ostro.veda.service;
 
 import ostro.veda.common.dto.*;
 import ostro.veda.common.error.ErrorHandling;
-import ostro.veda.common.validation.OrderValidation;
+import ostro.veda.common.validation.ValidateUtil;
 import ostro.veda.db.OrderRepository;
 import ostro.veda.loggerService.Logger;
 
@@ -16,7 +16,7 @@ public class OrderService {
 
     public OrderDTO addOrder(OrderBasic orderBasic) {
         try {
-            OrderValidation.validateOrder(orderBasic.getStatus());
+            ValidateUtil.validateOrder(orderBasic);
             return orderRepository.addOrder(orderBasic);
         } catch (Exception e) {
             Logger.log(e);
@@ -34,7 +34,7 @@ public class OrderService {
      */
     public OrderDTO updateOrderStatus(int orderId, String newStatus)
             throws ErrorHandling.InvalidInputException {
-        OrderValidation.validateOrder(newStatus);
+        ValidateUtil.validateOrderIdAndStatus(orderId, newStatus);
         return orderRepository.updateOrderStatus(orderId, newStatus);
     }
 

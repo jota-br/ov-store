@@ -1,7 +1,6 @@
 package test.resources;
 
 import org.junit.Test;
-import ostro.veda.common.validation.UrlEncoder;
 
 import java.util.HashMap;
 import java.util.Map;

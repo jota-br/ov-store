@@ -6,6 +6,10 @@ public class ErrorHandling {
         public InvalidInputException(InputExceptionMessage e, String input) {
             super(e.getMessage() + " [ Input: {" + input + "} ]");
         }
+
+        public InvalidInputException(String message, String input) {
+            super(message + " - [ Input: {" + input + "} ]");
+        }
     }
 
     public enum InputExceptionMessage {
