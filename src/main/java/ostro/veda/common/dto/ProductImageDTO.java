@@ -24,7 +24,7 @@ public class ProductImageDTO {
      * @param isMain boolean
      */
     public ProductImageDTO(String imageUrl, boolean isMain) {
-        this(-1, imageUrl, isMain);
+        this(0, imageUrl, isMain);
     }
 
     // GETTERS

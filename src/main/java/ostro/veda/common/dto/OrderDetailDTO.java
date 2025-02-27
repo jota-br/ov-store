@@ -17,7 +17,7 @@ public class OrderDetailDTO {
     }
 
     public OrderDetailDTO(OrderDTO order, ProductDTO product, int quantity, double unitPrice) {
-        this(-1, order, product, quantity, unitPrice);
+        this(0, order, product, quantity, unitPrice);
     }
 
     public int getOrderDetailId() {

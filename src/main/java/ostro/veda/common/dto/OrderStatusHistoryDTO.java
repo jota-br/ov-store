@@ -17,7 +17,7 @@ public class OrderStatusHistoryDTO {
     }
 
     public OrderStatusHistoryDTO(OrderDTO order, String status) {
-        this(-1, order, status, null);
+        this(0, order, status, null);
     }
 
     public int getOrderStatusHistoryId() {

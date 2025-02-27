@@ -94,7 +94,7 @@ public class OrderRepository extends Repository {
      *                and refund to be applicable.
      * @return will return OrderDTO with updated data
      */
-    public OrderDTO cancelOrder(int orderId) throws UnsupportedOperationException {
+    public OrderDTO cancelOrder(int orderId) {
         Order order = this.getEm().find(Order.class, orderId);
         List<OrderDetail> orderDetailList = this.getEntityManagerHelper().findByFieldId(this.getEm(),
                         OrderDetail.class, Map.of("order.orderId", orderId));

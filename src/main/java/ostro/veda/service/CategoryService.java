@@ -1,6 +1,7 @@
 package ostro.veda.service;
 
 import ostro.veda.common.dto.CategoryDTO;
+import ostro.veda.common.validation.SanitizeUtil;
 import ostro.veda.common.validation.ValidateUtil;
 import ostro.veda.db.CategoryRepository;
 import ostro.veda.loggerService.Logger;
@@ -22,7 +23,9 @@ public class CategoryService {
      */
     public List<CategoryDTO> addCategory(List<CategoryDTO> categories) {
         try {
-            return categoryRepository.addCategory(ValidateUtil.validateCategories(categories));
+            ValidateUtil.validateCategories(categories);
+            categories = SanitizeUtil.sanitizeCategories(categories);
+            return categoryRepository.addCategory(categories);
         } catch (Exception e) {
             Logger.log(e);
             return null;
@@ -36,7 +39,9 @@ public class CategoryService {
      */
     public List<CategoryDTO> updateCategory(List<CategoryDTO> categories) {
         try {
-            return categoryRepository.updateCategory(ValidateUtil.validateCategories(categories));
+            ValidateUtil.validateCategories(categories);
+            categories = SanitizeUtil.sanitizeCategories(categories);
+            return categoryRepository.updateCategory(categories);
         } catch (Exception e) {
             Logger.log(e);
             return null;

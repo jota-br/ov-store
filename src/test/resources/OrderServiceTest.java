@@ -213,21 +213,20 @@ public class OrderServiceTest {
     private static UserDTO getUserDTO(UserService userService, String username, String password, String email,
                                       String phone) {
 
-        return userService.processData(-1, username, password,
+        return userService.processData(0, username, password,
                 email, "Hobart", "Shulz", phone, true, ProcessDataType.ADD);
     }
 
     private static AddressDTO getAddressDTO(AddressService addressService, UserDTO user) {
-        int id = -1;
-        return addressService.processData(id, user.getUserId(), "streetname", "1900-B",
+        return addressService.processData(0, user.getUserId(), "streetname", "1900-B",
                 "Home", "Joinville", "Santa Catarina", "900103041", "Brazil", true, ProcessDataType.ADD);
     }
 
     private static List<ProductDTO> getProductDTOList(ProductService productService, List<CategoryDTO> categories) {
         return List.of(
-                productService.addProduct(new ProductDTO("Product Test One", "Description One",
+                productService.addProduct(new ProductDTO(0, "Product Test One", "Description One",
                         45.00, 10, true, categories, null)),
-                productService.addProduct(new ProductDTO("Product Test Two", "Description Two",
+                productService.addProduct(new ProductDTO(0, "Product Test Two", "Description Two",
                         50.00, 5, true, categories, null))
         );
     }

@@ -76,6 +76,10 @@ public class ValidateUtil {
         hasValidOrderStatus(status);
     }
 
+    public static void validateId(int id) throws ErrorHandling.InvalidInputException {
+        hasValidZeroOrHigherNumber(id);
+    }
+
     public static void hasValidName(String input) throws ErrorHandling.InvalidInputException {
         Pattern validPattern = Pattern.compile("^[\\sA-Za-z\\p{Punct}]{1,255}$");
         Matcher matcher = validPattern.matcher(input);

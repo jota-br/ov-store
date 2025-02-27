@@ -1,6 +1,7 @@
 package ostro.veda.service;
 
-import ostro.veda.common.dto.*;
+import ostro.veda.common.dto.OrderBasic;
+import ostro.veda.common.dto.OrderDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.common.validation.ValidateUtil;
 import ostro.veda.db.OrderRepository;
@@ -45,8 +46,9 @@ public class OrderService {
      */
     public OrderDTO cancelOrder(int orderId) {
         try {
+            ValidateUtil.validateId(orderId);
             return  orderRepository.cancelOrder(orderId);
-        } catch (UnsupportedOperationException e) {
+        } catch (UnsupportedOperationException | ErrorHandling.InvalidInputException e) {
             Logger.log(e);
             return null;
         }

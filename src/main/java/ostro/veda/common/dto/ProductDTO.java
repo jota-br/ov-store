@@ -76,7 +76,7 @@ public class ProductDTO {
      */
     public ProductDTO(String name, String description, double price, int stock, boolean isActive,
                       List<CategoryDTO> categories, List<ProductImageDTO> images) {
-        this(-1, name, description, price, stock, isActive, categories, images, null, null, 0);
+        this(0, name, description, price, stock, isActive, categories, images, null, null, 0);
     }
 
     // GETTERS

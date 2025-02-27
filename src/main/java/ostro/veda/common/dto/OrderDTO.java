@@ -34,7 +34,7 @@ public class OrderDTO {
 
     public OrderDTO(int userId, double totalAmount, String status,
                     AddressDTO shippingAddress, AddressDTO billingAddress) {
-        this(-1, userId, null, totalAmount, status, null,
+        this(0, userId, null, totalAmount, status, null,
                 shippingAddress, billingAddress, null, null);
     }
 

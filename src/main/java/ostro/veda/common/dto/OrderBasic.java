@@ -24,7 +24,7 @@ public class OrderBasic {
     }
 
     public OrderBasic(int userId, String status, int billingAddressId, int shippingAddressId, List<OrderDetailBasic> orderDetails, double totalAmount) {
-        this(userId, -1, status, billingAddressId, shippingAddressId, orderDetails, totalAmount);
+        this(userId, 0, status, billingAddressId, shippingAddressId, orderDetails, totalAmount);
     }
 
     public OrderBasic(int userId, int orderId, String status, int billingAddressId, int shippingAddressId, List<OrderDetailBasic> orderDetails) {
@@ -32,7 +32,7 @@ public class OrderBasic {
     }
 
     public OrderBasic(int userId, String status, int billingAddressId, int shippingAddressId, List<OrderDetailBasic> orderDetails) {
-        this(userId, -1, status, billingAddressId, shippingAddressId, orderDetails, 0);
+        this(userId, 0, status, billingAddressId, shippingAddressId, orderDetails, 0);
     }
 
     public int getUserId() {
