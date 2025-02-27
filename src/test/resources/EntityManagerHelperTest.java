@@ -6,14 +6,11 @@ import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.dto.ProductImageDTO;
 import ostro.veda.db.CategoryRepository;
-import ostro.veda.db.ProductImageRepository;
 import ostro.veda.db.ProductRepository;
 import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.db.helpers.columns.ProductColumns;
 import ostro.veda.db.jpa.Product;
-import ostro.veda.service.CategoryService;
-import ostro.veda.service.ProductImageService;
 import ostro.veda.service.ProductService;
 
 import java.util.List;
@@ -29,12 +26,9 @@ public class EntityManagerHelperTest {
         EntityManagerHelper entityManagerHelper = EntityManagerHelper.getEntityManagerHelper();
         EntityManager em = JPAUtil.getEm();
         try (CategoryRepository categoryRepository = new CategoryRepository(em);
-             ProductRepository productRepository = new ProductRepository(em, categoryRepository);
-             ProductImageRepository productImageRepository = new ProductImageRepository(em)) {
+             ProductRepository productRepository = new ProductRepository(em, categoryRepository);) {
 
-            CategoryService categoryService = new CategoryService(categoryRepository);
-            ProductImageService productImageService = new ProductImageService(productImageRepository);
-            ProductService productService = new ProductService(categoryService, productImageService, productRepository);
+            ProductService productService = new ProductService(productRepository);
 
             List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
             List<ProductImageDTO> images = TestHelper.getProductImageDTOS();
@@ -44,8 +38,8 @@ public class EntityManagerHelperTest {
             double price = 45.99;
             int stock = 15;
 
-            ProductDTO productDTO = productService.addProduct(name, description, price, stock, true,
-                    categories, images);
+            ProductDTO productDTO = productService.addProduct(new ProductDTO(name, description, price, stock, true,
+                    categories, images));
 
             List<Product> product = entityManagerHelper.findByFields(productRepository.getEm(), Product.class,
                     Map.of(

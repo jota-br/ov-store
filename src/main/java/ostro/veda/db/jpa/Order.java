@@ -33,8 +33,8 @@ public class Order {
     @Column(name = "status")
     private String status;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<OrderDetail> orderDetails = new ArrayList<>();
+    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderDetail> orderDetails;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shipping_address_id", referencedColumnName = "address_id")
@@ -44,8 +44,8 @@ public class Order {
     @JoinColumn(name = "billing_address_id", referencedColumnName = "address_id")
     private Address billingAddress;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<OrderStatusHistory> orderStatusHistory = new ArrayList<>();
+    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderStatusHistory> orderStatusHistory;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
@@ -54,13 +54,35 @@ public class Order {
     public Order() {
     }
 
-    public Order(int userId, double totalAmount, String status,
-                 Address shippingAddress, Address billingAddress) {
+    public Order(int orderId, int userId, LocalDateTime orderDate, double totalAmount, String status,
+                 List<OrderDetail> orderDetails, Address shippingAddress, Address billingAddress,
+                 List<OrderStatusHistory> orderStatusHistory, LocalDateTime updatedAt) {
+        this.orderId = orderId;
         this.userId = userId;
+        this.orderDate = orderDate;
         this.totalAmount = totalAmount;
         this.status = status;
+        this.orderDetails = orderDetails == null ? new ArrayList<>() : orderDetails;
         this.shippingAddress = shippingAddress;
         this.billingAddress = billingAddress;
+        this.orderStatusHistory = orderStatusHistory == null ? new ArrayList<>() : orderStatusHistory;
+        this.updatedAt = updatedAt;
+    }
+
+    public Order(int userId, double totalAmount, String status, List<OrderDetail> orderDetails,
+                 Address shippingAddress, Address billingAddress, List<OrderStatusHistory> orderStatusHistory) {
+        this(0, userId, null, totalAmount, status, orderDetails,shippingAddress, billingAddress,
+                orderStatusHistory, null);
+    }
+
+    public Order(int userId, double totalAmount, String status, Address shippingAddress, Address billingAddress) {
+        this(0, userId, null, totalAmount, status, List.of(), shippingAddress, billingAddress,
+                List.of(), null);
+    }
+
+    public Order(int userId, double totalAmount, String status, List<OrderDetail> orderDetails, Address shippingAddress, Address billingAddress) {
+        this(0, userId, null, totalAmount, status, orderDetails, shippingAddress, billingAddress,
+                List.of(), null);
     }
 
     public int getOrderId() {
@@ -124,6 +146,6 @@ public class Order {
         }
 
         return new OrderDTO(this.getOrderId(), this.getUserId(), this.getOrderDate(), this.getTotalAmount(), this.getStatus(),
-                orderDetailDTOList, this.getShippingAddress(), this.getBillingAddress(), orderStatusHistoryDTOList, this.getUpdatedAt());
+                orderDetailDTOList, this.getShippingAddress().transformToDto(), this.getBillingAddress().transformToDto(), orderStatusHistoryDTOList, this.getUpdatedAt());
     }
 }

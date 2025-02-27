@@ -16,6 +16,10 @@ public class OrderStatusHistoryDTO {
         this.changedAt = changedAt;
     }
 
+    public OrderStatusHistoryDTO(OrderDTO order, String status) {
+        this(0, order, status, null);
+    }
+
     public int getOrderStatusHistoryId() {
         return orderStatusHistoryId;
     }
