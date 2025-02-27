@@ -1,7 +1,9 @@
 package ostro.veda.common.validation;
 
+import org.apache.commons.validator.routines.EmailValidator;
 import ostro.veda.common.dto.*;
 import ostro.veda.common.error.ErrorHandling;
+import ostro.veda.db.helpers.AddressType;
 import ostro.veda.db.helpers.OrderStatus;
 
 import java.util.List;
@@ -80,6 +82,28 @@ public class ValidateUtil {
         hasValidZeroOrHigherNumber(id);
     }
 
+    public static void validateUser(UserDTO userDTO, String password) throws ErrorHandling.InvalidInputException {
+        hasValidZeroOrHigherNumber(userDTO.getUserId());
+        hasValidUsername(userDTO.getUsername());
+        hasValidEmail(userDTO.getEmail());
+        hasValidName(userDTO.getFirstName());
+        hasValidName(userDTO.getLastName());
+        hasValidPhone(userDTO.getPhone());
+        hasValidPassword(password);
+
+        if (!userDTO.getAddresses().isEmpty()) validateAddress(userDTO.getAddresses());
+    }
+
+    public static void validateAddress(List<AddressDTO> addressDTOList) throws ErrorHandling.InvalidInputException {
+        for (AddressDTO addressDTO : addressDTOList) {
+            hasValidZeroOrHigherNumber(addressDTO.getAddressId());
+            hasValidZeroOrHigherNumber(addressDTO.getUserId());
+            hasValidAddressType(addressDTO.getAddressType());
+            // needs to implement the rest of the check
+            // requires Maps API implementation
+        }
+    }
+
     public static void hasValidName(String input) throws ErrorHandling.InvalidInputException {
         Pattern validPattern = Pattern.compile("^[\\sA-Za-z\\p{Punct}]{1,255}$");
         Matcher matcher = validPattern.matcher(input);
@@ -132,7 +156,7 @@ public class ValidateUtil {
         }
 
         throw new ErrorHandling.InvalidInputException(
-                ErrorHandling.InputExceptionMessage.EX_INVALID_IMAGE_URL,
+                "Invalid Image URL",
                 "url:" + input
         );
     }
@@ -145,7 +169,54 @@ public class ValidateUtil {
             }
         }
         throw new ErrorHandling.InvalidInputException(
-                ErrorHandling.InputExceptionMessage.EX_INVALID_ORDER_STATUS, status
+                "Invalid Order Status", "status:" + status
+        );
+    }
+
+    public static void hasValidUsername(String input) throws ErrorHandling.InvalidInputException {
+        Pattern validPattern = Pattern.compile("^[a-zA-Z0-9@_-]{8,20}$");
+        Matcher matcher = validPattern.matcher(input);
+        if (matcher.matches()) {
+            return;
+        }
+        throw new ErrorHandling.InvalidInputException("Invalid Username", "username:" + input);
+    }
+
+    public static void hasValidPhone(String input) throws ErrorHandling.InvalidInputException {
+        Pattern validPattern = Pattern.compile("\\+\\d{6,14}");
+        Matcher matcher = validPattern.matcher(input);
+        if (matcher.matches()) {
+            return;
+        }
+        throw new ErrorHandling.InvalidInputException("Invalid Phone", "phone:" + input);
+    }
+
+    public static void hasValidEmail(String input) throws ErrorHandling.InvalidInputException {
+        EmailValidator emailValidator = EmailValidator.getInstance();
+        if (emailValidator.isValid(input)) {
+            return;
+        }
+        throw new ErrorHandling.InvalidInputException("Invalid Email", "email:" + input);
+    }
+
+    public static void hasValidPassword(String input) throws ErrorHandling.InvalidInputException {
+        Pattern validPattern = Pattern.compile("^[A-Za-z0-9!@#$%^&*()_+\\-={}\\[\\]:;\"'<>,.?/|\\\\]{8,20}$");
+        Matcher matcher = validPattern.matcher(input);
+        if (matcher.matches()) {
+            return;
+        }
+        throw new ErrorHandling.InvalidInputException("Invalid Password", "password:*");
+    }
+
+    private static void hasValidAddressType(String type)
+            throws ErrorHandling.InvalidInputException {
+        for (AddressType addressType : AddressType.values()) {
+            if (addressType.getValue().equals(type)) {
+                return;
+            }
+        }
+        throw new ErrorHandling.InvalidInputException(
+                "Invalid Address Type", "status:" + type
         );
     }
 }

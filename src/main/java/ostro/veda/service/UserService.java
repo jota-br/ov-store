@@ -4,6 +4,7 @@ import ostro.veda.common.InputValidator;
 import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.UserDTO;
 import ostro.veda.common.error.ErrorHandling;
+import ostro.veda.common.validation.ValidateUtil;
 import ostro.veda.db.UserRepository;
 import ostro.veda.loggerService.Logger;
 
@@ -30,6 +31,16 @@ public class UserService {
 
             return performDmlAction(userId, username, password, email,
                     firstName, lastName, phone, isActive, processDataType);
+        } catch (Exception e) {
+            Logger.log(e);
+            return null;
+        }
+    }
+
+    public UserDTO addUser(UserDTO userDTO, String password) {
+        try {
+            ValidateUtil.validateUser(userDTO, password);
+            return null;
         } catch (Exception e) {
             Logger.log(e);
             return null;
