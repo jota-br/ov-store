@@ -4,17 +4,18 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
+import lombok.extern.slf4j.Slf4j;
 import org.mariadb.jdbc.MariaDbDataSource;
-import ostro.veda.loggerService.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class JPAUtil {
 
-    public static EntityManagerFactory entityManagerFactory = null;
+    public static EntityManagerFactory entityManagerFactory;
 
     private static EntityManagerFactory getEmf() {
         if (entityManagerFactory == null) {
@@ -35,9 +36,9 @@ public class JPAUtil {
         properties.put("jakarta.persistence.jdbc.url", dbUrl);
         properties.put("jakarta.persistence.jdbc.user", dbUser);
         properties.put("jakarta.persistence.jdbc.password", dbPassword);
-        properties.put("hibernate.show_sql", true);
-//        properties.put("hibernate.format_sql", true);
-//        properties.put("hibernate.use_sql_comments", true);
+        properties.put("hibernate.show_sql", false);
+        properties.put("hibernate.format_sql", false);
+        properties.put("hibernate.use_sql_comments", false);
         return properties;
     }
 
@@ -73,7 +74,7 @@ public class JPAUtil {
 
             return dataSource.getConnection();
         } catch (SQLException e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
         }
         return null;
     }
@@ -84,7 +85,7 @@ public class JPAUtil {
                 connection.close();
             }
         } catch (SQLException e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
         }
     }
 }

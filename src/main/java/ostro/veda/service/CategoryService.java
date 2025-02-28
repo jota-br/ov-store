@@ -1,13 +1,13 @@
 package ostro.veda.service;
 
+import lombok.extern.slf4j.Slf4j;
 import ostro.veda.common.dto.CategoryDTO;
+import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.common.validation.SanitizeUtil;
 import ostro.veda.common.validation.ValidateUtil;
 import ostro.veda.db.CategoryRepository;
-import ostro.veda.loggerService.Logger;
 
-import java.util.List;
-
+@Slf4j
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
@@ -16,34 +16,24 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    /**
-     * Add Categories in the list.
-     * @param categories Category list with categories to be persisted.
-     * @return List with CategoryDTO.
-     */
-    public List<CategoryDTO> addCategory(List<CategoryDTO> categories) {
+    public CategoryDTO addCategory(CategoryDTO category) {
         try {
-            ValidateUtil.validateCategories(categories);
-            categories = SanitizeUtil.sanitizeCategories(categories);
-            return categoryRepository.addCategory(categories);
-        } catch (Exception e) {
-            Logger.log(e);
+            ValidateUtil.validateCategory(category);
+            category = SanitizeUtil.sanitizeCategory(category);
+            return categoryRepository.addCategory(category);
+        } catch (ErrorHandling.InvalidInputException e) {
+            log.warn(e.getMessage());
             return null;
         }
     }
 
-    /**
-     * Updates data in an existing Category.
-     * @param categories List with CategoryDTO.
-     * @return List with CategoryDTO.
-     */
-    public List<CategoryDTO> updateCategory(List<CategoryDTO> categories) {
+    public CategoryDTO updateCategory(CategoryDTO categories) {
         try {
-            ValidateUtil.validateCategories(categories);
-            categories = SanitizeUtil.sanitizeCategories(categories);
+            ValidateUtil.validateCategory(categories);
+            categories = SanitizeUtil.sanitizeCategory(categories);
             return categoryRepository.updateCategory(categories);
-        } catch (Exception e) {
-            Logger.log(e);
+        } catch (ErrorHandling.InvalidInputException e) {
+            log.warn(e.getMessage());
             return null;
         }
     }
