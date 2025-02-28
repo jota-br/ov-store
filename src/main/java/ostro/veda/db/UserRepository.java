@@ -1,6 +1,7 @@
 package ostro.veda.db;
 
 import jakarta.persistence.EntityTransaction;
+import lombok.extern.slf4j.Slf4j;
 import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.common.dto.UserDTO;
 import ostro.veda.db.helpers.JPAUtil;
@@ -8,12 +9,12 @@ import ostro.veda.db.helpers.columns.UserColumns;
 import ostro.veda.db.jpa.Address;
 import ostro.veda.db.jpa.Role;
 import ostro.veda.db.jpa.User;
-import ostro.veda.loggerService.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class UserRepository extends Repository {
 
     public UserDTO addUser(UserDTO user) {
@@ -37,7 +38,7 @@ public class UserRepository extends Repository {
             return newUser.transformToDto();
 
         }  catch (Exception e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
             JPAUtil.transactionRollBack(transaction);
             return null;
         }
@@ -63,7 +64,7 @@ public class UserRepository extends Repository {
             return user.transformToDto();
 
         }  catch (Exception e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
             JPAUtil.transactionRollBack(transaction);
             return null;
         }

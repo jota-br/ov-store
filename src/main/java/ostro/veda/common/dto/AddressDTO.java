@@ -1,7 +1,12 @@
 package ostro.veda.common.dto;
 
+import lombok.Getter;
+import lombok.ToString;
+
 import java.time.LocalDateTime;
 
+@Getter
+@ToString
 public class AddressDTO {
 
     private final int addressId;
@@ -37,53 +42,5 @@ public class AddressDTO {
                       String city, String state, String zipCode, String country, boolean isActive) {
         this(0, userId, streetAddress, addressNumber, addressType, city, state, zipCode,
                 country, isActive, null, null);
-    }
-
-    public int getAddressId() {
-        return addressId;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public String getStreetAddress() {
-        return streetAddress;
-    }
-
-    public String getAddressNumber() {
-        return addressNumber;
-    }
-
-    public String getAddressType() {
-        return addressType;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public String getZipCode() {
-        return zipCode;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
     }
 }

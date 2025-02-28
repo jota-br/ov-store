@@ -2,16 +2,17 @@ package ostro.veda.db;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import lombok.extern.slf4j.Slf4j;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.db.helpers.columns.CategoryColumns;
 import ostro.veda.db.jpa.Category;
-import ostro.veda.loggerService.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class CategoryRepository extends Repository {
 
     public CategoryRepository() {
@@ -64,7 +65,7 @@ public class CategoryRepository extends Repository {
 
             return category.transformToDto();
         } catch (Exception e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
             JPAUtil.transactionRollBack(transaction);
             return null;
         }
@@ -109,7 +110,7 @@ public class CategoryRepository extends Repository {
 
             return category.transformToDto();
         } catch (Exception e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
             JPAUtil.transactionRollBack(transaction);
             return null;
         }

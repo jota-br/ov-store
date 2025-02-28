@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.persistence.PersistenceException;
+import lombok.extern.slf4j.Slf4j;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.dto.ProductImageDTO;
@@ -14,12 +15,12 @@ import ostro.veda.db.helpers.columns.ProductImageColumns;
 import ostro.veda.db.jpa.Category;
 import ostro.veda.db.jpa.Product;
 import ostro.veda.db.jpa.ProductImage;
-import ostro.veda.loggerService.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class ProductRepository extends Repository {
 
     private final CategoryRepository categoryRepository;
@@ -62,7 +63,7 @@ public class ProductRepository extends Repository {
             transaction.commit();
             return product.transformToDto();
         } catch (Exception e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
             JPAUtil.transactionRollBack(transaction);
             throw new PersistenceException("Transaction was Roll Back");
         }
@@ -99,7 +100,7 @@ public class ProductRepository extends Repository {
 
             transaction.commit();
         }  catch (Exception e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
             JPAUtil.transactionRollBack(transaction);
         }
 

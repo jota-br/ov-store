@@ -1,15 +1,16 @@
 package ostro.veda.db;
 
 import jakarta.persistence.EntityTransaction;
+import lombok.extern.slf4j.Slf4j;
 import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.db.helpers.columns.AddressColumns;
 import ostro.veda.db.jpa.Address;
-import ostro.veda.loggerService.Logger;
 
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class AddressRepository extends Repository {
 
     public AddressDTO addAddress(AddressDTO addressDTO) {
@@ -43,7 +44,7 @@ public class AddressRepository extends Repository {
 
             transaction.commit();
         }  catch (Exception e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
             JPAUtil.transactionRollBack(transaction);
         }
 
@@ -69,7 +70,7 @@ public class AddressRepository extends Repository {
 
             transaction.commit();
         } catch (Exception e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
             JPAUtil.transactionRollBack(transaction);
         }
 

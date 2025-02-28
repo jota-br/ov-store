@@ -1,15 +1,24 @@
 package ostro.veda.common.dto;
 
+import lombok.Getter;
+import lombok.ToString;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@ToString
 public class UserDTO {
 
     private final int userId;
     private final String username;
+
+    @ToString.Exclude
     private final String salt;
+    @ToString.Exclude
     private final String hash;
+
     private final String email;
     private final String firstName;
     private final String lastName;
@@ -36,57 +45,5 @@ public class UserDTO {
         this.addresses = addresses == null ? new ArrayList<>() : addresses;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getSalt() {
-        return salt;
-    }
-
-    public String getHash() {
-        return hash;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public RoleDTO getRole() {
-        return role;
-    }
-
-    public List<AddressDTO> getAddresses() {
-        return addresses;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
     }
 }

@@ -1,16 +1,18 @@
 package ostro.veda.service;
 
+import lombok.extern.slf4j.Slf4j;
 import ostro.veda.common.dto.UserDTO;
+import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.common.validation.SanitizeUtil;
 import ostro.veda.common.validation.ValidateUtil;
 import ostro.veda.db.UserRepository;
-import ostro.veda.loggerService.Logger;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -26,8 +28,8 @@ public class UserService {
             UserDTO user = getUserWithSaltAndHash(userDTO, password);
 
             return userRepository.addUser(user);
-        } catch (Exception e) {
-            Logger.log(e);
+        } catch (ErrorHandling.InvalidInputException e) {
+            log.warn(e.getMessage());
             return null;
         }
     }
@@ -37,8 +39,8 @@ public class UserService {
             ValidateUtil.validateUser(userDTO, password);
             UserDTO user = getUserWithSaltAndHash(userDTO, password);
             return userRepository.updateUser(user);
-        } catch (Exception e) {
-            Logger.log(e);
+        } catch (ErrorHandling.InvalidInputException e) {
+            log.warn(e.getMessage());
             return null;
         }
     }
@@ -65,7 +67,7 @@ public class UserService {
             sr.nextBytes(salt);
             return salt;
         } catch (NoSuchAlgorithmException e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
         }
         return null;
     }
@@ -77,7 +79,7 @@ public class UserService {
             byte[] hashedPassword = md.digest(password.getBytes());
             return Base64.getEncoder().encodeToString(hashedPassword);
         } catch (NoSuchAlgorithmException e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
         }
         return null;
     }

@@ -2,18 +2,22 @@ package ostro.veda.db;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import lombok.extern.slf4j.Slf4j;
 import ostro.veda.common.dto.*;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.db.helpers.OrderStatus;
-import ostro.veda.db.jpa.*;
-import ostro.veda.loggerService.Logger;
+import ostro.veda.db.jpa.Address;
+import ostro.veda.db.jpa.Order;
+import ostro.veda.db.jpa.OrderDetail;
+import ostro.veda.db.jpa.Product;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class OrderRepository extends Repository {
 
     private final OrderDetailRepository orderDetailRepository;
@@ -46,7 +50,7 @@ public class OrderRepository extends Repository {
             orderDTO.getOrderDetails().addAll(orderDetailDTOList);
             orderDTO.getOrderStatusHistory().add(orderStatusHistoryDTO);
         } catch (Exception e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
             JPAUtil.transactionRollBack(transaction);
         }
 
@@ -79,7 +83,7 @@ public class OrderRepository extends Repository {
             orderDTO.getOrderStatusHistory().add(orderStatusHistoryDTO);
             return orderDTO;
         } catch (Exception e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
             JPAUtil.transactionRollBack(transaction);
         }
         return null;
@@ -117,7 +121,7 @@ public class OrderRepository extends Repository {
             orderDTO.getOrderStatusHistory().add(orderStatusHistory);
             return orderDTO;
         } catch (Exception e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
             JPAUtil.transactionRollBack(transaction);
         }
         return null;
@@ -147,7 +151,7 @@ public class OrderRepository extends Repository {
             orderDTO.getOrderStatusHistory().add(orderStatusHistory);
             return orderDTO;
         } catch (Exception e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
             JPAUtil.transactionRollBack(transaction);
         }
         return null;
@@ -176,7 +180,7 @@ public class OrderRepository extends Repository {
                 elapsedTime.isAfter(orderDate) ||
                         !OrderStatus.DELIVERED.getStatus().equals(status)
         ) {
-            throw new ErrorHandling.InvalidInputException(ErrorHandling.InputExceptionMessage.EX_INVALID_ORDER_RETURN_DS,
+            throw new ErrorHandling.InvalidInputException("Return is no longer available",
                     orderDate + ", status:" + status
             );
         }
