@@ -21,11 +21,11 @@ public class CategoryService {
      * @param categories Category list with categories to be persisted.
      * @return List with CategoryDTO.
      */
-    public List<CategoryDTO> addCategory(List<CategoryDTO> categories) {
+    public CategoryDTO addCategory(CategoryDTO category) {
         try {
-            ValidateUtil.validateCategories(categories);
-            categories = SanitizeUtil.sanitizeCategories(categories);
-            return categoryRepository.addCategory(categories);
+            ValidateUtil.validateCategory(category);
+            category = SanitizeUtil.sanitizeCategory(category);
+            return categoryRepository.addCategory(category);
         } catch (Exception e) {
             Logger.log(e);
             return null;
@@ -37,10 +37,10 @@ public class CategoryService {
      * @param categories List with CategoryDTO.
      * @return List with CategoryDTO.
      */
-    public List<CategoryDTO> updateCategory(List<CategoryDTO> categories) {
+    public CategoryDTO updateCategory(CategoryDTO categories) {
         try {
-            ValidateUtil.validateCategories(categories);
-            categories = SanitizeUtil.sanitizeCategories(categories);
+            ValidateUtil.validateCategory(categories);
+            categories = SanitizeUtil.sanitizeCategory(categories);
             return categoryRepository.updateCategory(categories);
         } catch (Exception e) {
             Logger.log(e);

@@ -32,15 +32,18 @@ public class ValidateUtil {
 
     public static void validateCategories(List<CategoryDTO> categoryDTOList) throws ErrorHandling.InvalidInputException {
         for (CategoryDTO category : categoryDTOList) {
-
-            int categoryId = category.getCategoryId();
-            String categoryName = category.getName();
-            String categoryDescription = category.getDescription();
-
-            hasValidZeroOrHigherNumber(categoryId);
-            hasValidName(categoryName);
-            hasValidDescription(categoryDescription);
+            validateCategory(category);
         }
+    }
+
+    public static void validateCategory(CategoryDTO category) throws ErrorHandling.InvalidInputException {
+        int categoryId = category.getCategoryId();
+        String categoryName = category.getName();
+        String categoryDescription = category.getDescription();
+
+        hasValidZeroOrHigherNumber(categoryId);
+        hasValidName(categoryName);
+        hasValidDescription(categoryDescription);
     }
 
     public static void validateImages(List<ProductImageDTO> imageDTOList) throws ErrorHandling.InvalidInputException {
@@ -96,12 +99,18 @@ public class ValidateUtil {
 
     public static void validateAddress(List<AddressDTO> addressDTOList) throws ErrorHandling.InvalidInputException {
         for (AddressDTO addressDTO : addressDTOList) {
-            hasValidZeroOrHigherNumber(addressDTO.getAddressId());
-            hasValidZeroOrHigherNumber(addressDTO.getUserId());
-            hasValidAddressType(addressDTO.getAddressType());
+            validateAddress(addressDTO);
             // needs to implement the rest of the check
             // requires Maps API implementation
         }
+    }
+
+    public static void validateAddress(AddressDTO addressDTO) throws ErrorHandling.InvalidInputException {
+        hasValidZeroOrHigherNumber(addressDTO.getAddressId());
+        hasValidZeroOrHigherNumber(addressDTO.getUserId());
+        hasValidAddressType(addressDTO.getAddressType());
+        // needs to implement the rest of the check
+        // requires Maps API implementation
     }
 
     public static void hasValidName(String input) throws ErrorHandling.InvalidInputException {

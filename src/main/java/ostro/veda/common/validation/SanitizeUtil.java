@@ -1,9 +1,6 @@
 package ostro.veda.common.validation;
 
-import ostro.veda.common.dto.CategoryDTO;
-import ostro.veda.common.dto.ProductDTO;
-import ostro.veda.common.dto.ProductImageDTO;
-import ostro.veda.common.dto.UserDTO;
+import ostro.veda.common.dto.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,16 +31,21 @@ public class SanitizeUtil {
         List<CategoryDTO> cleanCategoryList = new ArrayList<>();
         for (CategoryDTO category : categoryDTOList) {
 
-            int categoryId = category.getCategoryId();
-            String categoryName = category.getName();
-            String categoryDescription = category.getDescription();
-
-            categoryName = sanitize(categoryName);
-            categoryDescription = sanitize(categoryDescription);
-
-            cleanCategoryList.add(new CategoryDTO(categoryId, categoryName, categoryDescription, category.isActive()));
+            cleanCategoryList.add(sanitizeCategory(category));
         }
         return cleanCategoryList;
+    }
+
+    public static CategoryDTO sanitizeCategory(CategoryDTO category) {
+
+        int categoryId = category.getCategoryId();
+        String categoryName = category.getName();
+        String categoryDescription = category.getDescription();
+
+        categoryName = sanitize(categoryName);
+        categoryDescription = sanitize(categoryDescription);
+
+        return new CategoryDTO(categoryId, categoryName, categoryDescription, category.isActive());
     }
 
     public static List<ProductImageDTO> sanitizeImages(List<ProductImageDTO> imageDTOList) {
@@ -61,10 +63,46 @@ public class SanitizeUtil {
     }
 
     public static UserDTO sanitizeUser(UserDTO userDTO) {
-        return null;
+
+        String firstName = sanitize(userDTO.getFirstName());
+        String lastName = sanitize(userDTO.getLastName());
+        String username = sanitize(userDTO.getUsername());
+        String email = sanitize(userDTO.getEmail());
+        List<AddressDTO> addressDTOList = sanitizeAddress(userDTO.getAddresses());
+
+        return new UserDTO(userDTO.getUserId(), username, userDTO.getSalt(), userDTO.getHash(), email, firstName,
+                lastName, userDTO.getPhone(), userDTO.isActive(), userDTO.getRole(), addressDTOList,
+                userDTO.getCreatedAt(), userDTO.getUpdatedAt());
+    }
+
+    public static List<AddressDTO> sanitizeAddress(List<AddressDTO> addressDTOList) {
+
+        List<AddressDTO> addressDTOS = new ArrayList<>();
+        for (AddressDTO addressDTO : addressDTOList) {
+            addressDTOS.add(sanitizeAddress(addressDTO));
+        }
+        return addressDTOS;
+    }
+
+    public static AddressDTO sanitizeAddress(AddressDTO addressDTO) {
+
+        int id = addressDTO.getAddressId();
+        int userId = addressDTO.getUserId();
+        String streetAddress = sanitize(addressDTO.getStreetAddress());
+        String addressNumber = sanitize(addressDTO.getAddressNumber());
+        String addressType = sanitize(addressDTO.getAddressType());
+        String city = sanitize(addressDTO.getCity());
+        String state = sanitize(addressDTO.getState());
+        String zipCode = sanitize(addressDTO.getZipCode());
+        String country = sanitize(addressDTO.getCountry());
+        boolean isActive = addressDTO.isActive();
+
+        return new AddressDTO(id, userId, streetAddress, addressNumber, addressType, city, state, zipCode,
+                country, isActive, addressDTO.getCreatedAt(), addressDTO.getUpdatedAt());
     }
 
     public static String sanitize(String input) {
+
         Map<Character, String> sanitize = getSanitizeMap();
 
         StringBuilder sb = new StringBuilder();
@@ -75,6 +113,7 @@ public class SanitizeUtil {
     }
 
     private static Map<Character, String> getSanitizeMap() {
+
         Map<Character, String> sanitize = new HashMap<>();
         sanitize.put('\'', "&apos;");
         sanitize.put('&', "&amp;");
@@ -96,6 +135,7 @@ public class SanitizeUtil {
     }
 
     public static String encodeUrl(String input) {
+
         Map<Character, String> encodingMap = getEncodeMap();
 
         StringBuilder sb = new StringBuilder();
@@ -106,6 +146,7 @@ public class SanitizeUtil {
     }
 
     public static Map<Character, String> getEncodeMap() {
+
         Map<Character, String> encodingMap = new HashMap<>();
         encodingMap.put(' ', "%20");
         encodingMap.put('!', "%21");

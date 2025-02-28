@@ -63,22 +63,13 @@ public class User {
     public User() {
     }
 
-    public User(String username, String salt, String hash, String email, String firstName,
-                String lastName, String phone, boolean isActive, Role role) {
-        this.username = username;
-        this.salt = salt;
-        this.hash = hash;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phone = phone;
-        this.isActive = isActive;
-        this.role = role;
-        this.addresses = new ArrayList<>();
-    }
-
-    public User(String username, String salt, String hash, String email, String firstName,
-                String lastName, String phone, boolean isActive, Role role, List<Address> addresses) {
+    public User(int userId, String username, String salt,
+                String hash, String email,
+                String firstName, String lastName,
+                String phone, boolean isActive,
+                Role role, List<Address> addresses,
+                LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.userId = userId;
         this.username = username;
         this.salt = salt;
         this.hash = hash;
@@ -89,6 +80,8 @@ public class User {
         this.isActive = isActive;
         this.role = role;
         this.addresses = addresses == null ? new ArrayList<>() : addresses;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public int getUserId() {
@@ -167,6 +160,6 @@ public class User {
             }
         }
         return new UserDTO(this.getUserId(), this.getUsername(), this.getSalt(), this.getHash(), this.getEmail(), this.getFirstName(), this.getLastName(),
-                this.getPhone(), this.isActive(), this.getRole(), addressDTOList, this.getCreatedAt(), this.getUpdatedAt());
+                this.getPhone(), this.isActive(), this.getRole().transformToDto(), addressDTOList, this.getCreatedAt(), this.getUpdatedAt());
     }
 }

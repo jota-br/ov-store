@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class JPAUtil {
 
-    public static EntityManagerFactory entityManagerFactory = null;
+    public static EntityManagerFactory entityManagerFactory;
 
     private static EntityManagerFactory getEmf() {
         if (entityManagerFactory == null) {

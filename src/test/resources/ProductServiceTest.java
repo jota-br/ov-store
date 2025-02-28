@@ -18,6 +18,8 @@ public class ProductServiceTest {
 
     @Test
     public void addProduct() {
+
+        ResetTables.resetTables();
         EntityManager em = JPAUtil.getEm();
         try (CategoryRepository categoryRepository = new CategoryRepository(em);
              ProductRepository productRepository = new ProductRepository(em, categoryRepository)) {
@@ -35,13 +37,13 @@ public class ProductServiceTest {
 
         } catch (Exception e) {
             fail(e.getMessage());
-        } finally {
-            ResetTables.resetTables();
         }
     }
 
     @Test
     public void updateProduct() {
+
+        ResetTables.resetTables();
         List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
         List<ProductImageDTO> images = TestHelper.getProductImageDTOS();
 
@@ -66,8 +68,6 @@ public class ProductServiceTest {
 
         } catch (Exception e) {
             fail(e.getMessage());
-        } finally {
-            ResetTables.resetTables();
         }
     }
 }

@@ -27,26 +27,8 @@ public class ProductImageRepository extends Repository {
         if (productImage != null) {
             dto = productImage.transformToDto();
         } else {
-            dto = new ProductImageDTO(-1, url, isMain);
+            dto = new ProductImageDTO(0, url, isMain);
         }
         return dto;
-    }
-
-    public ProductImageDTO updateImage(int productImageId, String url, boolean isMain) {
-
-        ProductImage productImage = this.em.find(ProductImage.class, productImageId);
-
-        if (productImage == null) {
-            return addImage(url, isMain);
-        }
-
-        productImage.updateProductImage(new ProductImage(url, isMain));
-
-        boolean isInserted = this.entityManagerHelper.executeMerge(this.em, productImage);
-        if (!isInserted) {
-            return null;
-        }
-
-        return productImage.transformToDto();
     }
 }
