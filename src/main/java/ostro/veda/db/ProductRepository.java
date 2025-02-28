@@ -85,16 +85,22 @@ public class ProductRepository extends Repository {
         List<Category> categoriesList = getCategoriesList(productDTO.getCategories());
         List<ProductImage> imagesList = getImagesList(productDTO.getImages());
 
-        categoryRepository.updateCategory(productDTO.getCategories());
+        EntityTransaction transaction = null;
+        try {
+            transaction = this.em.getTransaction();
+            transaction.begin();
 
-        product.updateProduct(
-                new Product(productDTO.getName(), productDTO.getDescription(), productDTO.getPrice(),
-                        productDTO.getStock(), productDTO.isActive(), categoriesList, imagesList
-                ));
+            product.updateProduct(
+                    new Product(productDTO.getName(), productDTO.getDescription(), productDTO.getPrice(),
+                            productDTO.getStock(), productDTO.isActive(), categoriesList, imagesList
+                    ));
 
-        boolean isInserted = this.entityManagerHelper.executeMerge(this.em, product);
-        if (!isInserted) {
-            return null;
+            this.em.merge(product);
+
+            transaction.commit();
+        }  catch (Exception e) {
+            Logger.log(e);
+            JPAUtil.transactionRollBack(transaction);
         }
 
         return product.transformToDto();

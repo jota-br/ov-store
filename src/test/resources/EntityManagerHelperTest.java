@@ -23,6 +23,8 @@ public class EntityManagerHelperTest {
     @Test
     public void findByFields() {
 
+        ResetTables.resetTables();
+
         EntityManagerHelper entityManagerHelper = EntityManagerHelper.getEntityManagerHelper();
         EntityManager em = JPAUtil.getEm();
         try (CategoryRepository categoryRepository = new CategoryRepository(em);
@@ -57,8 +59,6 @@ public class EntityManagerHelperTest {
             assertEquals(productDTO.getStock(), product.get(0).getStock());
         } catch (Exception e) {
             fail(e.getMessage());
-        } finally {
-            ResetTables.resetTables();
         }
     }
 }

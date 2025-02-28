@@ -2,7 +2,6 @@ package test.resources;
 
 import jakarta.persistence.EntityManager;
 import org.junit.Test;
-import ostro.veda.common.ProcessDataType;
 import ostro.veda.common.dto.*;
 import ostro.veda.db.*;
 import ostro.veda.db.helpers.JPAUtil;
@@ -13,6 +12,7 @@ import ostro.veda.service.OrderService;
 import ostro.veda.service.ProductService;
 import ostro.veda.service.UserService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -21,6 +21,8 @@ public class OrderServiceTest {
 
     @Test
     public void addOrder() {
+
+        ResetTables.resetTables();
         EntityManager em = JPAUtil.getEm();
         EntityManager em2 = JPAUtil.getEm();
         try (
@@ -36,13 +38,11 @@ public class OrderServiceTest {
             UserService userService = new UserService(userRepository);
             ProductService productService = new ProductService(productRepository);
             OrderService orderService = new OrderService(orderRepository);
-
-            UserDTO user = getUserDTO(userService, "username1", "password99*", "email@email.com",
-                    "5511111000999");
             AddressService addressService = new AddressService(addressRepository);
-            AddressDTO addressDTO = getAddressDTO(addressService, user
-            );
-            List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
+
+            UserDTO user = getUserDTO(userService);
+            AddressDTO addressDTO = getAddressDTO(addressService, user);
+            List<CategoryDTO> categories = getCategoryDTOS();
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
             OrderDetailBasic orderDetailBasic = new OrderDetailBasic(
@@ -65,8 +65,6 @@ public class OrderServiceTest {
 
         } catch (Exception e) {
             fail(e.getMessage());
-        } finally {
-            ResetTables.resetTables();
         }
     }
 
@@ -87,13 +85,11 @@ public class OrderServiceTest {
             UserService userService = new UserService(userRepository);
             ProductService productService = new ProductService(productRepository);
             OrderService orderService = new OrderService(orderRepository);
-
-            UserDTO user = getUserDTO(userService, "username12", "password99*", "email2@email.com",
-                    "5511111000998");
             AddressService addressService = new AddressService(addressRepository);
-            AddressDTO addressDTO = getAddressDTO(addressService, user
-            );
-            List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
+
+            UserDTO user = getUserDTO(userService);
+            AddressDTO addressDTO = getAddressDTO(addressService, user);
+            List<CategoryDTO> categories = getCategoryDTOS();
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
             OrderDetailBasic orderDetailBasic = new OrderDetailBasic(
@@ -116,6 +112,8 @@ public class OrderServiceTest {
 
     @Test
     public void cancelOrder() {
+
+        ResetTables.resetTables();
         EntityManager em = JPAUtil.getEm();
         EntityManager em2 = JPAUtil.getEm();
         try (
@@ -131,13 +129,11 @@ public class OrderServiceTest {
             UserService userService = new UserService(userRepository);
             ProductService productService = new ProductService(productRepository);
             OrderService orderService = new OrderService(orderRepository);
-
-            UserDTO user = getUserDTO(userService, "username123", "password99*33", "email23@email.com",
-                    "5511111000997");
             AddressService addressService = new AddressService(addressRepository);
-            AddressDTO addressDTO = getAddressDTO(addressService, user
-            );
-            List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
+
+            UserDTO user = getUserDTO(userService);
+            AddressDTO addressDTO = getAddressDTO(addressService, user);
+            List<CategoryDTO> categories = getCategoryDTOS();
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
             OrderDetailBasic orderDetailBasic = new OrderDetailBasic(
@@ -154,13 +150,13 @@ public class OrderServiceTest {
 
         } catch (Exception e) {
             fail(e.getMessage());
-        } finally {
-            ResetTables.resetTables();
         }
     }
 
     @Test
     public void returnItem() {
+
+        ResetTables.resetTables();
         EntityManager em = JPAUtil.getEm();
         EntityManager em2 = JPAUtil.getEm();
         try (
@@ -170,20 +166,17 @@ public class OrderServiceTest {
                 UserRepository userRepository = new UserRepository();
                 CategoryRepository categoryRepository = new CategoryRepository(em2);
                 ProductRepository productRepository = new ProductRepository(em2, categoryRepository);
-                ProductImageRepository productImageRepository = new ProductImageRepository(em2);
                 AddressRepository addressRepository = new AddressRepository()
         ) {
 
             UserService userService = new UserService(userRepository);
             ProductService productService = new ProductService(productRepository);
             OrderService orderService = new OrderService(orderRepository);
-
-            UserDTO user = getUserDTO(userService, "username123", "password99*33", "email23@email.com",
-                    "5511111000997");
             AddressService addressService = new AddressService(addressRepository);
-            AddressDTO addressDTO = getAddressDTO(addressService, user
-            );
-            List<CategoryDTO> categories = TestHelper.getCategoryDTOS();
+
+            UserDTO user = getUserDTO(userService);
+            AddressDTO addressDTO = getAddressDTO(addressService, user);
+            List<CategoryDTO> categories = getCategoryDTOS();
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
             OrderDetailBasic orderDetailBasic = new OrderDetailBasic(
@@ -205,21 +198,7 @@ public class OrderServiceTest {
 
         } catch (Exception e) {
             fail(e.getMessage());
-        } finally {
-            ResetTables.resetTables();
         }
-    }
-
-    private static UserDTO getUserDTO(UserService userService, String username, String password, String email,
-                                      String phone) {
-
-        return userService.processData(0, username, password,
-                email, "Hobart", "Shulz", phone, true, ProcessDataType.ADD);
-    }
-
-    private static AddressDTO getAddressDTO(AddressService addressService, UserDTO user) {
-        return addressService.processData(0, user.getUserId(), "streetname", "1900-B",
-                "Home", "Joinville", "Santa Catarina", "900103041", "Brazil", true, ProcessDataType.ADD);
     }
 
     private static List<ProductDTO> getProductDTOList(ProductService productService, List<CategoryDTO> categories) {
@@ -229,5 +208,34 @@ public class OrderServiceTest {
                 productService.addProduct(new ProductDTO(0, "Product Test Two", "Description Two",
                         50.00, 5, true, categories, null))
         );
+    }
+
+    private static List<ProductImageDTO> getProductImageDTOS() {
+        List<ProductImageDTO> images = new ArrayList<>();
+        images.add(new ProductImageDTO(0, "http://sub.example.co.uk/images/photo.png", true));
+        return images;
+    }
+
+    private static List<CategoryDTO> getCategoryDTOS() {
+        List<CategoryDTO> categories = new ArrayList<>();
+        categories.add(new CategoryDTO(0, "Furniture", "Handmade", true));
+        categories.add(new CategoryDTO(0, "Wood work", "Artisan", true));
+        return categories;
+    }
+
+    private static UserDTO getUserDTO(UserService userService) {
+
+        return userService.addUser(new UserDTO(0, "username90R", null, null,
+                "email@example.com", "John", "Doe", "+00099988877766",
+                true, getRoleDTO(), null, null, null), "password");
+    }
+
+    private static RoleDTO getRoleDTO() {
+        return new RoleDTO(20, null, null, null, null, null);
+    }
+
+    private static AddressDTO getAddressDTO(AddressService addressService, UserDTO user) {
+        return addressService.addAddress(new AddressDTO(0, user.getUserId(), "Street N123", "1900-B",
+                "Home", "Hollville", "State of Play", "900103041", "Brazil", true, null, null));
     }
 }
