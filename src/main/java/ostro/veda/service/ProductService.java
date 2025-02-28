@@ -1,12 +1,13 @@
 package ostro.veda.service;
 
+import lombok.extern.slf4j.Slf4j;
 import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.common.validation.SanitizeUtil;
 import ostro.veda.common.validation.ValidateUtil;
 import ostro.veda.db.ProductRepository;
-import ostro.veda.loggerService.Logger;
 
+@Slf4j
 public class ProductService {
 
     private final ProductRepository productRepository;
@@ -15,18 +16,13 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    /**
-     * Add new Product.
-     * @param product ProductDTO
-     * @return ProductDTO
-     */
     public ProductDTO addProduct(ProductDTO product) {
         try {
             ValidateUtil.validateProduct(product);
             ProductDTO productDTO = SanitizeUtil.sanitizeProduct(product);
             return this.productRepository.addProduct(productDTO);
         } catch (ErrorHandling.InvalidInputException e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
             return null;
         }
     }
@@ -36,8 +32,8 @@ public class ProductService {
             ValidateUtil.validateProduct(product);
             ProductDTO productDTO = SanitizeUtil.sanitizeProduct(product);
             return this.productRepository.updateProduct(productDTO);
-        } catch (Exception e) {
-            Logger.log(e);
+        } catch (ErrorHandling.InvalidInputException e) {
+            log.warn(e.getMessage());
             return null;
         }
     }

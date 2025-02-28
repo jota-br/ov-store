@@ -3,12 +3,13 @@ package ostro.veda.db.helpers;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
-import ostro.veda.loggerService.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class EntityManagerHelper {
 
     private static EntityManagerHelper entityManagerHelper;
@@ -74,7 +75,7 @@ public class EntityManagerHelper {
             transaction.commit();
             return true;
         } catch (Exception e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
             JPAUtil.transactionRollBack(transaction);
         }
         return false;
@@ -94,7 +95,7 @@ public class EntityManagerHelper {
             transaction.commit();
             return true;
         } catch (Exception e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
             JPAUtil.transactionRollBack(transaction);
         }
         return false;
@@ -118,7 +119,7 @@ public class EntityManagerHelper {
             transaction.commit();
             return list;
         } catch (Exception e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
             JPAUtil.transactionRollBack(transaction);
         }
         return null;
@@ -142,7 +143,7 @@ public class EntityManagerHelper {
             transaction.commit();
             return list;
         } catch (Exception e) {
-            Logger.log(e);
+            log.warn(e.getMessage());
             JPAUtil.transactionRollBack(transaction);
         }
         return null;

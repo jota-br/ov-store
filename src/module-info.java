@@ -6,6 +6,8 @@ module ostro.veda.project {
     requires org.checkerframework.checker.qual;
     requires ostro.veda.Logger;
     requires org.apache.commons.validator;
+    requires static lombok;
+    requires org.slf4j;
 
     exports test.resources to junit;
     opens ostro.veda.db.jpa to org.hibernate.orm.core;

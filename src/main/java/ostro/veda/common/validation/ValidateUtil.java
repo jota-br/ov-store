@@ -120,8 +120,7 @@ public class ValidateUtil {
             return;
         }
 
-        throw new ErrorHandling.InvalidInputException(
-                ErrorHandling.InputExceptionMessage.EX_INVALID_NAME,
+        throw new ErrorHandling.InvalidInputException("Invalid Name",
                 "name:" + input
         );
     }
@@ -133,8 +132,7 @@ public class ValidateUtil {
             return;
         }
 
-        throw new ErrorHandling.InvalidInputException(
-                ErrorHandling.InputExceptionMessage.EX_INVALID_DESCRIPTION,
+        throw new ErrorHandling.InvalidInputException("Invalid Description",
                 "description:" + input
         );
     }
@@ -177,6 +175,7 @@ public class ValidateUtil {
                 return;
             }
         }
+
         throw new ErrorHandling.InvalidInputException(
                 "Invalid Order Status", "status:" + status
         );
@@ -188,6 +187,7 @@ public class ValidateUtil {
         if (matcher.matches()) {
             return;
         }
+
         throw new ErrorHandling.InvalidInputException("Invalid Username", "username:" + input);
     }
 
@@ -197,6 +197,7 @@ public class ValidateUtil {
         if (matcher.matches()) {
             return;
         }
+
         throw new ErrorHandling.InvalidInputException("Invalid Phone", "phone:" + input);
     }
 
@@ -205,6 +206,7 @@ public class ValidateUtil {
         if (emailValidator.isValid(input)) {
             return;
         }
+
         throw new ErrorHandling.InvalidInputException("Invalid Email", "email:" + input);
     }
 
@@ -214,6 +216,7 @@ public class ValidateUtil {
         if (matcher.matches()) {
             return;
         }
+
         throw new ErrorHandling.InvalidInputException("Invalid Password", "password:*");
     }
 
@@ -224,6 +227,7 @@ public class ValidateUtil {
                 return;
             }
         }
+
         throw new ErrorHandling.InvalidInputException(
                 "Invalid Address Type", "status:" + type
         );
