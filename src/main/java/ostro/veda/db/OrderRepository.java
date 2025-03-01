@@ -12,6 +12,7 @@ import java.util.List;
 public interface OrderRepository extends Repository<OrderDTO> {
 
     OrderDTO cancelOrder(int orderId);
+    OrderDTO returnItem(OrderDetailDTO orderDetailDTO);
 
     Order buildOrder(OrderDTO orderDTO);
     Order buildNewOrderStatusHistory(Order order);

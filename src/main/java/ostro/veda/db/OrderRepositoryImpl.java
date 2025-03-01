@@ -6,7 +6,9 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ostro.veda.common.dto.*;
+import ostro.veda.common.dto.OrderDTO;
+import ostro.veda.common.dto.OrderDetailDTO;
+import ostro.veda.common.dto.OrderStatusHistoryDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.db.helpers.JPAUtil;
@@ -29,36 +31,6 @@ public class OrderRepositoryImpl implements OrderRepository {
     public OrderRepositoryImpl(EntityManager entityManager, EntityManagerHelper entityManagerHelper) {
         this.entityManager = entityManager;
         this.entityManagerHelper = entityManagerHelper;
-    }
-
-    public OrderDTO returnItem(OrderBasic orderBasic)
-            throws UnsupportedOperationException, ErrorHandling.InvalidInputException {
-
-        Order order = getOrder(orderBasic.getOrderId());
-
-        if (!isReturnAvailable(order.getUpdatedAt(), order.getStatus())) return null;
-        if (!isReturningItemsCorrect(order, orderBasic)) return null;
-
-        String status = OrderStatus.RETURN_REQUESTED.getStatus();
-        order.updateOrderStatus(status);
-        EntityTransaction transaction = null;
-        try {
-            transaction = this.getEm().getTransaction();
-            transaction.begin();
-
-            this.getEm().persist(order);
-            OrderStatusHistoryDTO orderStatusHistory = orderStatusHistoryRepository.addOrderStatusHistory(order);
-            orderDetailRepository.addOrderDetail(order, order.getOrderDetails(), OrderDetailRepository.OrderOperation.INCREASE);
-
-            transaction.commit();
-            OrderDTO orderDTO = order.transformToDto();
-            orderDTO.getOrderStatusHistory().add(orderStatusHistory);
-            return orderDTO;
-        } catch (Exception e) {
-            log.warn(e.getMessage());
-            JPAUtil.transactionRollBack(transaction);
-        }
-        return null;
     }
 
     @Override
@@ -105,6 +77,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         return null;
     }
 
+    @Override
     public OrderDTO cancelOrder(int orderId) {
         Order order = this.entityManager.find(Order.class, orderId);
 
@@ -115,12 +88,41 @@ public class OrderRepositoryImpl implements OrderRepository {
 
         List<OrderDetail> newOrderDetails = updateProductInventory(orderDetailList, OrderDetailRepository.OrderOperation.INCREASE);
         if (newOrderDetails == null || newOrderDetails.isEmpty()) return null;
-        orderDetailList.addAll(newOrderDetails);
 
+        orderDetailList.addAll(newOrderDetails);
+        order.setOrderDetails(orderDetailList);
         String status = OrderStatus.CANCELLED.getStatus();
         order.updateOrderStatus(status);
+        order = buildNewOrderStatusHistory(order);
+
         EntityTransaction transaction = null;
         try {
+            transaction = this.entityManager.getTransaction();
+            transaction.begin();
+
+            this.entityManager.persist(order);
+
+            transaction.commit();
+            return order.transformToDto();
+        } catch (Exception e) {
+            log.warn(e.getMessage());
+            JPAUtil.transactionRollBack(transaction);
+        }
+        return null;
+    }
+
+    @Override
+    public OrderDTO returnItem(@NonNull OrderDetailDTO orderDetailDTO) {
+        Order order = this.entityManager.find(Order.class, orderDetailDTO.getOrder().getOrderId());
+
+        EntityTransaction transaction = null;
+        try {
+            if (!isReturnAvailable(order.getUpdatedAt(), order.getStatus())) return null;
+            if (!isReturningItemsCorrect(order, orderDetailDTO)) return null;
+
+            String status = OrderStatus.RETURN_REQUESTED.getStatus();
+            order.updateOrderStatus(status);
+
             transaction = this.entityManager.getTransaction();
             transaction.begin();
 
@@ -171,7 +173,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Order buildNewOrderStatusHistory(Order order) {
+    public Order buildNewOrderStatusHistory(@NonNull Order order) {
         OrderStatusHistory orderStatusHistory = new OrderStatusHistory()
                 .setOrder(order)
                 .setStatus(order.getStatus());
@@ -191,7 +193,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public OrderDetail buildOrderDetail(Order order, OrderDetailDTO orderDetailDTO) {
+    public OrderDetail buildOrderDetail(@NonNull Order order, @NonNull OrderDetailDTO orderDetailDTO) {
         Product product = this.entityManager.find(Product.class, orderDetailDTO.getProduct().getProductId());
         int quantity = orderDetailDTO.getQuantity();
         double price = product.getPrice();
@@ -237,12 +239,19 @@ public class OrderRepositoryImpl implements OrderRepository {
 
             if (orderOperation.equals(OrderDetailRepository.OrderOperation.INCREASE)) {
                 newStock = newStock + quantity;
-                newOrderDetailList.add(new OrderDetail(0, order, product, -quantity, product.getPrice(), 0));
+                quantity = -quantity;
             } else {
                 if (!hasStock(newStock, quantity)) return null;
                 newStock = newStock - quantity;
             }
 
+            OrderDetail newOrderDetail = new OrderDetail()
+                    .setOrderDetailId(orderDetail.getOrderDetailId())
+                    .setOrder(orderDetail.getOrder())
+                    .setProduct(product)
+                    .setQuantity(quantity)
+                    .setUnitPrice(product.getPrice());
+            newOrderDetailList.add(newOrderDetail);
             product.updateStock(newStock);
         }
         return newOrderDetailList;
@@ -252,7 +261,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         return stock >= quantity;
     }
 
-    private boolean isCancellationAvailable(String orderStatus) throws UnsupportedOperationException {
+    private boolean isCancellationAvailable(@NonNull String orderStatus) throws UnsupportedOperationException {
         final int NO_CANCELLATION_ORDINAL = 4;
         final int ordinal = OrderStatus.getOrdinal(orderStatus);
         if (ordinal >= NO_CANCELLATION_ORDINAL) {
@@ -261,7 +270,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         return true;
     }
 
-    private boolean isReturnAvailable(LocalDateTime orderDate, String status)
+    private boolean isReturnAvailable(@NonNull LocalDateTime orderDate, @NonNull String status)
             throws ErrorHandling.InvalidInputException {
         final int MAXIMUM_AMOUNT_OF_DAY_TO_RETURN = 30;
         LocalDateTime elapsedTime = LocalDateTime.now().minusDays(MAXIMUM_AMOUNT_OF_DAY_TO_RETURN);
@@ -276,23 +285,19 @@ public class OrderRepositoryImpl implements OrderRepository {
         return true;
     }
 
-    private boolean isReturningItemsCorrect(Order order, OrderBasic orderBasic) {
+    private boolean isReturningItemsCorrect(@NonNull Order order, @NonNull OrderDetailDTO orderDetail) {
 
         int orderId = order.getOrderId();
-        int orderBasicId = orderBasic.getOrderId();
-        if (orderId != orderBasicId) return false;
+        int orderDetailId = orderDetail.getOrder().getOrderId();
+        if (orderId != orderDetailId) return false;
 
-        for (OrderDetail orderDetail : order.getOrderDetails()) {
-            int productId = orderDetail.getProduct().getProductId();
-            int quantity = orderDetail.getQuantity();
+        for (OrderDetail od : order.getOrderDetails()) {
+            int productId = od.getProduct().getProductId();
+            int quantity = od.getQuantity();
 
-            for (OrderDetailBasic orderDetailBasic : orderBasic.getOrderDetails()) {
-                int orderBasicProductId = orderDetailBasic.getProductId();
-                int orderBasicQuantity = -(orderDetailBasic.getQuantity());
-                if (productId != orderBasicProductId || quantity < orderBasicQuantity) return false;
-            }
+            if (productId == orderDetail.getProduct().getProductId() && quantity <= orderDetail.getQuantity()) return true;
         }
-        return true;
+        return false;
     }
 
     @Override

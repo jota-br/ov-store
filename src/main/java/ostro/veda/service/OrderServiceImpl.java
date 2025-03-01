@@ -24,7 +24,7 @@ public class OrderServiceImpl implements OrderService {
         try {
             log.info("add() new Order for User = {}", orderDTO.getUserId());
             ValidateUtil.validateOrder(orderDTO);
-            return orderRepositoryImpl.addOrder(orderDTO);
+            return orderRepositoryImpl.add(orderDTO);
         } catch (Exception e) {
             log.warn(e.getMessage());
             return null;
@@ -36,7 +36,7 @@ public class OrderServiceImpl implements OrderService {
         try {
             log.info("update() OrderStatus for Order = {}", orderDTO.getOrderId());
             ValidateUtil.validateOrderIdAndStatus(orderDTO.getOrderId(), orderDTO.getStatus());
-            return orderRepositoryImpl.updateOrderStatus(orderDTO);
+            return orderRepositoryImpl.update(orderDTO);
         } catch (ErrorHandling.InvalidInputException e) {
             log.warn(e.getMessage());
             return null;
@@ -60,7 +60,7 @@ public class OrderServiceImpl implements OrderService {
         try {
             log.info("returnItem() Product = {}", returningItem.getProduct().getProductId());
             return orderRepositoryImpl.returnItem(returningItem);
-        } catch (ErrorHandling.InvalidInputException e) {
+        } catch (Exception e) {
             log.warn(e.getMessage());
             return null;
         }
