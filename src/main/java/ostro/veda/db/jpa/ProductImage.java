@@ -1,8 +1,14 @@
 package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import ostro.veda.common.dto.ProductImageDTO;
 
+@Getter
+@Setter
+@AllArgsConstructor
 @Entity
 @Table(name = "product_images")
 public class ProductImage {
@@ -18,24 +24,10 @@ public class ProductImage {
     @Column(name = "is_main")
     private boolean isMain;
 
+    @Version
+    private int version;
+
     public ProductImage() {
-    }
-
-    public ProductImage(String imageUrl, boolean isMain) {
-        this.imageUrl = imageUrl;
-        this.isMain = isMain;
-    }
-
-    public int getProductImageId() {
-        return productImageId;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public boolean isMain() {
-        return isMain;
     }
 
     public ProductImage updateProductImage(ProductImage updatedData) {
@@ -46,6 +38,6 @@ public class ProductImage {
     }
 
     public ProductImageDTO transformToDto() {
-        return new ProductImageDTO(this.getProductImageId(), this.getImageUrl(), this.isMain());
+        return new ProductImageDTO(this.getProductImageId(), this.getImageUrl(), this.isMain(), this.getVersion());
     }
 }

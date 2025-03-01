@@ -1,6 +1,9 @@
 package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import ostro.veda.common.dto.CategoryDTO;
@@ -11,6 +14,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
+@AllArgsConstructor
 @Entity
 @Table(name = "products")
 public class Product {
@@ -63,68 +69,6 @@ public class Product {
     private int version;
 
     public Product() {
-    }
-
-    public Product(String name, String description, double price, int stock, boolean isActive) {
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.stock = stock;
-        this.isActive = isActive;
-    }
-
-    public Product(String name, String description, double price, int stock, boolean isActive, List<Category> categories, List<ProductImage> images) {
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.stock = stock;
-        this.isActive = isActive;
-        this.categories = categories;
-        this.images = images;
-    }
-
-    public int getProductId() {
-        return productId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public List<Category> getCategories() {
-        return categories;
-    }
-
-    public List<ProductImage> getImages() {
-        return images;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public int getVersion() {
-        return version;
     }
 
     public Product updateProduct(Product updatedData) {

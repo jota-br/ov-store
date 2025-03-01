@@ -1,8 +1,14 @@
 package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import ostro.veda.common.dto.OrderDetailDTO;
 
+@Getter
+@Setter
+@AllArgsConstructor
 @Entity
 @Table(name = "order_details")
 public class OrderDetail {
@@ -26,43 +32,16 @@ public class OrderDetail {
     @Column(name = "unit_price")
     private double unitPrice;
 
+    @Version
+    private int version;
+
     public OrderDetail() {
     }
 
-    public OrderDetail(Order order, Product product, int quantity, double unitPrice) {
-        this.order = order;
-        this.product = product;
-        this.quantity = quantity;
-        this.unitPrice = unitPrice;
-    }
-
-    public OrderDetail(Product product, int quantity, double unitPrice) {
-        this(null, product, quantity, unitPrice);
-    }
-
-    public int getOrderDetailId() {
-        return orderDetailId;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public double getUnitPrice() {
-        return unitPrice;
-    }
-
     public OrderDetailDTO transformToDto() {
-        return new OrderDetailDTO(this.getOrderDetailId(), this.getOrder().transformToDto(), this.getProduct().transformToDto(), this.getQuantity(),
-                this.getUnitPrice());
+        return new OrderDetailDTO(this.getOrderDetailId(), this.getOrder().transformToDto(),
+                this.getProduct().transformToDto(), this.getQuantity(),
+                this.getUnitPrice(), this.getVersion());
     }
 
     @Override

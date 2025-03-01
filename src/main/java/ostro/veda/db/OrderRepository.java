@@ -223,8 +223,8 @@ public class OrderRepository extends Repository {
         Address shipping = this.em.find(Address.class, orderBasic.getShippingAddressId());
         Address billing = this.em.find(Address.class, orderBasic.getBillingAddressId());
 
-        return new Order(orderBasic.getUserId(), totalAmount, orderBasic.getStatus(),
-                shipping, billing);
+        return new Order(0, orderBasic.getUserId(), LocalDateTime.now(), totalAmount, orderBasic.getStatus(), null,
+                shipping, billing, null, LocalDateTime.now(), 0);
     }
 
     private List<OrderDetail> getOrderDetail(Order order, OrderBasic orderBasic) {

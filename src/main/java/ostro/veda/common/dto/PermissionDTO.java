@@ -1,7 +1,12 @@
 package ostro.veda.common.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 
+@Getter
+@AllArgsConstructor
 public class PermissionDTO {
 
     private final int permissionId;
@@ -9,32 +14,5 @@ public class PermissionDTO {
     private final String description;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
-
-    public PermissionDTO(int permissionId, String name, String description, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.permissionId = permissionId;
-        this.name = name;
-        this.description = description;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-
-    public int getPermissionId() {
-        return permissionId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
+    private final int version;
 }

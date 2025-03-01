@@ -151,11 +151,12 @@ public class ProductRepository extends Repository {
             List<ProductImage> result = this.entityManagerHelper.findByFields(this.getEm(), ProductImage.class,
                     Map.of(ProductImageColumns.IMAGE_URL.getColumnName(), pi.getImageUrl()));
 
+            ProductImage newProductImage = new ProductImage(pi.getProductImageId(), pi.getImageUrl(), pi.isMain(), pi.getVersion());
             if (result != null) {
                 productImage = result.get(0);
-                productImage.updateProductImage(new ProductImage(pi.getImageUrl(), pi.isMain()));
+                productImage.updateProductImage(newProductImage);
             } else {
-                productImage = new ProductImage(pi.getImageUrl(), pi.isMain());
+                productImage = newProductImage;
             }
 
             imagesList.add(productImage);

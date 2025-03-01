@@ -74,13 +74,13 @@ public class UserRepository extends Repository {
         Role role = this.em.find(Role.class, 20);
         return new User(user.getUserId(), user.getUsername(), user.getSalt(), user.getHash(), user.getEmail(),
                 user.getFirstName(), user.getLastName(), user.getPhone(), user.isActive(), role,
-                addressList, user.getCreatedAt(), user.getUpdatedAt());
+                addressList, user.getCreatedAt(), user.getUpdatedAt(), user.getVersion());
     }
 
     private User getUpdatedData(UserDTO userDTO, User user, List<Address> addressList) {
         return new User(user.getUserId(), userDTO.getUsername(), userDTO.getSalt(), userDTO.getHash(),
                 userDTO.getEmail(), userDTO.getFirstName(), userDTO.getLastName(), userDTO.getPhone(),
-                userDTO.isActive(), user.getRole(), addressList, userDTO.getCreatedAt(), userDTO.getUpdatedAt());
+                userDTO.isActive(), user.getRole(), addressList, userDTO.getCreatedAt(), userDTO.getUpdatedAt(), user.getVersion());
     }
 
     private List<Address> getAddresses(UserDTO user) {

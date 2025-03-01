@@ -1,6 +1,9 @@
 package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import ostro.veda.common.dto.OrderDTO;
@@ -11,6 +14,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
+@AllArgsConstructor
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -51,78 +57,10 @@ public class Order {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Version
+    private int version;
+
     public Order() {
-    }
-
-    public Order(int orderId, int userId, LocalDateTime orderDate, double totalAmount, String status,
-                 List<OrderDetail> orderDetails, Address shippingAddress, Address billingAddress,
-                 List<OrderStatusHistory> orderStatusHistory, LocalDateTime updatedAt) {
-        this.orderId = orderId;
-        this.userId = userId;
-        this.orderDate = orderDate;
-        this.totalAmount = totalAmount;
-        this.status = status;
-        this.orderDetails = orderDetails == null ? new ArrayList<>() : orderDetails;
-        this.shippingAddress = shippingAddress;
-        this.billingAddress = billingAddress;
-        this.orderStatusHistory = orderStatusHistory == null ? new ArrayList<>() : orderStatusHistory;
-        this.updatedAt = updatedAt;
-    }
-
-    public Order(int userId, double totalAmount, String status, List<OrderDetail> orderDetails,
-                 Address shippingAddress, Address billingAddress, List<OrderStatusHistory> orderStatusHistory) {
-        this(0, userId, null, totalAmount, status, orderDetails,shippingAddress, billingAddress,
-                orderStatusHistory, null);
-    }
-
-    public Order(int userId, double totalAmount, String status, Address shippingAddress, Address billingAddress) {
-        this(0, userId, null, totalAmount, status, List.of(), shippingAddress, billingAddress,
-                List.of(), null);
-    }
-
-    public Order(int userId, double totalAmount, String status, List<OrderDetail> orderDetails, Address shippingAddress, Address billingAddress) {
-        this(0, userId, null, totalAmount, status, orderDetails, shippingAddress, billingAddress,
-                List.of(), null);
-    }
-
-    public int getOrderId() {
-        return orderId;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public LocalDateTime getOrderDate() {
-        return orderDate;
-    }
-
-    public double getTotalAmount() {
-        return totalAmount;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public List<OrderDetail> getOrderDetails() {
-        return orderDetails;
-    }
-
-    public Address getShippingAddress() {
-        return shippingAddress;
-    }
-
-    public Address getBillingAddress() {
-        return billingAddress;
-    }
-
-    public List<OrderStatusHistory> getOrderStatusHistory() {
-        return orderStatusHistory;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
     }
 
     public Order updateOrderStatus(String status) {
@@ -145,7 +83,11 @@ public class Order {
             }
         }
 
-        return new OrderDTO(this.getOrderId(), this.getUserId(), this.getOrderDate(), this.getTotalAmount(), this.getStatus(),
-                orderDetailDTOList, this.getShippingAddress().transformToDto(), this.getBillingAddress().transformToDto(), orderStatusHistoryDTOList, this.getUpdatedAt());
+        return new OrderDTO(this.getOrderId(), this.getUserId(),
+                this.getOrderDate(), this.getTotalAmount(),
+                this.getStatus(), orderDetailDTOList,
+                this.getShippingAddress().transformToDto(), this.getBillingAddress().transformToDto(),
+                orderStatusHistoryDTOList, this.getUpdatedAt(),
+                this.getVersion());
     }
 }
