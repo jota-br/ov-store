@@ -10,7 +10,7 @@ import ostro.veda.db.helpers.OrderStatus;
 import ostro.veda.db.jpa.Product;
 import ostro.veda.service.AddressServiceImpl;
 import ostro.veda.service.OrderService;
-import ostro.veda.service.ProductService;
+import ostro.veda.service.ProductServiceImpl;
 import ostro.veda.service.UserServiceImpl;
 
 import java.util.ArrayList;
@@ -32,19 +32,19 @@ public class OrderServiceTest {
                 OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
                 UserRepositoryImpl userRepositoryImpl = new UserRepositoryImpl();
                 CategoryRepository categoryRepository = new CategoryRepository(em2);
-                ProductRepository productRepository = new ProductRepository(em2, categoryRepository);
+                ProductRepositoryImpl productRepositoryImpl = new ProductRepositoryImpl(em2, categoryRepository);
                 AddressRepositoryImpl addressRepository = new AddressRepositoryImpl(em2, new EntityManagerHelper())
         ) {
 
             UserServiceImpl userServiceImpl = new UserServiceImpl(userRepositoryImpl);
-            ProductService productService = new ProductService(productRepository);
+            ProductServiceImpl productServiceImpl = new ProductServiceImpl(productRepositoryImpl);
             OrderService orderService = new OrderService(orderRepository);
             AddressServiceImpl addressServiceImpl = new AddressServiceImpl(addressRepository);
 
             UserDTO user = getUserDTO(userServiceImpl);
             AddressDTO addressDTO = getAddressDTO(addressServiceImpl, user);
             List<CategoryDTO> categories = getCategoryDTOS();
-            List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
+            List<ProductDTO> productDTOList = getProductDTOList(productServiceImpl, categories);
 
             OrderDetailBasic orderDetailBasic = new OrderDetailBasic(
                     productDTOList.get(0).getProductId(), 5);
@@ -79,19 +79,19 @@ public class OrderServiceTest {
                 OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
                 UserRepositoryImpl userRepositoryImpl = new UserRepositoryImpl();
                 CategoryRepository categoryRepository = new CategoryRepository(em2);
-                ProductRepository productRepository = new ProductRepository(em2, categoryRepository);
+                ProductRepositoryImpl productRepositoryImpl = new ProductRepositoryImpl(em2, categoryRepository);
                 AddressRepositoryImpl addressRepository = new AddressRepositoryImpl(em2, new EntityManagerHelper())
         ) {
 
             UserServiceImpl userServiceImpl = new UserServiceImpl(userRepositoryImpl);
-            ProductService productService = new ProductService(productRepository);
+            ProductServiceImpl productServiceImpl = new ProductServiceImpl(productRepositoryImpl);
             OrderService orderService = new OrderService(orderRepository);
             AddressServiceImpl addressServiceImpl = new AddressServiceImpl(addressRepository);
 
             UserDTO user = getUserDTO(userServiceImpl);
             AddressDTO addressDTO = getAddressDTO(addressServiceImpl, user);
             List<CategoryDTO> categories = getCategoryDTOS();
-            List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
+            List<ProductDTO> productDTOList = getProductDTOList(productServiceImpl, categories);
 
             OrderDetailBasic orderDetailBasic = new OrderDetailBasic(
                     productDTOList.get(0).getProductId(), productDTOList.get(0).getStock());
@@ -123,19 +123,19 @@ public class OrderServiceTest {
                 OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
                 UserRepositoryImpl userRepositoryImpl = new UserRepositoryImpl();
                 CategoryRepository categoryRepository = new CategoryRepository(em2);
-                ProductRepository productRepository = new ProductRepository(em2, categoryRepository);
+                ProductRepositoryImpl productRepositoryImpl = new ProductRepositoryImpl(em2, categoryRepository);
                 AddressRepositoryImpl addressRepository = new AddressRepositoryImpl(em2, new EntityManagerHelper())
         ) {
 
             UserServiceImpl userServiceImpl = new UserServiceImpl(userRepositoryImpl);
-            ProductService productService = new ProductService(productRepository);
+            ProductServiceImpl productServiceImpl = new ProductServiceImpl(productRepositoryImpl);
             OrderService orderService = new OrderService(orderRepository);
             AddressServiceImpl addressServiceImpl = new AddressServiceImpl(addressRepository);
 
             UserDTO user = getUserDTO(userServiceImpl);
             AddressDTO addressDTO = getAddressDTO(addressServiceImpl, user);
             List<CategoryDTO> categories = getCategoryDTOS();
-            List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
+            List<ProductDTO> productDTOList = getProductDTOList(productServiceImpl, categories);
 
             OrderDetailBasic orderDetailBasic = new OrderDetailBasic(
                     productDTOList.get(0).getProductId(), 10);
@@ -166,19 +166,19 @@ public class OrderServiceTest {
                 OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
                 UserRepositoryImpl userRepositoryImpl = new UserRepositoryImpl();
                 CategoryRepository categoryRepository = new CategoryRepository(em2);
-                ProductRepository productRepository = new ProductRepository(em2, categoryRepository);
+                ProductRepositoryImpl productRepositoryImpl = new ProductRepositoryImpl(em2, categoryRepository);
                 AddressRepositoryImpl addressRepository = new AddressRepositoryImpl(em2, new EntityManagerHelper())
         ) {
 
             UserServiceImpl userServiceImpl = new UserServiceImpl(userRepositoryImpl);
-            ProductService productService = new ProductService(productRepository);
+            ProductServiceImpl productServiceImpl = new ProductServiceImpl(productRepositoryImpl);
             OrderService orderService = new OrderService(orderRepository);
             AddressServiceImpl addressServiceImpl = new AddressServiceImpl(addressRepository);
 
             UserDTO user = getUserDTO(userServiceImpl);
             AddressDTO addressDTO = getAddressDTO(addressServiceImpl, user);
             List<CategoryDTO> categories = getCategoryDTOS();
-            List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
+            List<ProductDTO> productDTOList = getProductDTOList(productServiceImpl, categories);
 
             OrderDetailBasic orderDetailBasic = new OrderDetailBasic(
                     productDTOList.get(0).getProductId(), productDTOList.get(0).getStock());
@@ -202,11 +202,11 @@ public class OrderServiceTest {
         }
     }
 
-    private static List<ProductDTO> getProductDTOList(ProductService productService, List<CategoryDTO> categories) {
+    private static List<ProductDTO> getProductDTOList(ProductServiceImpl productServiceImpl, List<CategoryDTO> categories) {
         return List.of(
-                productService.addProduct(new ProductDTO(0, "Product Test One", "Description One",
+                productServiceImpl.addProduct(new ProductDTO(0, "Product Test One", "Description One",
                         45.00, 10, true, categories, null,  null, null, 0)),
-                productService.addProduct(new ProductDTO(0, "Product Test Two", "Description Two",
+                productServiceImpl.addProduct(new ProductDTO(0, "Product Test Two", "Description Two",
                         50.00, 5, true, categories, null,  null, null, 0))
         );
     }

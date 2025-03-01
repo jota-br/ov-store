@@ -29,8 +29,8 @@ public class AddressRepositoryImpl implements AddressRepository {
     }
 
     @Override
-    public Address build(@NonNull AddressDTO addressDTO) {
-        log.info("build() Address for User = {}", addressDTO.getUserId());
+    public Address buildAddress(@NonNull AddressDTO addressDTO) {
+        log.info("buildAddress() Address for User = {}", addressDTO.getUserId());
         return new Address()
                 .setAddressId(addressDTO.getAddressId())
                 .setUserId(addressDTO.getUserId())
@@ -66,7 +66,7 @@ public class AddressRepositoryImpl implements AddressRepository {
                 return null;
             }
         } else {
-            address = build(addressDTO);
+            address = buildAddress(addressDTO);
         }
 
         EntityTransaction transaction = null;
@@ -98,7 +98,7 @@ public class AddressRepositoryImpl implements AddressRepository {
             transaction = this.entityManager.getTransaction();
             transaction.begin();
 
-            Address updatedAddress = build(addressDTO);
+            Address updatedAddress = buildAddress(addressDTO);
             address.updateAddress(updatedAddress);
 
             this.entityManager.merge(address);

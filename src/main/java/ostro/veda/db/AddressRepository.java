@@ -5,5 +5,5 @@ import ostro.veda.db.jpa.Address;
 
 public interface AddressRepository extends Repository<AddressDTO> {
 
-    Address build(AddressDTO addressDTO);
+    Address buildAddress(AddressDTO addressDTO);
 }

@@ -2,7 +2,7 @@ package test.ostro.veda.test;
 
 import ostro.veda.common.dto.*;
 import ostro.veda.service.AddressServiceImpl;
-import ostro.veda.service.ProductService;
+import ostro.veda.service.ProductServiceImpl;
 import ostro.veda.service.UserServiceImpl;
 
 import java.util.ArrayList;
@@ -10,11 +10,11 @@ import java.util.List;
 
 public class TestHelper {
 
-    public static List<ProductDTO> getProductDTOList(ProductService productService, List<CategoryDTO> categories) {
+    public static List<ProductDTO> getProductDTOList(ProductServiceImpl productServiceImpl, List<CategoryDTO> categories) {
         return List.of(
-                productService.addProduct(new ProductDTO(0, "Product Test One", "Description One",
+                productServiceImpl.addProduct(new ProductDTO(0, "Product Test One", "Description One",
                         45.00, 10, true, categories, null,  null, null, 0)),
-                productService.addProduct(new ProductDTO(0, "Product Test Two", "Description Two",
+                productServiceImpl.addProduct(new ProductDTO(0, "Product Test Two", "Description Two",
                         50.00, 5, true, categories, null, null, null, 0))
         );
     }

@@ -89,7 +89,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User build(@NonNull UserDTO userDTO) {
-        log.info("build() User = [{}, {}, {}]", userDTO.getUserId(), userDTO.getUsername(), userDTO.getEmail());
+        log.info("buildAddress() User = [{}, {}, {}]", userDTO.getUserId(), userDTO.getUsername(), userDTO.getEmail());
 
         Role role = this.entityManager.find(Role.class, 20);
         List<Address> addressList = buildAddress(userDTO);
@@ -136,6 +136,9 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void close() throws Exception {
-
+        log.info("close() resource EntityManager");
+        if (this.entityManager != null && this.entityManager.isOpen()) {
+            this.entityManager.close();
+        }
     }
 }
