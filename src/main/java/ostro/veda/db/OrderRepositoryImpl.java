@@ -107,23 +107,27 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     public OrderDTO cancelOrder(int orderId) {
         Order order = this.entityManager.find(Order.class, orderId);
+
+        if (!isCancellationAvailable(order.getStatus())) return null;
+
         List<OrderDetail> orderDetailList = this.entityManagerHelper.findByFieldId(this.entityManager,
                 OrderDetail.class, Map.of("order.orderId", orderId));
 
-        if (!isCancellationAvailable(order.getStatus())) return null;
+        List<OrderDetail> newOrderDetails = updateProductInventory(orderDetailList, OrderDetailRepository.OrderOperation.INCREASE);
+        if (newOrderDetails == null || newOrderDetails.isEmpty()) return null;
+        orderDetailList.addAll(newOrderDetails);
 
         String status = OrderStatus.CANCELLED.getStatus();
         order.updateOrderStatus(status);
         EntityTransaction transaction = null;
         try {
-            transaction = this.getEm().getTransaction();
+            transaction = this.entityManager.getTransaction();
             transaction.begin();
 
             this.entityManager.persist(order);
 
             transaction.commit();
-            OrderDTO orderDTO = order.transformToDto();
-            return orderDTO;
+            return order.transformToDto();
         } catch (Exception e) {
             log.warn(e.getMessage());
             JPAUtil.transactionRollBack(transaction);
@@ -139,7 +143,7 @@ public class OrderRepositoryImpl implements OrderRepository {
             Product product = this.entityManager.find(Product.class, orderDetail.getProduct().getProductId());
 
             int quantity = orderDetail.getQuantity();
-            if (product.getStock() < quantity) return null;
+            if (!hasStock(product.getStock(), quantity)) return null;
 
             double price = product.getPrice();
             totalAmount += totalAmount + (price * quantity);
@@ -158,7 +162,7 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .setUpdatedAt(orderDTO.getUpdatedAt());
 
         order
-                .setOrderDetails(buildOrderDetail(order, orderDTO.getOrderDetails()))
+                .setOrderDetails(buildOrderDetails(order, orderDTO.getOrderDetails()))
                 .setOrderStatusHistory(buildOrderStatusHistories(order, orderDTO.getOrderStatusHistory()));
 
         order = buildNewOrderStatusHistory(order);
@@ -173,27 +177,33 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .setStatus(order.getStatus());
         order.getOrderStatusHistory().add(orderStatusHistory);
 
-        updateProductInventory(order.getOrderDetails(), OrderDetailRepository.OrderOperation.DECREASE);
         return order;
     }
 
     @Override
-    public List<OrderDetail> buildOrderDetail(@NonNull Order order, @NonNull List<OrderDetailDTO> orderDetailDTOS) {
+    public List<OrderDetail> buildOrderDetails(@NonNull Order order, @NonNull List<OrderDetailDTO> orderDetailDTOS) {
         List<OrderDetail> orderDetailList = new ArrayList<>();
         for (OrderDetailDTO orderDetailDTO : orderDetailDTOS) {
-            Product product = this.entityManager.find(Product.class, orderDetailDTO.getProduct().getProductId());
-            int quantity = orderDetailDTO.getQuantity();
-            double price = product.getPrice();
 
-            OrderDetail orderDetail = new OrderDetail()
-                    .setOrderDetailId(orderDetailDTO.getOrderDetailId())
-                    .setProduct(product)
-                    .setQuantity(quantity)
-                    .setUnitPrice(price)
-                    .setOrder(order);
-            orderDetailList.add(orderDetail);
+            orderDetailList.add(buildOrderDetail(order, orderDetailDTO));
         }
         return orderDetailList;
+    }
+
+    @Override
+    public OrderDetail buildOrderDetail(Order order, OrderDetailDTO orderDetailDTO) {
+        Product product = this.entityManager.find(Product.class, orderDetailDTO.getProduct().getProductId());
+        int quantity = orderDetailDTO.getQuantity();
+        double price = product.getPrice();
+
+        updateProductInventory(order.getOrderDetails(), OrderDetailRepository.OrderOperation.DECREASE);
+
+        return new OrderDetail()
+                .setOrderDetailId(orderDetailDTO.getOrderDetailId())
+                .setProduct(product)
+                .setQuantity(quantity)
+                .setUnitPrice(price)
+                .setOrder(order);
     }
 
     @Override
@@ -215,7 +225,7 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .setChangedAt(orderStatusHistoryDTO.getChangedAt());
     }
 
-    private List<OrderDetail> updateProductInventory(List<OrderDetail> orderDetailList, OrderDetailRepository.OrderOperation orderOperation) {
+    private List<OrderDetail> updateProductInventory(@NonNull List<OrderDetail> orderDetailList, @NonNull OrderDetailRepository.OrderOperation orderOperation) {
 
         List<OrderDetail> newOrderDetailList = new ArrayList<>();
         for (OrderDetail orderDetail : orderDetailList) {
