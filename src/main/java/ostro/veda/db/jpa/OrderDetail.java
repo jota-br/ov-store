@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import ostro.veda.common.dto.OrderDetailDTO;
 
 @Getter
 @Setter
+@Accessors(chain = true)
 @AllArgsConstructor
 @Entity
 @Table(name = "order_details")

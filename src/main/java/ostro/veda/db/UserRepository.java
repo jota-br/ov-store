@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface UserRepository extends Repository<UserDTO> {
 
-    User build(UserDTO userDTO);
+    User buildUser(UserDTO userDTO);
 
     List<Address> buildAddress(UserDTO userDTO);
 }

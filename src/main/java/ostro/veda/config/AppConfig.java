@@ -5,10 +5,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import ostro.veda.db.AddressRepositoryImpl;
+import ostro.veda.db.ProductRepositoryImpl;
 import ostro.veda.db.UserRepositoryImpl;
 import ostro.veda.db.helpers.EntityManagerFactoryManager;
 import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.service.AddressServiceImpl;
+import ostro.veda.service.ProductServiceImpl;
 import ostro.veda.service.UserServiceImpl;
 
 @Configuration
@@ -48,5 +50,15 @@ public class AppConfig {
     @Bean
     public UserRepositoryImpl userRepositoryImpl(EntityManager entityManager, EntityManagerHelper entityManagerHelper) {
         return new UserRepositoryImpl(entityManager, entityManagerHelper);
+    }
+
+    @Bean
+    public ProductServiceImpl productServiceImpl(ProductRepositoryImpl productRepository) {
+        return new ProductServiceImpl(productRepository);
+    }
+
+    @Bean
+    public ProductRepositoryImpl productRepositoryImpl(EntityManager entityManager, EntityManagerHelper entityManagerHelper) {
+        return new ProductRepositoryImpl(entityManager, entityManagerHelper);
     }
 }

@@ -26,7 +26,7 @@ public class ProductServiceImpl implements ProductService {
         try {
             ValidateUtil.validateProduct(product);
             ProductDTO productDTO = SanitizeUtil.sanitizeProduct(product);
-            return this.productRepositoryImpl.addProduct(productDTO);
+            return this.productRepositoryImpl.add(productDTO);
         } catch (ErrorHandling.InvalidInputException e) {
             log.warn(e.getMessage());
             return null;
@@ -38,7 +38,7 @@ public class ProductServiceImpl implements ProductService {
         try {
             ValidateUtil.validateProduct(product);
             ProductDTO productDTO = SanitizeUtil.sanitizeProduct(product);
-            return this.productRepositoryImpl.updateProduct(productDTO);
+            return this.productRepositoryImpl.update(productDTO);
         } catch (ErrorHandling.InvalidInputException e) {
             log.warn(e.getMessage());
             return null;

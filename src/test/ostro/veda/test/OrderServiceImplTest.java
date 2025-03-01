@@ -9,7 +9,7 @@ import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.db.helpers.OrderStatus;
 import ostro.veda.db.jpa.Product;
 import ostro.veda.service.AddressServiceImpl;
-import ostro.veda.service.OrderService;
+import ostro.veda.service.OrderServiceImpl;
 import ostro.veda.service.ProductServiceImpl;
 import ostro.veda.service.UserServiceImpl;
 
@@ -18,7 +18,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class OrderServiceTest {
+public class OrderServiceImplTest {
 
     @Test
     public void addOrder() {
@@ -29,7 +29,7 @@ public class OrderServiceTest {
         try (
                 OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em);
                 OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
-                OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
+                OrderRepositoryImpl orderRepositoryImpl = new OrderRepositoryImpl(em, orderDetailRepository, orderStatusHistoryRepository);
                 UserRepositoryImpl userRepositoryImpl = new UserRepositoryImpl();
                 CategoryRepository categoryRepository = new CategoryRepository(em2);
                 ProductRepositoryImpl productRepositoryImpl = new ProductRepositoryImpl(em2, categoryRepository);
@@ -38,7 +38,7 @@ public class OrderServiceTest {
 
             UserServiceImpl userServiceImpl = new UserServiceImpl(userRepositoryImpl);
             ProductServiceImpl productServiceImpl = new ProductServiceImpl(productRepositoryImpl);
-            OrderService orderService = new OrderService(orderRepository);
+            OrderServiceImpl orderServiceImpl = new OrderServiceImpl(orderRepositoryImpl);
             AddressServiceImpl addressServiceImpl = new AddressServiceImpl(addressRepository);
 
             UserDTO user = getUserDTO(userServiceImpl);
@@ -51,14 +51,14 @@ public class OrderServiceTest {
             OrderBasic orderBasic = new OrderBasic(user.getUserId(), OrderStatus.DELIVERED.getStatus(),
                     addressDTO.getAddressId(), addressDTO.getAddressId(), List.of(orderDetailBasic));
 
-            OrderDTO orderDTO = orderService.addOrder(orderBasic);
+            OrderDTO orderDTO = orderServiceImpl.addOrder(orderBasic);
             assertNotNull(orderDTO);
 
-            orderDTO = orderService.addOrder(orderBasic);
+            orderDTO = orderServiceImpl.addOrder(orderBasic);
             assertNotNull(orderDTO);
 
-            orderDTO = orderService.addOrder(orderBasic);
-            Product pOne = orderRepository.getEm().find(Product.class, productDTOList.get(0).getProductId());
+            orderDTO = orderServiceImpl.addOrder(orderBasic);
+            Product pOne = orderRepositoryImpl.getEm().find(Product.class, productDTOList.get(0).getProductId());
 
 
             assertNull(orderDTO);
@@ -76,7 +76,7 @@ public class OrderServiceTest {
         try (
                 OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em);
                 OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
-                OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
+                OrderRepositoryImpl orderRepositoryImpl = new OrderRepositoryImpl(em, orderDetailRepository, orderStatusHistoryRepository);
                 UserRepositoryImpl userRepositoryImpl = new UserRepositoryImpl();
                 CategoryRepository categoryRepository = new CategoryRepository(em2);
                 ProductRepositoryImpl productRepositoryImpl = new ProductRepositoryImpl(em2, categoryRepository);
@@ -85,7 +85,7 @@ public class OrderServiceTest {
 
             UserServiceImpl userServiceImpl = new UserServiceImpl(userRepositoryImpl);
             ProductServiceImpl productServiceImpl = new ProductServiceImpl(productRepositoryImpl);
-            OrderService orderService = new OrderService(orderRepository);
+            OrderServiceImpl orderServiceImpl = new OrderServiceImpl(orderRepositoryImpl);
             AddressServiceImpl addressServiceImpl = new AddressServiceImpl(addressRepository);
 
             UserDTO user = getUserDTO(userServiceImpl);
@@ -98,10 +98,10 @@ public class OrderServiceTest {
             OrderBasic orderBasic = new OrderBasic(user.getUserId(), OrderStatus.DELIVERED.getStatus(),
                     addressDTO.getAddressId(), addressDTO.getAddressId(), List.of(orderDetailBasic));
 
-            OrderDTO orderDTO = orderService.addOrder(orderBasic);
+            OrderDTO orderDTO = orderServiceImpl.addOrder(orderBasic);
             assertNotNull(orderDTO);
 
-            orderDTO = orderService.updateOrderStatus(1, OrderStatus.PROCESSING.getStatus());
+            orderDTO = orderServiceImpl.updateOrderStatus(1, OrderStatus.PROCESSING.getStatus());
             assertNotNull(orderDTO);
             assertEquals(orderDTO.getStatus(), OrderStatus.PROCESSING.getStatus());
 
@@ -120,7 +120,7 @@ public class OrderServiceTest {
         try (
                 OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em);
                 OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
-                OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
+                OrderRepositoryImpl orderRepositoryImpl = new OrderRepositoryImpl(em, orderDetailRepository, orderStatusHistoryRepository);
                 UserRepositoryImpl userRepositoryImpl = new UserRepositoryImpl();
                 CategoryRepository categoryRepository = new CategoryRepository(em2);
                 ProductRepositoryImpl productRepositoryImpl = new ProductRepositoryImpl(em2, categoryRepository);
@@ -129,7 +129,7 @@ public class OrderServiceTest {
 
             UserServiceImpl userServiceImpl = new UserServiceImpl(userRepositoryImpl);
             ProductServiceImpl productServiceImpl = new ProductServiceImpl(productRepositoryImpl);
-            OrderService orderService = new OrderService(orderRepository);
+            OrderServiceImpl orderServiceImpl = new OrderServiceImpl(orderRepositoryImpl);
             AddressServiceImpl addressServiceImpl = new AddressServiceImpl(addressRepository);
 
             UserDTO user = getUserDTO(userServiceImpl);
@@ -142,10 +142,10 @@ public class OrderServiceTest {
             OrderBasic orderBasic = new OrderBasic(user.getUserId(), OrderStatus.PROCESSING.getStatus(),
                     addressDTO.getAddressId(), addressDTO.getAddressId(), List.of(orderDetailBasic));
 
-            OrderDTO orderDTO = orderService.addOrder(orderBasic);
+            OrderDTO orderDTO = orderServiceImpl.addOrder(orderBasic);
             assertNotNull(orderDTO);
 
-            OrderDTO orderToBeCancelled = orderService.cancelOrder(orderDTO.getOrderId());
+            OrderDTO orderToBeCancelled = orderServiceImpl.cancelOrder(orderDTO.getOrderId());
             assertNotNull(orderToBeCancelled);
             assertEquals(orderToBeCancelled.getStatus(), OrderStatus.CANCELLED.getStatus());
 
@@ -163,7 +163,7 @@ public class OrderServiceTest {
         try (
                 OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em);
                 OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
-                OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
+                OrderRepositoryImpl orderRepositoryImpl = new OrderRepositoryImpl(em, orderDetailRepository, orderStatusHistoryRepository);
                 UserRepositoryImpl userRepositoryImpl = new UserRepositoryImpl();
                 CategoryRepository categoryRepository = new CategoryRepository(em2);
                 ProductRepositoryImpl productRepositoryImpl = new ProductRepositoryImpl(em2, categoryRepository);
@@ -172,7 +172,7 @@ public class OrderServiceTest {
 
             UserServiceImpl userServiceImpl = new UserServiceImpl(userRepositoryImpl);
             ProductServiceImpl productServiceImpl = new ProductServiceImpl(productRepositoryImpl);
-            OrderService orderService = new OrderService(orderRepository);
+            OrderServiceImpl orderServiceImpl = new OrderServiceImpl(orderRepositoryImpl);
             AddressServiceImpl addressServiceImpl = new AddressServiceImpl(addressRepository);
 
             UserDTO user = getUserDTO(userServiceImpl);
@@ -185,7 +185,7 @@ public class OrderServiceTest {
             OrderBasic orderBasic = new OrderBasic(user.getUserId(), OrderStatus.DELIVERED.getStatus(),
                     addressDTO.getAddressId(), addressDTO.getAddressId(), List.of(orderDetailBasic));
 
-            OrderDTO orderDTO = orderService.addOrder(orderBasic);
+            OrderDTO orderDTO = orderServiceImpl.addOrder(orderBasic);
 
             orderDetailBasic = new OrderDetailBasic(
                     orderDTO.getOrderDetails().get(0).getProduct().getProductId(), orderDTO.getOrderDetails().get(0).getQuantity());
@@ -193,7 +193,7 @@ public class OrderServiceTest {
                     orderDTO.getBillingAddress().getAddressId(), orderDTO.getShippingAddress().getAddressId(), List.of(orderDetailBasic));
             assertNotNull(orderDTO);
 
-            OrderDTO orderAndItemToReturn = orderService.returnItem(orderBasic);
+            OrderDTO orderAndItemToReturn = orderServiceImpl.returnItem(orderBasic);
             assertNotNull(orderAndItemToReturn);
             assertEquals(orderAndItemToReturn.getStatus(), OrderStatus.RETURN_REQUESTED.getStatus());
 

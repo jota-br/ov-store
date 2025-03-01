@@ -29,24 +29,6 @@ public class AddressRepositoryImpl implements AddressRepository {
     }
 
     @Override
-    public Address buildAddress(@NonNull AddressDTO addressDTO) {
-        log.info("buildAddress() Address for User = {}", addressDTO.getUserId());
-        return new Address()
-                .setAddressId(addressDTO.getAddressId())
-                .setUserId(addressDTO.getUserId())
-                .setStreetAddress(addressDTO.getStreetAddress())
-                .setAddressNumber(addressDTO.getAddressNumber())
-                .setAddressType(addressDTO.getAddressType())
-                .setCity(addressDTO.getCity())
-                .setState(addressDTO.getState())
-                .setZipCode(addressDTO.getZipCode())
-                .setCountry(addressDTO.getCountry())
-                .setActive(addressDTO.isActive())
-                .setCreatedAt(addressDTO.getCreatedAt())
-                .setUpdatedAt(addressDTO.getUpdatedAt());
-    }
-
-    @Override
     public AddressDTO add(@NonNull AddressDTO addressDTO) {
         log.info("add() Address for User = {}", addressDTO.getUserId());
         List<Address> result = this.entityManagerHelper.findByFields(this.entityManager, Address.class, Map.of(
@@ -110,6 +92,24 @@ public class AddressRepositoryImpl implements AddressRepository {
         }
 
         return address.transformToDto();
+    }
+
+    @Override
+    public Address buildAddress(@NonNull AddressDTO addressDTO) {
+        log.info("buildAddress() Address for User = {}", addressDTO.getUserId());
+        return new Address()
+                .setAddressId(addressDTO.getAddressId())
+                .setUserId(addressDTO.getUserId())
+                .setStreetAddress(addressDTO.getStreetAddress())
+                .setAddressNumber(addressDTO.getAddressNumber())
+                .setAddressType(addressDTO.getAddressType())
+                .setCity(addressDTO.getCity())
+                .setState(addressDTO.getState())
+                .setZipCode(addressDTO.getZipCode())
+                .setCountry(addressDTO.getCountry())
+                .setActive(addressDTO.isActive())
+                .setCreatedAt(addressDTO.getCreatedAt())
+                .setUpdatedAt(addressDTO.getUpdatedAt());
     }
 
     @Override

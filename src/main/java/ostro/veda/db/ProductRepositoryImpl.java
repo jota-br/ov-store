@@ -6,6 +6,7 @@ import jakarta.persistence.PersistenceException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.dto.ProductImageDTO;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
+@Component
 public class ProductRepositoryImpl implements ProductRepository {
 
     private final EntityManager entityManager;
@@ -34,43 +36,9 @@ public class ProductRepositoryImpl implements ProductRepository {
         this.entityManagerHelper = entityManagerHelper;
     }
 
-    private List<Category> getCategoriesList(List<CategoryDTO> categories) {
-
-    }
-
-    /**
-     * Transforms ProductImageDTO to ProductImage.
-     * @param images List.
-     * @return List of ProductImage.
-     */
-    private List<ProductImage> getImagesList(List<ProductImageDTO> images) {
-        if (images == null) {
-            return null;
-        }
-        List<ProductImage> imagesList = new ArrayList<>();
-        for (ProductImageDTO pi : images) {
-
-            ProductImage productImage = null;
-
-            List<ProductImage> result = this.entityManagerHelper.findByFields(this.getEm(), ProductImage.class,
-                    Map.of(ProductImageColumns.IMAGE_URL.getColumnName(), pi.getImageUrl()));
-
-            ProductImage newProductImage = new ProductImage(pi.getProductImageId(), pi.getImageUrl(), pi.isMain(), pi.getVersion());
-            if (result != null) {
-                productImage = result.get(0);
-                productImage.updateProductImage(newProductImage);
-            } else {
-                productImage = newProductImage;
-            }
-
-            imagesList.add(productImage);
-        }
-
-        return imagesList;
-    }
-
     @Override
-    public ProductDTO add(ProductDTO productDTO) {
+    public ProductDTO add(@NonNull ProductDTO productDTO) {
+        log.info("add() new Product = {}", productDTO.getName());
         List<Product> result = this.entityManagerHelper.findByFields(this.entityManager, Product.class,
                 Map.of(ProductColumns.NAME.getColumnName(), productDTO.getName()));
         if (result != null && !result.isEmpty()) {
@@ -82,11 +50,7 @@ public class ProductRepositoryImpl implements ProductRepository {
             transaction = this.entityManager.getTransaction();
             transaction.begin();
 
-            List<Category> categoriesList = getCategoriesList(productDTO.getCategories());
-            List<ProductImage> imagesList = getImagesList(productDTO.getImages());
-
-            Product product = new Product(0, productDTO.getName(), productDTO.getDescription(),
-                    productDTO.getPrice(), productDTO.getStock(), productDTO.isActive(), categoriesList, imagesList, null, null, 0);
+            Product product = buildProduct(productDTO);
 
             this.entityManager.persist(product);
 
@@ -100,24 +64,16 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public ProductDTO update(ProductDTO productDTO) {
+    public ProductDTO update(@NonNull ProductDTO productDTO) {
+        log.info("update() Product = [{}, {}]", productDTO.getProductId(), productDTO.getName());
         Product product = this.entityManager.find(Product.class, productDTO.getProductId());
-
-        if (product == null) {
-            return null;
-        }
-
-        List<Category> categoriesList = buildCategories(productDTO.getCategories());
-        List<ProductImage> imagesList = buildImages(productDTO.getImages());
 
         EntityTransaction transaction = null;
         try {
             transaction = this.entityManager.getTransaction();
             transaction.begin();
 
-            product.updateProduct(
-                    new Product(0, productDTO.getName(), productDTO.getDescription(), productDTO.getPrice(),
-                            productDTO.getStock(), productDTO.isActive(), categoriesList, imagesList, null, null, 0));
+            product.updateProduct(buildProduct(productDTO));
 
             this.entityManager.merge(product);
 
@@ -130,16 +86,26 @@ public class ProductRepositoryImpl implements ProductRepository {
         return product.transformToDto();
     }
 
+
     @Override
-    public void close() throws Exception {
-        log.info("close() resource EntityManager");
-        if (this.entityManager != null && this.entityManager.isOpen()) {
-            this.entityManager.close();
-        }
+    public Product buildProduct(@NonNull ProductDTO productDTO) {
+        log.info("buildProduct() Product = [{}, {}]", productDTO.getProductId(), productDTO.getName());
+        return new Product()
+                .setProductId(productDTO.getProductId())
+                .setName(productDTO.getName())
+                .setDescription(productDTO.getDescription())
+                .setPrice(productDTO.getPrice())
+                .setStock(productDTO.getStock())
+                .setActive(productDTO.isActive())
+                .setCategories(buildCategories(productDTO.getCategories()))
+                .setImages(buildImages(productDTO.getImages()))
+                .setCreatedAt(productDTO.getCreatedAt())
+                .setUpdatedAt(productDTO.getUpdatedAt());
     }
 
     @Override
-    public List<Category> buildCategories(List<CategoryDTO> categoryDTOS) {
+    public List<Category> buildCategories(@NonNull List<CategoryDTO> categoryDTOS) {
+        log.info("buildCategories() size = {}", categoryDTOS.size());
         List<Category> categoriesList = new ArrayList<>();
         for (CategoryDTO categoryDTO : categoryDTOS) {
 
@@ -163,7 +129,8 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public Category buildCategory(CategoryDTO categoryDTO) {
+    public Category buildCategory(@NonNull CategoryDTO categoryDTO) {
+        log.info("buildCategory() Category = [{}, {}]", categoryDTO.getCategoryId(), categoryDTO.getName());
         return new Category()
                 .setCategoryId(categoryDTO.getCategoryId())
                 .setName(categoryDTO.getName())
@@ -175,25 +142,43 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public List<ProductImage> buildImages(@NonNull List<ProductImageDTO> productImageDTOS) {
+        log.info("buildImages() size = {}", productImageDTOS.size());
         List<ProductImage> imagesList = new ArrayList<>();
         for (ProductImageDTO productImageDTO : productImageDTOS) {
 
             ProductImage productImage = null;
 
-            List<ProductImage> result = this.entityManagerHelper.findByFields(this.entityManager, ProductImage.class,
+            List<ProductImage> hasProductImage = this.entityManagerHelper.findByFields(this.entityManager, ProductImage.class,
                     Map.of(ProductImageColumns.IMAGE_URL.getColumnName(), productImageDTO.getImageUrl()));
 
-            ProductImage newProductImage = new ProductImage(productImageDTO.getProductImageId(), productImageDTO.getImageUrl(), productImageDTO.isMain(), productImageDTO.getVersion());
-            if (result != null) {
-                productImage = result.get(0);
-                productImage.updateProductImage(newProductImage);
+            if (hasProductImage != null) {
+                productImage = hasProductImage.get(0);
+                ProductImage productImageNewData = buildImage(productImageDTO);
+                productImage.updateProductImage(productImageNewData);
             } else {
-                productImage = newProductImage;
+                productImage = buildImage(productImageDTO);
             }
 
             imagesList.add(productImage);
         }
 
         return imagesList;
+    }
+
+    @Override
+    public ProductImage buildImage(@NonNull ProductImageDTO productImageDTO) {
+        log.info("buildImage() ProductImage = [{}, {}]", productImageDTO.getProductImageId(), productImageDTO.getImageUrl());
+        return new ProductImage()
+                .setProductImageId(productImageDTO.getProductImageId())
+                .setImageUrl(productImageDTO.getImageUrl())
+                .setMain(productImageDTO.isMain());
+    }
+
+    @Override
+    public void close() throws Exception {
+        log.info("close() resource EntityManager");
+        if (this.entityManager != null && this.entityManager.isOpen()) {
+            this.entityManager.close();
+        }
     }
 }

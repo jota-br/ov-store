@@ -47,7 +47,7 @@ public class UserRepositoryImpl implements UserRepository {
             transaction = this.entityManager.getTransaction();
             transaction.begin();
 
-            User newUser = build(userDTO);
+            User newUser = buildUser(userDTO);
             this.entityManager.persist(newUser);
 
             transaction.commit();
@@ -74,7 +74,7 @@ public class UserRepositoryImpl implements UserRepository {
             transaction = this.entityManager.getTransaction();
             transaction.begin();
 
-            user.updateUser(build(userDTO));
+            user.updateUser(buildUser(userDTO));
             this.entityManager.persist(user);
 
             transaction.commit();
@@ -88,7 +88,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User build(@NonNull UserDTO userDTO) {
+    public User buildUser(@NonNull UserDTO userDTO) {
         log.info("buildAddress() User = [{}, {}, {}]", userDTO.getUserId(), userDTO.getUsername(), userDTO.getEmail());
 
         Role role = this.entityManager.find(Role.class, 20);
@@ -112,7 +112,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public List<Address> buildAddress(@NonNull UserDTO userDTO) {
-        log.info("buildAddress() Address for User = {}", userDTO.getUserId());
+        log.info("buildAddress() Address for User = [{}, {}, {}]", userDTO.getUserId(), userDTO.getUsername(), userDTO.getEmail());
 
         List<Address> addressList = new ArrayList<>();
         for (AddressDTO addressDTO : userDTO.getAddresses()) {
