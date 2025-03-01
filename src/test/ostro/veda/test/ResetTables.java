@@ -1,4 +1,4 @@
-package test.resources;
+package test.ostro.veda.test;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import ostro.veda.common.dto.AddressDTO;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Accessors(chain = true)
 @AllArgsConstructor
 @Entity
 @Table(name = "addresses")

@@ -8,7 +8,7 @@ import ostro.veda.db.jpa.ProductImage;
 import java.util.List;
 import java.util.Map;
 
-public class ProductImageRepository extends Repository {
+public class ProductImageRepository extends RepositoryOld {
 
     public ProductImageRepository(EntityManager em) {
         super(em);
@@ -27,7 +27,7 @@ public class ProductImageRepository extends Repository {
         if (productImage != null) {
             dto = productImage.transformToDto();
         } else {
-            dto = new ProductImageDTO(0, url, isMain);
+            dto = new ProductImageDTO(0, url, isMain, 0);
         }
         return dto;
     }

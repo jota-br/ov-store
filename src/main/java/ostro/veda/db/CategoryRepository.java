@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class CategoryRepository extends Repository {
+public class CategoryRepository extends RepositoryOld {
 
     public CategoryRepository() {
     }
@@ -57,7 +57,7 @@ public class CategoryRepository extends Repository {
                     Map.of(CategoryColumns.NAME.getColumnName(), name));
 
             if (result != null && !result.isEmpty()) return null;
-            Category category = new Category(name, description, isActive);
+            Category category = new Category(0, name, description, isActive, null, null, 0);
 
             this.em.persist(category);
 
@@ -103,7 +103,7 @@ public class CategoryRepository extends Repository {
             Category category = this.em.find(Category.class, categoryId);
             if (category == null) return null;
 
-            category.updateCategory(new Category(name, description, active));
+            category.updateCategory(new Category(0, name, description, active, null, null, 0));
             this.em.merge(category);
 
             transaction.commit();

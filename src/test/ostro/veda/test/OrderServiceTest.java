@@ -1,16 +1,17 @@
-package test.resources;
+package test.ostro.veda.test;
 
 import jakarta.persistence.EntityManager;
 import org.junit.Test;
 import ostro.veda.common.dto.*;
 import ostro.veda.db.*;
+import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.db.helpers.OrderStatus;
 import ostro.veda.db.jpa.Product;
-import ostro.veda.service.AddressService;
+import ostro.veda.service.AddressServiceImpl;
 import ostro.veda.service.OrderService;
 import ostro.veda.service.ProductService;
-import ostro.veda.service.UserService;
+import ostro.veda.service.UserServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,19 +30,19 @@ public class OrderServiceTest {
                 OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em);
                 OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
                 OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
-                UserRepository userRepository = new UserRepository();
+                UserRepositoryImpl userRepositoryImpl = new UserRepositoryImpl();
                 CategoryRepository categoryRepository = new CategoryRepository(em2);
                 ProductRepository productRepository = new ProductRepository(em2, categoryRepository);
-                AddressRepository addressRepository = new AddressRepository()
+                AddressRepositoryImpl addressRepository = new AddressRepositoryImpl(em2, new EntityManagerHelper())
         ) {
 
-            UserService userService = new UserService(userRepository);
+            UserServiceImpl userServiceImpl = new UserServiceImpl(userRepositoryImpl);
             ProductService productService = new ProductService(productRepository);
             OrderService orderService = new OrderService(orderRepository);
-            AddressService addressService = new AddressService(addressRepository);
+            AddressServiceImpl addressServiceImpl = new AddressServiceImpl(addressRepository);
 
-            UserDTO user = getUserDTO(userService);
-            AddressDTO addressDTO = getAddressDTO(addressService, user);
+            UserDTO user = getUserDTO(userServiceImpl);
+            AddressDTO addressDTO = getAddressDTO(addressServiceImpl, user);
             List<CategoryDTO> categories = getCategoryDTOS();
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
@@ -76,19 +77,19 @@ public class OrderServiceTest {
                 OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em);
                 OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
                 OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
-                UserRepository userRepository = new UserRepository();
+                UserRepositoryImpl userRepositoryImpl = new UserRepositoryImpl();
                 CategoryRepository categoryRepository = new CategoryRepository(em2);
                 ProductRepository productRepository = new ProductRepository(em2, categoryRepository);
-                AddressRepository addressRepository = new AddressRepository()
+                AddressRepositoryImpl addressRepository = new AddressRepositoryImpl(em2, new EntityManagerHelper())
         ) {
 
-            UserService userService = new UserService(userRepository);
+            UserServiceImpl userServiceImpl = new UserServiceImpl(userRepositoryImpl);
             ProductService productService = new ProductService(productRepository);
             OrderService orderService = new OrderService(orderRepository);
-            AddressService addressService = new AddressService(addressRepository);
+            AddressServiceImpl addressServiceImpl = new AddressServiceImpl(addressRepository);
 
-            UserDTO user = getUserDTO(userService);
-            AddressDTO addressDTO = getAddressDTO(addressService, user);
+            UserDTO user = getUserDTO(userServiceImpl);
+            AddressDTO addressDTO = getAddressDTO(addressServiceImpl, user);
             List<CategoryDTO> categories = getCategoryDTOS();
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
@@ -106,7 +107,7 @@ public class OrderServiceTest {
 
         } catch (Exception ignored) {
         } finally {
-            test.resources.ResetTables.resetTables();
+            ResetTables.resetTables();
         }
     }
 
@@ -120,19 +121,19 @@ public class OrderServiceTest {
                 OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em);
                 OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
                 OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
-                UserRepository userRepository = new UserRepository();
+                UserRepositoryImpl userRepositoryImpl = new UserRepositoryImpl();
                 CategoryRepository categoryRepository = new CategoryRepository(em2);
                 ProductRepository productRepository = new ProductRepository(em2, categoryRepository);
-                AddressRepository addressRepository = new AddressRepository()
+                AddressRepositoryImpl addressRepository = new AddressRepositoryImpl(em2, new EntityManagerHelper())
         ) {
 
-            UserService userService = new UserService(userRepository);
+            UserServiceImpl userServiceImpl = new UserServiceImpl(userRepositoryImpl);
             ProductService productService = new ProductService(productRepository);
             OrderService orderService = new OrderService(orderRepository);
-            AddressService addressService = new AddressService(addressRepository);
+            AddressServiceImpl addressServiceImpl = new AddressServiceImpl(addressRepository);
 
-            UserDTO user = getUserDTO(userService);
-            AddressDTO addressDTO = getAddressDTO(addressService, user);
+            UserDTO user = getUserDTO(userServiceImpl);
+            AddressDTO addressDTO = getAddressDTO(addressServiceImpl, user);
             List<CategoryDTO> categories = getCategoryDTOS();
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
@@ -163,19 +164,19 @@ public class OrderServiceTest {
                 OrderDetailRepository orderDetailRepository = new OrderDetailRepository(em);
                 OrderStatusHistoryRepository orderStatusHistoryRepository = new OrderStatusHistoryRepository(em);
                 OrderRepository orderRepository = new OrderRepository(em, orderDetailRepository, orderStatusHistoryRepository);
-                UserRepository userRepository = new UserRepository();
+                UserRepositoryImpl userRepositoryImpl = new UserRepositoryImpl();
                 CategoryRepository categoryRepository = new CategoryRepository(em2);
                 ProductRepository productRepository = new ProductRepository(em2, categoryRepository);
-                AddressRepository addressRepository = new AddressRepository()
+                AddressRepositoryImpl addressRepository = new AddressRepositoryImpl(em2, new EntityManagerHelper())
         ) {
 
-            UserService userService = new UserService(userRepository);
+            UserServiceImpl userServiceImpl = new UserServiceImpl(userRepositoryImpl);
             ProductService productService = new ProductService(productRepository);
             OrderService orderService = new OrderService(orderRepository);
-            AddressService addressService = new AddressService(addressRepository);
+            AddressServiceImpl addressServiceImpl = new AddressServiceImpl(addressRepository);
 
-            UserDTO user = getUserDTO(userService);
-            AddressDTO addressDTO = getAddressDTO(addressService, user);
+            UserDTO user = getUserDTO(userServiceImpl);
+            AddressDTO addressDTO = getAddressDTO(addressServiceImpl, user);
             List<CategoryDTO> categories = getCategoryDTOS();
             List<ProductDTO> productDTOList = getProductDTOList(productService, categories);
 
@@ -204,38 +205,38 @@ public class OrderServiceTest {
     private static List<ProductDTO> getProductDTOList(ProductService productService, List<CategoryDTO> categories) {
         return List.of(
                 productService.addProduct(new ProductDTO(0, "Product Test One", "Description One",
-                        45.00, 10, true, categories, null)),
+                        45.00, 10, true, categories, null,  null, null, 0)),
                 productService.addProduct(new ProductDTO(0, "Product Test Two", "Description Two",
-                        50.00, 5, true, categories, null))
+                        50.00, 5, true, categories, null,  null, null, 0))
         );
     }
 
     private static List<ProductImageDTO> getProductImageDTOS() {
         List<ProductImageDTO> images = new ArrayList<>();
-        images.add(new ProductImageDTO(0, "http://sub.example.co.uk/images/photo.png", true));
+        images.add(new ProductImageDTO(0, "http://sub.example.co.uk/images/photo.png", true, 0));
         return images;
     }
 
     private static List<CategoryDTO> getCategoryDTOS() {
         List<CategoryDTO> categories = new ArrayList<>();
-        categories.add(new CategoryDTO(0, "Furniture", "Handmade", true));
-        categories.add(new CategoryDTO(0, "Wood work", "Artisan", true));
+        categories.add(new CategoryDTO(0, "Furniture", "Handmade", true, null, null, 0));
+        categories.add(new CategoryDTO(0, "Wood work", "Artisan", true,  null, null, 0));
         return categories;
     }
 
-    private static UserDTO getUserDTO(UserService userService) {
+    private static UserDTO getUserDTO(UserServiceImpl userServiceImpl) {
 
-        return userService.addUser(new UserDTO(0, "username90R", null, null,
+        return userServiceImpl.add(new UserDTO(0, "username90R", null, null,
                 "email@example.com", "John", "Doe", "+00099988877766",
-                true, getRoleDTO(), null, null, null), "password");
+                true, getRoleDTO(), null, null, null, 0), "password");
     }
 
     private static RoleDTO getRoleDTO() {
-        return new RoleDTO(20, null, null, null, null, null);
+        return new RoleDTO(20, null, null, null, null, null, 0);
     }
 
-    private static AddressDTO getAddressDTO(AddressService addressService, UserDTO user) {
-        return addressService.addAddress(new AddressDTO(0, user.getUserId(), "Street N123", "1900-B",
-                "Home", "Hollville", "State of Play", "900103041", "Brazil", true, null, null));
+    private static AddressDTO getAddressDTO(AddressServiceImpl addressServiceImpl, UserDTO user) {
+        return addressServiceImpl.add(new AddressDTO(0, user.getUserId(), "Street N123", "1900-B",
+                "Home", "Hollville", "State of Play", "900103041", "Brazil", true, null, null, 0));
     }
 }

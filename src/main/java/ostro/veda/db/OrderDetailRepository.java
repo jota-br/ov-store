@@ -10,7 +10,7 @@ import ostro.veda.db.jpa.Product;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderDetailRepository extends Repository {
+public class OrderDetailRepository extends RepositoryOld {
 
     public OrderDetailRepository(EntityManager em) {
         super(em);
@@ -47,7 +47,7 @@ public class OrderDetailRepository extends Repository {
 
             if (orderOperation.equals(OrderOperation.INCREASE)) {
                 newStock = newStock + quantity;
-                newOrderDetailList.add(new OrderDetail(order, product, -quantity, product.getPrice()));
+                newOrderDetailList.add(new OrderDetail(0, order, product, -quantity, product.getPrice(), 0));
             } else {
                 if (!hasStock(newStock, quantity)) return null;
                 newStock = newStock - quantity;

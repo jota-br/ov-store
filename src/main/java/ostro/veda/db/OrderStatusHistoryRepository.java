@@ -5,7 +5,7 @@ import ostro.veda.common.dto.OrderStatusHistoryDTO;
 import ostro.veda.db.jpa.Order;
 import ostro.veda.db.jpa.OrderStatusHistory;
 
-public class OrderStatusHistoryRepository extends Repository {
+public class OrderStatusHistoryRepository extends RepositoryOld {
 
     public OrderStatusHistoryRepository(EntityManager em) {
         super(em);
@@ -13,7 +13,7 @@ public class OrderStatusHistoryRepository extends Repository {
 
     public OrderStatusHistoryDTO addOrderStatusHistory(Order order) {
 
-        OrderStatusHistory orderStatusHistory = new OrderStatusHistory(order, order.getStatus());
+        OrderStatusHistory orderStatusHistory = new OrderStatusHistory(0, order, order.getStatus(), null, 0);
         this.em.persist(orderStatusHistory);
         return orderStatusHistory.transformToDto();
     }

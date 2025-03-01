@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class OrderRepository extends Repository {
+public class OrderRepository extends RepositoryOld {
 
     private final OrderDetailRepository orderDetailRepository;
     private final OrderStatusHistoryRepository orderStatusHistoryRepository;
@@ -233,7 +233,7 @@ public class OrderRepository extends Repository {
             Product product = this.getEm().find(Product.class, orderDetailBasic.getProductId());
             int quantity = orderDetailBasic.getQuantity();
             double price = product.getPrice();
-            orderDetailList.add(new OrderDetail(order, product, quantity, price));
+            orderDetailList.add(new OrderDetail(0, order, product, quantity, price, 0));
         }
         return orderDetailList;
     }

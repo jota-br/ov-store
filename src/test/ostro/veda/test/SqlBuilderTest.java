@@ -1,4 +1,4 @@
-package test.resources;
+package test.ostro.veda.test;
 
 import org.junit.Test;
 import ostro.veda.db.helpers.SqlBuilder;

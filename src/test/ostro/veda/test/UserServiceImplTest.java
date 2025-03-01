@@ -1,25 +1,25 @@
-package test.resources;
+package test.ostro.veda.test;
 
 import org.junit.Test;
 import ostro.veda.common.dto.UserDTO;
-import ostro.veda.db.UserRepository;
-import ostro.veda.service.UserService;
+import ostro.veda.db.UserRepositoryImpl;
+import ostro.veda.service.UserServiceImpl;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-public class UserServiceTest {
+public class UserServiceImplTest {
 
     @Test
     public void addUser() {
 
         ResetTables.resetTables();
         try (
-                UserRepository userRepository = new UserRepository();
+                UserRepositoryImpl userRepositoryImpl = new UserRepositoryImpl();
         ) {
-            UserService userService = new UserService(userRepository);
+            UserServiceImpl userServiceImpl = new UserServiceImpl(userRepositoryImpl);
 
-            UserDTO userDTO = TestHelper.getUserDTO(userService);
+            UserDTO userDTO = TestHelper.getUserDTO(userServiceImpl);
             assertNotNull(userDTO);
 
         } catch (Exception e) {
@@ -32,18 +32,18 @@ public class UserServiceTest {
 
         ResetTables.resetTables();
         try (
-                UserRepository userRepository = new UserRepository();
+                UserRepositoryImpl userRepositoryImpl = new UserRepositoryImpl();
         ) {
-            UserService userService = new UserService(userRepository);
+            UserServiceImpl userServiceImpl = new UserServiceImpl(userRepositoryImpl);
 
-            UserDTO userDTO = TestHelper.getUserDTO(userService);
+            UserDTO userDTO = TestHelper.getUserDTO(userServiceImpl);
             assertNotNull(userDTO);
 
             UserDTO updatedUserDTO = new UserDTO(userDTO.getUserId(), "newUser90r", null, null,
                     "email2@example.com", "Doe", "John", "+00099988877755",
-                    true, userDTO.getRole(), null, null, null);
+                    true, userDTO.getRole(), null, null, null, 0);
 
-            userDTO = userService.updateUser(updatedUserDTO, "newPassword");
+            userDTO = userServiceImpl.updateUser(updatedUserDTO, "newPassword");
             assertNotNull(userDTO);
 
         } catch (Exception e) {

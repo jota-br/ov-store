@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class ProductRepository extends Repository {
+public class ProductRepository extends RepositoryOld {
 
     private final CategoryRepository categoryRepository;
 
@@ -55,8 +55,8 @@ public class ProductRepository extends Repository {
             List<Category> categoriesList = getCategoriesList(productDTO.getCategories());
             List<ProductImage> imagesList = getImagesList(productDTO.getImages());
 
-            Product product = new Product(productDTO.getName(), productDTO.getDescription(),
-                    productDTO.getPrice(), productDTO.getStock(), productDTO.isActive(), categoriesList, imagesList);
+            Product product = new Product(0, productDTO.getName(), productDTO.getDescription(),
+                    productDTO.getPrice(), productDTO.getStock(), productDTO.isActive(), categoriesList, imagesList, null, null, 0);
 
             this.em.persist(product);
 
@@ -92,9 +92,8 @@ public class ProductRepository extends Repository {
             transaction.begin();
 
             product.updateProduct(
-                    new Product(productDTO.getName(), productDTO.getDescription(), productDTO.getPrice(),
-                            productDTO.getStock(), productDTO.isActive(), categoriesList, imagesList
-                    ));
+                    new Product(0, productDTO.getName(), productDTO.getDescription(), productDTO.getPrice(),
+                            productDTO.getStock(), productDTO.isActive(), categoriesList, imagesList, null, null, 0));
 
             this.em.merge(product);
 
@@ -123,9 +122,9 @@ public class ProductRepository extends Repository {
 
             if (result != null) {
                 category = result.get(0);
-                category.updateCategory(new Category(c.getName(), c.getDescription(), c.isActive()));
+                category.updateCategory(new Category(0, c.getName(), c.getDescription(), c.isActive(), null, null, 0));
             } else {
-                category = new Category(c.getName(), c.getDescription(), c.isActive());
+                category = new Category(0, c.getName(), c.getDescription(), c.isActive(), null, null, 0);
             }
 
             categoriesList.add(category);

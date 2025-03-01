@@ -1,4 +1,4 @@
-package test.resources;
+package test.ostro.veda.test;
 
 import jakarta.persistence.EntityManager;
 import org.junit.Test;
@@ -25,7 +25,7 @@ public class EntityManagerHelperTest {
 
         ResetTables.resetTables();
 
-        EntityManagerHelper entityManagerHelper = EntityManagerHelper.getEntityManagerHelper();
+        EntityManagerHelper entityManagerHelper = new EntityManagerHelper();
         EntityManager em = JPAUtil.getEm();
         try (CategoryRepository categoryRepository = new CategoryRepository(em);
              ProductRepository productRepository = new ProductRepository(em, categoryRepository);) {
@@ -40,8 +40,8 @@ public class EntityManagerHelperTest {
             double price = 45.99;
             int stock = 15;
 
-            ProductDTO productDTO = productService.addProduct(new ProductDTO(name, description, price, stock, true,
-                    categories, images));
+            ProductDTO productDTO = productService.addProduct(new ProductDTO(0, name, description, price, stock, true,
+                    categories, images, null, null, 0));
 
             List<Product> product = entityManagerHelper.findByFields(productRepository.getEm(), Product.class,
                     Map.of(
