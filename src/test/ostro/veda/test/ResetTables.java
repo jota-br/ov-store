@@ -12,7 +12,7 @@ import java.util.List;
 public class ResetTables {
 
     public static void resetTables() {
-        Path path = Path.of("src/test/resources/resetTables.sql");
+        Path path = Path.of("src/test/ostro/veda/test/resetTables.sql");
         EntityManager em = JPAUtil.getEm();
         try {
             List<String> files = Files.readAllLines(path);

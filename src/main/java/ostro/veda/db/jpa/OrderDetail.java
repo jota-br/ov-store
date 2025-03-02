@@ -24,8 +24,11 @@ public class OrderDetail {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "product_id")
+//    private Product product;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_id", referencedColumnName = "product_id")
     private Product product;
 
     @Column(name = "quantity")
@@ -44,18 +47,5 @@ public class OrderDetail {
         return new OrderDetailDTO(this.getOrderDetailId(), null,
                 this.getProduct().transformToDto(), this.getQuantity(),
                 this.getUnitPrice(), this.getVersion());
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-
-        OrderDetail that = (OrderDetail) o;
-        return orderDetailId == that.orderDetailId;
-    }
-
-    @Override
-    public int hashCode() {
-        return orderDetailId;
     }
 }

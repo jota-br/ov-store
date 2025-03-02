@@ -18,7 +18,6 @@ import ostro.veda.db.jpa.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Component
@@ -59,6 +58,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         log.info("update() Order = {}", orderDTO.getOrderId());
         Order order = this.entityManager.find(Order.class, orderDTO.getOrderId());
         order.updateOrderStatus(orderDTO.getStatus());
+        order = buildNewOrderStatusHistory(order);
 
         try {
 
@@ -80,8 +80,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
         if (!isCancellationAvailable(order.getStatus())) return null;
 
-        List<OrderDetail> orderDetailList = this.entityManagerHelper.findByFieldId(this.entityManager,
-                OrderDetail.class, Map.of("order.orderId", orderId));
+        List<OrderDetail> orderDetailList = order.getOrderDetails();
 
         List<OrderDetail> newOrderDetails = updateProductInventory(
                 orderDetailList.stream().map(
@@ -98,7 +97,13 @@ public class OrderRepositoryImpl implements OrderRepository {
 
         try {
 
-            this.entityManager.persist(order);
+            for (OrderDetail orderDetail : newOrderDetails) {
+                Product product = orderDetail.getProduct();
+                orderDetail.setOrder(order);
+                this.entityManager.merge(product);
+                this.entityManager.merge(orderDetail);
+            }
+            this.entityManager.merge(order);
 
             return order.transformToDto();
         } catch (Exception e) {

@@ -17,8 +17,6 @@ import static org.junit.Assert.assertNotNull;
 
 public class OrderServiceImplTest {
 
-    public static ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
-
     private UserDTO getUserDTO() {
 
         RoleDTO roleDTO = new RoleDTO(20, null, null,
@@ -68,6 +66,10 @@ public class OrderServiceImplTest {
     @Test
     public void add() {
 
+        ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+
+        ResetTables.resetTables();
+
         UserServiceImpl userService = context.getBean(UserServiceImpl.class);
         ProductServiceImpl productService = context.getBean(ProductServiceImpl.class);
         OrderServiceImpl orderService = context.getBean(OrderServiceImpl.class);
@@ -84,21 +86,64 @@ public class OrderServiceImplTest {
         orderDTO = orderService.add(orderDTO);
         assertNotNull(orderDTO);
 
-//        OrderServiceImpl orderService = context.getBean(OrderServiceImpl.class);
-//
-//        orderService.add(orderDTO);
-
         // close context (container)
         context.close();
     }
 
     @Test
     public void update() {
+        ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 
+        ResetTables.resetTables();
+
+        UserServiceImpl userService = context.getBean(UserServiceImpl.class);
+        ProductServiceImpl productService = context.getBean(ProductServiceImpl.class);
+        OrderServiceImpl orderService = context.getBean(OrderServiceImpl.class);
+
+        UserDTO userDTO = getUserDTO();
+        userDTO = userService.add(userDTO, "password123*@");
+        assertNotNull(userDTO);
+
+        ProductDTO productDTO = getProductDTO();
+        productDTO = productService.add(productDTO);
+        assertNotNull(productDTO);
+
+        OrderDTO orderDTO = getOrder(productDTO, userDTO.getAddresses().get(0), userDTO.getUserId());
+        orderDTO = orderService.add(orderDTO);
+        orderDTO = orderService.update(new OrderDTO(orderDTO.getOrderId(), orderDTO.getUserId(),
+                null, 0, OrderStatus.PROCESSING.getStatus(), null, null,
+                null, null, null, 0));
+        assertNotNull(orderDTO);
+
+        // close context (container)
+        context.close();
     }
 
     @Test
     public void cancelOrder() {
+        ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+
+        ResetTables.resetTables();
+
+        UserServiceImpl userService = context.getBean(UserServiceImpl.class);
+        ProductServiceImpl productService = context.getBean(ProductServiceImpl.class);
+        OrderServiceImpl orderService = context.getBean(OrderServiceImpl.class);
+
+        UserDTO userDTO = getUserDTO();
+        userDTO = userService.add(userDTO, "password123*@");
+        assertNotNull(userDTO);
+
+        ProductDTO productDTO = getProductDTO();
+        productDTO = productService.add(productDTO);
+        assertNotNull(productDTO);
+
+        OrderDTO orderDTO = getOrder(productDTO, userDTO.getAddresses().get(0), userDTO.getUserId());
+        orderDTO = orderService.add(orderDTO);
+        orderDTO = orderService.cancelOrder(orderDTO.getOrderId());
+        assertNotNull(orderDTO);
+
+        // close context (container)
+        context.close();
     }
 
     @Test
