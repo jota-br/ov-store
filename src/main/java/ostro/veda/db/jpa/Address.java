@@ -24,8 +24,9 @@ public class Address {
     @Column(name = "address_id")
     private int addressId;
 
-    @Column(name = "user_id")
-    private int userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "street_address", nullable = false)
     private String streetAddress;
@@ -79,7 +80,7 @@ public class Address {
     }
 
     public AddressDTO transformToDto() {
-        return new AddressDTO(this.getAddressId(), this.getUserId(), this.getStreetAddress(),
+        return new AddressDTO(this.getAddressId(), null, this.getStreetAddress(),
                 this.getAddressNumber(), this.getAddressType(), this.getCity(), this.getState(),
                 this.getZipCode(), this.getCountry(), this.isActive(), this.getCreatedAt(),
                 this.getUpdatedAt(), this.getVersion());

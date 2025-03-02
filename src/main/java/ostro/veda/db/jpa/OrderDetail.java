@@ -41,7 +41,7 @@ public class OrderDetail {
     }
 
     public OrderDetailDTO transformToDto() {
-        return new OrderDetailDTO(this.getOrderDetailId(), this.getOrder().transformToDto(),
+        return new OrderDetailDTO(this.getOrderDetailId(), null,
                 this.getProduct().transformToDto(), this.getQuantity(),
                 this.getUnitPrice(), this.getVersion());
     }

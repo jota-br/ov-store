@@ -1,17 +1,17 @@
 package ostro.veda.db;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.PersistenceContext;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ostro.veda.common.dto.OrderDTO;
 import ostro.veda.common.dto.OrderDetailDTO;
 import ostro.veda.common.dto.OrderStatusHistoryDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.helpers.EntityManagerHelper;
-import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.db.helpers.OrderStatus;
 import ostro.veda.db.jpa.*;
 
@@ -24,62 +24,56 @@ import java.util.Map;
 @Component
 public class OrderRepositoryImpl implements OrderRepository {
 
-    private final EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private final EntityManagerHelper entityManagerHelper;
 
     @Autowired
-    public OrderRepositoryImpl(EntityManager entityManager, EntityManagerHelper entityManagerHelper) {
-        this.entityManager = entityManager;
+    public OrderRepositoryImpl(EntityManagerHelper entityManagerHelper) {
         this.entityManagerHelper = entityManagerHelper;
     }
 
     @Override
+    @Transactional
     public OrderDTO add(@NonNull OrderDTO orderDTO) {
         log.info("add() new Order = {}", orderDTO.getOrderId());
         Order order = buildOrder(orderDTO);
         if (order == null) return null;
 
-        EntityTransaction transaction = null;
         try {
-            transaction = this.entityManager.getTransaction();
-            transaction.begin();
 
             this.entityManager.persist(order);
 
-            transaction.commit();
             orderDTO = order.transformToDto();
         } catch (Exception e) {
             log.warn(e.getMessage());
-            JPAUtil.transactionRollBack(transaction);
         }
 
         return orderDTO;
     }
 
     @Override
+    @Transactional
     public OrderDTO update(@NonNull OrderDTO orderDTO) {
         log.info("update() Order = {}", orderDTO.getOrderId());
         Order order = this.entityManager.find(Order.class, orderDTO.getOrderId());
         order.updateOrderStatus(orderDTO.getStatus());
 
-        EntityTransaction transaction = null;
         try {
-            transaction = this.entityManager.getTransaction();
-            transaction.begin();
 
             this.entityManager.persist(order);
 
-            transaction.commit();
             orderDTO = order.transformToDto();
             return orderDTO;
         } catch (Exception e) {
             log.warn(e.getMessage());
-            JPAUtil.transactionRollBack(transaction);
         }
         return null;
     }
 
     @Override
+    @Transactional
     public OrderDTO cancelOrder(int orderId) {
         log.info("cancelOrder() Order = {}", orderId);
         Order order = this.entityManager.find(Order.class, orderId);
@@ -89,7 +83,11 @@ public class OrderRepositoryImpl implements OrderRepository {
         List<OrderDetail> orderDetailList = this.entityManagerHelper.findByFieldId(this.entityManager,
                 OrderDetail.class, Map.of("order.orderId", orderId));
 
-        List<OrderDetail> newOrderDetails = updateProductInventory(orderDetailList, OrderDetailRepository.OrderOperation.INCREASE);
+        List<OrderDetail> newOrderDetails = updateProductInventory(
+                orderDetailList.stream().map(
+                OrderDetail::transformToDto).toList(),
+                OrderDetailRepository.OrderOperation.INCREASE
+        );
         if (newOrderDetails == null || newOrderDetails.isEmpty()) return null;
 
         orderDetailList.addAll(newOrderDetails);
@@ -98,29 +96,24 @@ public class OrderRepositoryImpl implements OrderRepository {
         order.updateOrderStatus(status);
         order = buildNewOrderStatusHistory(order);
 
-        EntityTransaction transaction = null;
         try {
-            transaction = this.entityManager.getTransaction();
-            transaction.begin();
 
             this.entityManager.persist(order);
 
-            transaction.commit();
             return order.transformToDto();
         } catch (Exception e) {
             log.warn(e.getMessage());
-            JPAUtil.transactionRollBack(transaction);
         }
         return null;
     }
 
     @Override
+    @Transactional
     public OrderDTO returnItem(@NonNull OrderDetailDTO orderDetailDTO) {
         log.info("returnItem() Product and Quantity for Order = [{}, {}, {}]", orderDetailDTO.getProduct().getProductId(),
                 orderDetailDTO.getQuantity(), orderDetailDTO.getOrder().getOrderId());
         Order order = this.entityManager.find(Order.class, orderDetailDTO.getOrder().getOrderId());
 
-        EntityTransaction transaction = null;
         try {
             if (!isReturnAvailable(order.getUpdatedAt(), order.getStatus())) return null;
             if (!isReturningItemsCorrect(order, orderDetailDTO)) return null;
@@ -128,16 +121,12 @@ public class OrderRepositoryImpl implements OrderRepository {
             String status = OrderStatus.RETURN_REQUESTED.getStatus();
             order.updateOrderStatus(status);
 
-            transaction = this.entityManager.getTransaction();
-            transaction.begin();
 
             this.entityManager.persist(order);
 
-            transaction.commit();
             return order.transformToDto();
         } catch (Exception e) {
             log.warn(e.getMessage());
-            JPAUtil.transactionRollBack(transaction);
         }
         return null;
     }
@@ -175,6 +164,14 @@ public class OrderRepositoryImpl implements OrderRepository {
 
         order = buildNewOrderStatusHistory(order);
 
+        for (OrderDetail orderDetail : order.getOrderDetails()) {
+            orderDetail.setOrder(order);
+        }
+
+        for (OrderStatusHistory orderStatusHistory : order.getOrderStatusHistory()) {
+            orderStatusHistory.setOrder(order);
+        }
+
         return order;
     }
 
@@ -207,7 +204,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         int quantity = orderDetailDTO.getQuantity();
         double price = product.getPrice();
 
-        updateProductInventory(order.getOrderDetails(), OrderDetailRepository.OrderOperation.DECREASE);
+        updateProductInventory(List.of(orderDetailDTO), OrderDetailRepository.OrderOperation.DECREASE);
 
         return new OrderDetail()
                 .setOrderDetailId(orderDetailDTO.getOrderDetailId())
@@ -218,12 +215,17 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public List<OrderStatusHistory> buildOrderStatusHistories(@NonNull Order order, @NonNull List<OrderStatusHistoryDTO> orderStatusHistoryDTOS) {
+    public List<OrderStatusHistory> buildOrderStatusHistories(@NonNull Order order, List<OrderStatusHistoryDTO> orderStatusHistoryDTOS) {
         log.info("buildOrderStatusHistories() Order = {}", order.getOrderId());
         List<OrderStatusHistory> orderStatusHistoryList = new ArrayList<>();
-        for (OrderStatusHistoryDTO orderStatusHistoryDTO : orderStatusHistoryDTOS) {
-            OrderStatusHistory orderStatusHistory = buildOrderStatusHistory(order, orderStatusHistoryDTO);
-            orderStatusHistoryList.add(orderStatusHistory);
+
+        try {
+            for (OrderStatusHistoryDTO orderStatusHistoryDTO : orderStatusHistoryDTOS) {
+                OrderStatusHistory orderStatusHistory = buildOrderStatusHistory(order, orderStatusHistoryDTO);
+                orderStatusHistoryList.add(orderStatusHistory);
+            }
+        } catch (Exception e) {
+            log.info("orderStatusHistoryDTOS is null");
         }
         return orderStatusHistoryList;
     }
@@ -238,13 +240,13 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .setChangedAt(orderStatusHistoryDTO.getChangedAt());
     }
 
-    private List<OrderDetail> updateProductInventory(@NonNull List<OrderDetail> orderDetailList, @NonNull OrderDetailRepository.OrderOperation orderOperation) {
+    private List<OrderDetail> updateProductInventory(@NonNull List<OrderDetailDTO> orderDetailList, @NonNull OrderDetailRepository.OrderOperation orderOperation) {
         log.info("updateProductInventory() OrderDetail list size = {}", orderDetailList.size());
 
         List<OrderDetail> newOrderDetailList = new ArrayList<>();
-        for (OrderDetail orderDetail : orderDetailList) {
+        for (OrderDetailDTO orderDetail : orderDetailList) {
 
-            Product product = orderDetail.getProduct();
+            Product product = this.entityManager.find(Product.class, orderDetail.getProduct().getProductId());
             int newStock = product.getStock();
             int quantity = orderDetail.getQuantity();
 
@@ -259,7 +261,6 @@ public class OrderRepositoryImpl implements OrderRepository {
 
             OrderDetail newOrderDetail = new OrderDetail()
                     .setOrderDetailId(orderDetail.getOrderDetailId())
-                    .setOrder(orderDetail.getOrder())
                     .setProduct(product)
                     .setQuantity(quantity)
                     .setUnitPrice(product.getPrice());

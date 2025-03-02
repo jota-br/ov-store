@@ -6,24 +6,34 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import ostro.veda.common.dto.*;
 import ostro.veda.config.AppConfig;
 import ostro.veda.db.helpers.OrderStatus;
+import ostro.veda.service.OrderServiceImpl;
+import ostro.veda.service.ProductServiceImpl;
 import ostro.veda.service.UserServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertNotNull;
+
 public class OrderServiceImplTest {
 
+    public static ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+
     private UserDTO getUserDTO() {
-        AddressDTO addressDTO = new AddressDTO(0, 0, "Street 234 West",
-                "123-B", "Home", "Some City Name", "State of Where",
-                "90222000", "The United Country", true, null, null, 0);
 
         RoleDTO roleDTO = new RoleDTO(20, null, null,
                 null, null, null, 0);
 
-        return new UserDTO(0, "username92", null, null,
+        AddressDTO addressDTO = new AddressDTO(0, null, "Street 234 West",
+                "123-B", "Home", "Some City Name", "State of Where",
+                "90222000", "The United Country", true, null, null, 0);
+
+        UserDTO userDTO = new UserDTO(0, "username92", null, null,
                 "email@example.com", "John", "Doe", "+5511122233344",
                 true, roleDTO, List.of(addressDTO), null, null, 0);
+
+        addressDTO.setUser(userDTO);
+        return userDTO;
     }
 
     private ProductDTO getProductDTO() {
@@ -43,23 +53,36 @@ public class OrderServiceImplTest {
 
     private OrderDTO getOrder(ProductDTO productDTO, AddressDTO addressDTO, int userId) {
 
-        OrderDetailDTO orderDetailDTO = new OrderDetailDTO(0, null, productDTO,
+        OrderDTO orderDTO = new OrderDTO(0, userId, null, 0,
+                OrderStatus.PENDING_PAYMENT.getStatus(), List.of(), addressDTO, addressDTO,
+                null, null, 0);
+
+        OrderDetailDTO orderDetailDTO = new OrderDetailDTO(0, orderDTO, productDTO,
                 3, productDTO.getPrice(), 0);
 
-        return new OrderDTO(0, userId, null, 0,
-                OrderStatus.PENDING_PAYMENT.getStatus(), List.of(orderDetailDTO), addressDTO, addressDTO,
-                null, null, 0);
+        orderDTO.setOrderDetails(List.of(orderDetailDTO));
+
+        return orderDTO;
     }
 
     @Test
     public void add() {
-        // create context (container)
-        ConfigurableApplicationContext context
-                = new AnnotationConfigApplicationContext(AppConfig.class);
 
         UserServiceImpl userService = context.getBean(UserServiceImpl.class);
-        userService.add(getUserDTO(), "password123*@");
+        ProductServiceImpl productService = context.getBean(ProductServiceImpl.class);
+        OrderServiceImpl orderService = context.getBean(OrderServiceImpl.class);
 
+        UserDTO userDTO = getUserDTO();
+        userDTO = userService.add(userDTO, "password123*@");
+        assertNotNull(userDTO);
+
+        ProductDTO productDTO = getProductDTO();
+        productDTO = productService.add(productDTO);
+        assertNotNull(productDTO);
+
+        OrderDTO orderDTO = getOrder(productDTO, userDTO.getAddresses().get(0), userDTO.getUserId());
+        orderDTO = orderService.add(orderDTO);
+        assertNotNull(orderDTO);
 
 //        OrderServiceImpl orderService = context.getBean(OrderServiceImpl.class);
 //
@@ -71,6 +94,7 @@ public class OrderServiceImplTest {
 
     @Test
     public void update() {
+
     }
 
     @Test

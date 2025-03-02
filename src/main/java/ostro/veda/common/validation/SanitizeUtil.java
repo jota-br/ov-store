@@ -89,7 +89,7 @@ public class SanitizeUtil {
     public static AddressDTO sanitizeAddress(AddressDTO addressDTO) {
 
         int id = addressDTO.getAddressId();
-        int userId = addressDTO.getUserId();
+        UserDTO userDTO = addressDTO.getUser();
         String streetAddress = sanitize(addressDTO.getStreetAddress());
         String addressNumber = sanitize(addressDTO.getAddressNumber());
         String addressType = sanitize(addressDTO.getAddressType());
@@ -99,7 +99,7 @@ public class SanitizeUtil {
         String country = sanitize(addressDTO.getCountry());
         boolean isActive = addressDTO.isActive();
 
-        return new AddressDTO(id, userId, streetAddress, addressNumber, addressType, city, state, zipCode,
+        return new AddressDTO(id, userDTO, streetAddress, addressNumber, addressType, city, state, zipCode,
                 country, isActive, addressDTO.getCreatedAt(), addressDTO.getUpdatedAt(), addressDTO.getVersion());
     }
 

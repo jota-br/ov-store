@@ -1,16 +1,15 @@
 package ostro.veda.db;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
-import jakarta.transaction.Transactional;
+import jakarta.persistence.PersistenceContext;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.common.dto.UserDTO;
 import ostro.veda.db.helpers.EntityManagerHelper;
-import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.db.helpers.columns.UserColumns;
 import ostro.veda.db.jpa.Address;
 import ostro.veda.db.jpa.Role;
@@ -24,12 +23,13 @@ import java.util.Map;
 @Component
 public class UserRepositoryImpl implements UserRepository {
 
-    private final EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private final EntityManagerHelper entityManagerHelper;
 
     @Autowired
-    public UserRepositoryImpl(EntityManager entityManager, EntityManagerHelper entityManagerHelper) {
-        this.entityManager = entityManager;
+    public UserRepositoryImpl(EntityManagerHelper entityManagerHelper) {
         this.entityManagerHelper = entityManagerHelper;
     }
 
@@ -44,20 +44,14 @@ public class UserRepositoryImpl implements UserRepository {
             return null;
         }
 
-//        EntityTransaction transaction = null;
         try {
-//            transaction = this.entityManager.getTransaction();
-//            transaction.begin();
-
             User newUser = buildUser(userDTO);
             this.entityManager.persist(newUser);
 
-//            transaction.commit();
             return newUser.transformToDto();
 
         } catch (Exception e) {
             log.warn(e.getMessage());
-//            JPAUtil.transactionRollBack(transaction);
             return null;
         }
     }
@@ -72,20 +66,14 @@ public class UserRepositoryImpl implements UserRepository {
             return null;
         }
 
-        EntityTransaction transaction = null;
         try {
-            transaction = this.entityManager.getTransaction();
-            transaction.begin();
 
             user.updateUser(buildUser(userDTO));
             this.entityManager.persist(user);
-
-            transaction.commit();
             return user.transformToDto();
 
         } catch (Exception e) {
             log.warn(e.getMessage());
-            JPAUtil.transactionRollBack(transaction);
             return null;
         }
     }
@@ -94,10 +82,10 @@ public class UserRepositoryImpl implements UserRepository {
     public User buildUser(@NonNull UserDTO userDTO) {
         log.info("buildUser() User = [{}, {}, {}]", userDTO.getUserId(), userDTO.getUsername(), userDTO.getEmail());
 
-        Role role = this.entityManager.find(Role.class, 20);
         List<Address> addressList = buildAddress(userDTO);
+        Role role = this.entityManager.find(Role.class, userDTO.getRole().getRoleId());
 
-        return new User()
+        User user = new User()
                 .setUserId(userDTO.getUserId())
                 .setUsername(userDTO.getUsername())
                 .setSalt(userDTO.getSalt())
@@ -111,17 +99,23 @@ public class UserRepositoryImpl implements UserRepository {
                 .setAddresses(addressList)
                 .setCreatedAt(userDTO.getCreatedAt())
                 .setUpdatedAt(userDTO.getUpdatedAt());
+
+        for (Address address : addressList) {
+            address.setUser(user);
+        }
+        return user;
     }
 
     @Override
     public List<Address> buildAddress(@NonNull UserDTO userDTO) {
         log.info("buildAddress() Address for User = [{}, {}, {}]", userDTO.getUserId(), userDTO.getUsername(), userDTO.getEmail());
 
+        User user = this.entityManager.find(User.class, userDTO.getUserId());
         List<Address> addressList = new ArrayList<>();
         for (AddressDTO addressDTO : userDTO.getAddresses()) {
             Address address = new Address()
                     .setAddressId(addressDTO.getAddressId())
-                    .setUserId(addressDTO.getUserId())
+                    .setUser(user)
                     .setStreetAddress(addressDTO.getStreetAddress())
                     .setAddressNumber(addressDTO.getAddressNumber())
                     .setAddressType(addressDTO.getAddressType())

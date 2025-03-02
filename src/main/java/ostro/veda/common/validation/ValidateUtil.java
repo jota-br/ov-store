@@ -107,7 +107,7 @@ public class ValidateUtil {
 
     public static void validateAddress(AddressDTO addressDTO) throws ErrorHandling.InvalidInputException {
         hasValidZeroOrHigherNumber(addressDTO.getAddressId());
-        hasValidZeroOrHigherNumber(addressDTO.getUserId());
+        hasValidZeroOrHigherNumber(addressDTO.getUser().getUserId());
         hasValidAddressType(addressDTO.getAddressType());
         // needs to implement the rest of the check
         // requires Maps API implementation

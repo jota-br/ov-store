@@ -1,13 +1,13 @@
 package ostro.veda.db;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.db.helpers.EntityManagerHelper;
-import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.db.helpers.columns.CategoryColumns;
 import ostro.veda.db.jpa.Category;
 
@@ -18,22 +18,22 @@ import java.util.Map;
 @Component
 public class CategoryRepositoryImpl implements CategoryRepository {
 
-    private final EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private final EntityManagerHelper entityManagerHelper;
 
     @Autowired
-    public CategoryRepositoryImpl(EntityManager entityManager, EntityManagerHelper entityManagerHelper) {
-        this.entityManager = entityManager;
+    public CategoryRepositoryImpl(EntityManagerHelper entityManagerHelper) {
         this.entityManagerHelper = entityManagerHelper;
     }
 
     @Override
+    @Transactional
     public CategoryDTO add(CategoryDTO categoryDTO) {
         log.info("add() Category = {}", categoryDTO.getName());
-        EntityTransaction transaction = null;
+
         try {
-            transaction = this.entityManager.getTransaction();
-            transaction.begin();
 
             String name = categoryDTO.getName();
             String description = categoryDTO.getDescription();
@@ -47,23 +47,19 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
             this.entityManager.persist(category);
 
-            transaction.commit();
-
             return category.transformToDto();
         } catch (Exception e) {
             log.warn(e.getMessage());
-            JPAUtil.transactionRollBack(transaction);
             return null;
         }
     }
 
     @Override
+    @Transactional
     public CategoryDTO update(CategoryDTO categoryDTO) {
         log.info("update() Category = {}", categoryDTO.getCategoryId());
-        EntityTransaction transaction = null;
+
         try {
-            transaction = this.entityManager.getTransaction();
-            transaction.begin();
 
             int categoryId = categoryDTO.getCategoryId();
             String name = categoryDTO.getName();
@@ -82,12 +78,9 @@ public class CategoryRepositoryImpl implements CategoryRepository {
             category.updateCategory(categoryNewData);
             this.entityManager.merge(category);
 
-            transaction.commit();
-
             return category.transformToDto();
         } catch (Exception e) {
             log.warn(e.getMessage());
-            JPAUtil.transactionRollBack(transaction);
             return null;
         }
     }

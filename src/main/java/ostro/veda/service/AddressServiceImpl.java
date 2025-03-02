@@ -8,23 +8,23 @@ import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.common.validation.SanitizeUtil;
 import ostro.veda.common.validation.ValidateUtil;
-import ostro.veda.db.AddressRepositoryImpl;
+import ostro.veda.db.AddressRepository;
 
 @Slf4j
 @Component
 public class AddressServiceImpl implements AddressService {
 
-    private final AddressRepositoryImpl addressRepository;
+    private final AddressRepository addressRepository;
 
     @Autowired
-    public AddressServiceImpl(AddressRepositoryImpl addressRepository) {
+    public AddressServiceImpl(AddressRepository addressRepository) {
         this.addressRepository = addressRepository;
     }
 
     @Override
     public AddressDTO add(@NonNull AddressDTO addressDTO) {
         try {
-            log.info("add() Address for User = {}", addressDTO.getUserId());
+            log.info("add() Address for User = {}", addressDTO.getUser().getUserId());
             ValidateUtil.validateAddress(addressDTO);
             addressDTO = SanitizeUtil.sanitizeAddress(addressDTO);
             return addressRepository.add(addressDTO);
@@ -37,7 +37,7 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public AddressDTO update(@NonNull AddressDTO addressDTO) {
         try {
-            log.info("update() Address for User = {}", addressDTO.getUserId());
+            log.info("update() Address for User = {}", addressDTO.getUser().getUserId());
             ValidateUtil.validateAddress(addressDTO);
             addressDTO = SanitizeUtil.sanitizeAddress(addressDTO);
             return addressRepository.update(addressDTO);

@@ -2,6 +2,7 @@ package ostro.veda.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,7 +16,10 @@ public class OrderDTO {
     private final LocalDateTime orderDate;
     private final double totalAmount;
     private final String status;
-    private final List<OrderDetailDTO> orderDetails;
+
+    @Setter
+    private List<OrderDetailDTO> orderDetails;
+
     private final AddressDTO shippingAddress;
     private final AddressDTO billingAddress;
     private final List<OrderStatusHistoryDTO> orderStatusHistory;

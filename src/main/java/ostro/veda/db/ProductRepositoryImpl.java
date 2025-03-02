@@ -1,17 +1,17 @@
 package ostro.veda.db;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PersistenceException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.dto.ProductImageDTO;
 import ostro.veda.db.helpers.EntityManagerHelper;
-import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.db.helpers.columns.CategoryColumns;
 import ostro.veda.db.helpers.columns.ProductColumns;
 import ostro.veda.db.helpers.columns.ProductImageColumns;
@@ -27,16 +27,18 @@ import java.util.Map;
 @Component
 public class ProductRepositoryImpl implements ProductRepository {
 
-    private final EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private final EntityManagerHelper entityManagerHelper;
 
     @Autowired
-    public ProductRepositoryImpl(EntityManager entityManager, EntityManagerHelper entityManagerHelper) {
-        this.entityManager = entityManager;
+    public ProductRepositoryImpl(EntityManagerHelper entityManagerHelper) {
         this.entityManagerHelper = entityManagerHelper;
     }
 
     @Override
+    @Transactional
     public ProductDTO add(@NonNull ProductDTO productDTO) {
         log.info("add() new Product = {}", productDTO.getName());
         List<Product> result = this.entityManagerHelper.findByFields(this.entityManager, Product.class,
@@ -45,42 +47,33 @@ public class ProductRepositoryImpl implements ProductRepository {
             return null;
         }
 
-        EntityTransaction transaction = null;
         try {
-            transaction = this.entityManager.getTransaction();
-            transaction.begin();
 
             Product product = buildProduct(productDTO);
 
             this.entityManager.persist(product);
 
-            transaction.commit();
             return product.transformToDto();
         } catch (Exception e) {
             log.warn(e.getMessage());
-            JPAUtil.transactionRollBack(transaction);
             throw new PersistenceException("Transaction was Rolled Back");
         }
     }
 
     @Override
+    @Transactional
     public ProductDTO update(@NonNull ProductDTO productDTO) {
         log.info("update() Product = [{}, {}]", productDTO.getProductId(), productDTO.getName());
         Product product = this.entityManager.find(Product.class, productDTO.getProductId());
 
-        EntityTransaction transaction = null;
         try {
-            transaction = this.entityManager.getTransaction();
-            transaction.begin();
 
             product.updateProduct(buildProduct(productDTO));
 
             this.entityManager.merge(product);
 
-            transaction.commit();
         }  catch (Exception e) {
             log.warn(e.getMessage());
-            JPAUtil.transactionRollBack(transaction);
         }
 
         return product.transformToDto();

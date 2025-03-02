@@ -2,6 +2,7 @@ package ostro.veda.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -10,7 +11,10 @@ import java.time.LocalDateTime;
 public class AddressDTO {
 
     private final int addressId;
-    private final int userId;
+
+    @Setter
+    private UserDTO user;
+
     private final String streetAddress;
     private final String addressNumber;
     private final String addressType;

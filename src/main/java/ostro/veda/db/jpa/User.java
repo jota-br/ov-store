@@ -56,8 +56,7 @@ public class User {
     @JoinColumn(name = "user_role_id", referencedColumnName = "role_id")
     private Role role;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "address_id", referencedColumnName = "user_id")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
     private List<Address> addresses;
 
     @CreationTimestamp
@@ -92,7 +91,7 @@ public class User {
         List<AddressDTO> addressDTOList = new ArrayList<>();
         for (Address address : this.getAddresses()) {
             addressDTOList.add(
-                    new AddressDTO(address.getAddressId(), address.getUserId(), address.getStreetAddress(),
+                    new AddressDTO(address.getAddressId(), null, address.getStreetAddress(),
                             address.getAddressNumber(), address.getAddressType(), address.getCity(), address.getState(),
                             address.getZipCode(), address.getCountry(), address.isActive(), address.getCreatedAt(),
                             address.getUpdatedAt(), this.getVersion())

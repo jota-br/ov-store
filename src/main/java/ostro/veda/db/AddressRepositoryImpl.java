@@ -1,36 +1,37 @@
 package ostro.veda.db;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.PersistenceContext;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.db.helpers.EntityManagerHelper;
-import ostro.veda.db.helpers.JPAUtil;
 import ostro.veda.db.helpers.columns.AddressColumns;
 import ostro.veda.db.jpa.Address;
+import ostro.veda.db.jpa.User;
 
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Component
+@Repository
 public class AddressRepositoryImpl implements AddressRepository {
 
-    private final EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private final EntityManagerHelper entityManagerHelper;
 
-    @Autowired
-    public AddressRepositoryImpl(EntityManager entityManager, EntityManagerHelper entityManagerHelper) {
-        this.entityManager = entityManager;
+    public AddressRepositoryImpl(EntityManagerHelper entityManagerHelper) {
         this.entityManagerHelper = entityManagerHelper;
     }
 
     @Override
+    @Transactional
     public AddressDTO add(@NonNull AddressDTO addressDTO) {
-        log.info("add() Address for User = {}", addressDTO.getUserId());
+        log.info("add() Address for User = {}", addressDTO.getUser().getUserId());
         List<Address> result = this.entityManagerHelper.findByFields(this.entityManager, Address.class, Map.of(
                 AddressColumns.STREET_ADDRESS.getColumnName(), addressDTO.getStreetAddress(),
                 AddressColumns.ADDRESS_NUMBER.getColumnName(), addressDTO.getAddressNumber(),
@@ -44,51 +45,42 @@ public class AddressRepositoryImpl implements AddressRepository {
         if (result != null && !result.isEmpty()) {
             address = result.get(0);
 
-            if (address.getUserId() == addressDTO.getUserId()) {
+            if (address.getUser().getUserId() == addressDTO.getUser().getUserId()) {
                 return null;
             }
         } else {
             address = buildAddress(addressDTO);
         }
 
-        EntityTransaction transaction = null;
         try {
-            transaction = this.entityManager.getTransaction();
-            transaction.begin();
 
             this.entityManager.persist(address);
 
-            transaction.commit();
         } catch (Exception e) {
             log.warn(e.getMessage());
-            JPAUtil.transactionRollBack(transaction);
         }
 
         return address.transformToDto();
     }
 
     @Override
+    @Transactional
     public AddressDTO update(@NonNull AddressDTO addressDTO) {
-        log.info("update() Address for User = {}", addressDTO.getUserId());
+        log.info("update() Address for User = {}", addressDTO.getUser().getUserId());
         Address address = this.entityManager.find(Address.class, addressDTO.getAddressId());
         if (address == null) {
             return null;
         }
 
-        EntityTransaction transaction = null;
         try {
-            transaction = this.entityManager.getTransaction();
-            transaction.begin();
 
             Address updatedAddress = buildAddress(addressDTO);
             address.updateAddress(updatedAddress);
 
             this.entityManager.merge(address);
 
-            transaction.commit();
         } catch (Exception e) {
             log.warn(e.getMessage());
-            JPAUtil.transactionRollBack(transaction);
         }
 
         return address.transformToDto();
@@ -96,10 +88,11 @@ public class AddressRepositoryImpl implements AddressRepository {
 
     @Override
     public Address buildAddress(@NonNull AddressDTO addressDTO) {
-        log.info("buildAddress() Address for User = {}", addressDTO.getUserId());
+        log.info("buildAddress() Address for User = {}", addressDTO.getUser().getUserId());
+        User user = this.entityManager.find(User.class, addressDTO.getUser().getUserId());
         return new Address()
                 .setAddressId(addressDTO.getAddressId())
-                .setUserId(addressDTO.getUserId())
+                .setUser(user)
                 .setStreetAddress(addressDTO.getStreetAddress())
                 .setAddressNumber(addressDTO.getAddressNumber())
                 .setAddressType(addressDTO.getAddressType())

@@ -7,15 +7,15 @@ import ostro.veda.common.dto.OrderDTO;
 import ostro.veda.common.dto.OrderDetailDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.common.validation.ValidateUtil;
-import ostro.veda.db.OrderRepositoryImpl;
+import ostro.veda.db.OrderRepository;
 
 @Slf4j
 @Component
 public class OrderServiceImpl implements OrderService {
 
-    private final OrderRepositoryImpl orderRepositoryImpl;
+    private final OrderRepository orderRepositoryImpl;
 
-    public OrderServiceImpl(OrderRepositoryImpl orderRepositoryImpl) {
+    public OrderServiceImpl(OrderRepository orderRepositoryImpl) {
         this.orderRepositoryImpl = orderRepositoryImpl;
     }
 

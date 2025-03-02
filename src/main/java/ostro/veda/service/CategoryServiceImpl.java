@@ -7,16 +7,16 @@ import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.common.validation.SanitizeUtil;
 import ostro.veda.common.validation.ValidateUtil;
-import ostro.veda.db.CategoryRepositoryImpl;
+import ostro.veda.db.CategoryRepository;
 
 @Slf4j
 @Component
 public class CategoryServiceImpl implements CategoryService {
 
-    private final CategoryRepositoryImpl categoryRepositoryImpl;
+    private final CategoryRepository categoryRepositoryImpl;
 
     @Autowired
-    public CategoryServiceImpl(CategoryRepositoryImpl categoryRepositoryImpl) {
+    public CategoryServiceImpl(CategoryRepository categoryRepositoryImpl) {
         this.categoryRepositoryImpl = categoryRepositoryImpl;
     }
 

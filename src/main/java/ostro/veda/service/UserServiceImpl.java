@@ -8,7 +8,7 @@ import ostro.veda.common.dto.UserDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.common.validation.SanitizeUtil;
 import ostro.veda.common.validation.ValidateUtil;
-import ostro.veda.db.UserRepositoryImpl;
+import ostro.veda.db.UserRepository;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -19,10 +19,10 @@ import java.util.Base64;
 @Component
 public class UserServiceImpl implements UserService {
 
-    private final UserRepositoryImpl userRepositoryImpl;
+    private final UserRepository userRepositoryImpl;
 
     @Autowired
-    public UserServiceImpl(UserRepositoryImpl userRepositoryImpl) {
+    public UserServiceImpl(UserRepository userRepositoryImpl) {
         this.userRepositoryImpl = userRepositoryImpl;
     }
 

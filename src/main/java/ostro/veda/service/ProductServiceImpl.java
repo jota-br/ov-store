@@ -8,16 +8,16 @@ import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.common.validation.SanitizeUtil;
 import ostro.veda.common.validation.ValidateUtil;
-import ostro.veda.db.ProductRepositoryImpl;
+import ostro.veda.db.ProductRepository;
 
 @Slf4j
 @Component
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductRepositoryImpl productRepositoryImpl;
+    private final ProductRepository productRepositoryImpl;
 
     @Autowired
-    public ProductServiceImpl(ProductRepositoryImpl productRepositoryImpl) {
+    public ProductServiceImpl(ProductRepository productRepositoryImpl) {
         this.productRepositoryImpl = productRepositoryImpl;
     }
 
