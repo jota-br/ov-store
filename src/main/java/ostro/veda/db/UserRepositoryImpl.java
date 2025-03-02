@@ -2,6 +2,7 @@ package ostro.veda.db;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    @Transactional
     public UserDTO add(@NonNull UserDTO userDTO) {
         log.info("add() new User = [{}, {}]", userDTO.getUsername(), userDTO.getEmail());
 
@@ -42,25 +44,26 @@ public class UserRepositoryImpl implements UserRepository {
             return null;
         }
 
-        EntityTransaction transaction = null;
+//        EntityTransaction transaction = null;
         try {
-            transaction = this.entityManager.getTransaction();
-            transaction.begin();
+//            transaction = this.entityManager.getTransaction();
+//            transaction.begin();
 
             User newUser = buildUser(userDTO);
             this.entityManager.persist(newUser);
 
-            transaction.commit();
+//            transaction.commit();
             return newUser.transformToDto();
 
         } catch (Exception e) {
             log.warn(e.getMessage());
-            JPAUtil.transactionRollBack(transaction);
+//            JPAUtil.transactionRollBack(transaction);
             return null;
         }
     }
 
     @Override
+    @Transactional
     public UserDTO update(@NonNull UserDTO userDTO) {
         log.info("update() User = [{}, {}, {}]", userDTO.getUserId(), userDTO.getUsername(), userDTO.getEmail());
 
@@ -89,7 +92,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User buildUser(@NonNull UserDTO userDTO) {
-        log.info("buildAddress() User = [{}, {}, {}]", userDTO.getUserId(), userDTO.getUsername(), userDTO.getEmail());
+        log.info("buildUser() User = [{}, {}, {}]", userDTO.getUserId(), userDTO.getUsername(), userDTO.getEmail());
 
         Role role = this.entityManager.find(Role.class, 20);
         List<Address> addressList = buildAddress(userDTO);

@@ -11,6 +11,7 @@ module ostro.veda.project {
     requires spring.context;
     requires spring.beans;
     requires java.annotation;
+    requires jakarta.transaction;
 
     exports test.ostro.veda.test to junit;
     exports ostro.veda.db to spring.beans;
@@ -20,6 +21,6 @@ module ostro.veda.project {
     opens ostro.veda.db.helpers to org.hibernate.orm.core;
     opens ostro.veda.db.helpers.columns to org.hibernate.orm.core;
     opens ostro.veda.config;
-    exports ostro.veda.common.dto to ostro.veda.db;;
+    exports ostro.veda.common.dto to ostro.veda.db;
     exports ostro.veda.db.jpa to ostro.veda.db;
 }

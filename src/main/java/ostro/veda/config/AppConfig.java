@@ -4,16 +4,11 @@ import jakarta.persistence.EntityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import ostro.veda.db.AddressRepositoryImpl;
-import ostro.veda.db.OrderRepositoryImpl;
-import ostro.veda.db.ProductRepositoryImpl;
-import ostro.veda.db.UserRepositoryImpl;
+import org.springframework.context.annotation.Scope;
+import ostro.veda.db.*;
 import ostro.veda.db.helpers.EntityManagerFactoryManager;
 import ostro.veda.db.helpers.EntityManagerHelper;
-import ostro.veda.service.AddressServiceImpl;
-import ostro.veda.service.OrderServiceImpl;
-import ostro.veda.service.ProductServiceImpl;
-import ostro.veda.service.UserServiceImpl;
+import ostro.veda.service.*;
 
 @Configuration
 @ComponentScan(basePackages = "ostro.veda")
@@ -25,6 +20,7 @@ public class AppConfig {
     }
 
     @Bean
+    @Scope("transaction")
     public EntityManager entityManager(EntityManagerFactoryManager entityManagerFactoryManager) {
         return entityManagerFactoryManager.getEntityManagerFactory().createEntityManager();
     }
@@ -52,6 +48,16 @@ public class AppConfig {
     @Bean
     public UserRepositoryImpl userRepositoryImpl(EntityManager entityManager, EntityManagerHelper entityManagerHelper) {
         return new UserRepositoryImpl(entityManager, entityManagerHelper);
+    }
+
+    @Bean
+    public CategoryServiceImpl categoryServiceImpl(CategoryRepositoryImpl categoryRepository) {
+        return new CategoryServiceImpl(categoryRepository);
+    }
+
+    @Bean
+    public CategoryRepositoryImpl categoryRepositoryImpl(EntityManager entityManager, EntityManagerHelper entityManagerHelper) {
+        return new CategoryRepositoryImpl(entityManager, entityManagerHelper);
     }
 
     @Bean
