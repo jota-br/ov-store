@@ -4,25 +4,19 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
+@Component
 public class EntityManagerHelper {
-
-    private static EntityManagerHelper entityManagerHelper;
-
-    public static EntityManagerHelper getEntityManagerHelper() {
-        if (entityManagerHelper == null) {
-            entityManagerHelper = new EntityManagerHelper();
-        }
-        return entityManagerHelper;
-    }
 
     public <T> List<T> findByFields(EntityManager em, Class<T> entityClass, Map<String, String> columnsAndValues) {
 
+        log.info("findByFields() = {}", columnsAndValues);
         String[] columns = columnsAndValues.keySet().toArray(new String[0]);
         String[] values = columnsAndValues.values().toArray(new String[0]);
 
@@ -43,6 +37,7 @@ public class EntityManagerHelper {
 
     public <T> List<T> findByFieldId(EntityManager em, Class<T> entityClass, Map<String, Integer> columnsAndValues) {
 
+        log.info("findByFieldId() = {}", columnsAndValues);
         String[] columns = columnsAndValues.keySet().toArray(new String[0]);
         Integer[] values = columnsAndValues.values().toArray(new Integer[0]);
 

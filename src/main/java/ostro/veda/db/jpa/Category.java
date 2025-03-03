@@ -1,12 +1,21 @@
 package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import ostro.veda.common.dto.CategoryDTO;
 
 import java.time.LocalDateTime;
 
+
+@Getter
+@Setter
+@Accessors(chain = true)
+@AllArgsConstructor
 @Entity
 @Table(name = "categories")
 public class Category {
@@ -33,49 +42,10 @@ public class Category {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Version
+    private int version;
+
     public Category() {
-    }
-
-    public Category(String name, String description, boolean isActive) {
-        this.name = name;
-        this.description = description;
-        this.isActive = isActive;
-    }
-
-    public int getCategoryId() {
-        return categoryId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
     }
 
     public Category updateCategory(Category updatedData) {
@@ -87,6 +57,7 @@ public class Category {
     }
 
     public CategoryDTO transformToDto() {
-        return new CategoryDTO(this.getCategoryId(), this.getName(), this.getDescription(), this.isActive(), this.getCreatedAt(), this.getUpdatedAt());
+        return new CategoryDTO(this.getCategoryId(), this.getName(), this.getDescription(),
+                this.isActive(), this.getCreatedAt(), this.getUpdatedAt(), this.getVersion());
     }
 }

@@ -4,7 +4,8 @@ Create Table If Not Exists roles (
   name Varchar(50) Not Null Unique,
   description Varchar(155) Not Null,
   created_at Timestamp Default Current_Timestamp,
-  updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp
+  updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp,
+  version int Default 0
 );
 
 -- users table
@@ -21,6 +22,7 @@ Create Table If Not Exists users (
   user_role_id int Default 20,
   created_at Timestamp Default Current_Timestamp,
   updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp,
+  version int Default 0,
   Constraint Foreign Key (user_role_id) References roles (role_id) On Delete Cascade On Update Cascade
 );
 
@@ -38,6 +40,7 @@ Create Table If Not Exists addresses (
   is_active Boolean Default true,
   created_at Timestamp Default Current_Timestamp,
   updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp,
+  version int Default 0,
   Constraint Foreign Key (user_id) References users (user_id) On Delete Cascade On Update Cascade
 );
 
@@ -46,7 +49,8 @@ Create Table If Not Exists permissions (
   permission_id Int Primary Key Auto_Increment,
   name Varchar(50) Not Null Unique,
   description Varchar(155),
-  created_at Timestamp Default Current_Timestamp
+  created_at Timestamp Default Current_Timestamp,
+  version int Default 0
 );
 
 -- N to N role_permissions table
@@ -95,7 +99,8 @@ Create Table If Not Exists categories (
   description Varchar(510),
   is_active Boolean Default false,
   created_at Timestamp Default Current_Timestamp,
-  updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp
+  updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp,
+  version int Default 0
 );
 
 Create Table If Not Exists products (
@@ -113,7 +118,8 @@ Create Table If Not Exists products (
 Create Table If Not Exists product_images (
   product_image_id Int Primary Key Auto_Increment,
   image_url Varchar(350) Unique Not Null,
-  is_main Boolean Default false
+  is_main Boolean Default false,
+  version int Default 0
 );
 
 Create Table If Not Exists products_images (
@@ -140,6 +146,7 @@ Create Table If Not Exists orders (
   status Varchar(50)  Default 'pending',
   shipping_address_id Int Not Null,
   billing_address_id Int Not Null,
+  version int Default 0,
   updated_at Timestamp Default Current_Timestamp On Update Current_Timestamp,
   Constraint Foreign Key (user_id) References users (user_id) On Delete Cascade On Update Cascade,
   Constraint Foreign Key (shipping_address_id) References addresses (address_id) On Delete Cascade On Update Cascade,
@@ -152,6 +159,7 @@ Create Table If Not Exists order_details (
   product_id Int Not Null,
   quantity Int Not Null,
   unit_price Decimal(10,2) Not Null,
+  version int Default 0,
   Constraint Foreign Key (order_id) References orders (order_id) On Delete Cascade On Update Cascade,
   Constraint Foreign Key (product_id) References products (product_id) On Delete Cascade On Update Cascade
 );
@@ -161,6 +169,7 @@ Create Table If Not Exists order_status_history (
   order_id Int Not Null,
   status Varchar(50) Default 'pending',
   changed_at Timestamp Default Current_Timestamp,
+  version int Default 0,
   Constraint Foreign Key (order_id) References orders (order_id) On Delete Cascade On Update Cascade
 );
 

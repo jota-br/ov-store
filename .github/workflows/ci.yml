@@ -40,7 +40,7 @@ jobs:
       - name: Run tests with Maven
         run: mvn test
 
-      - name: Push to test if build and tests pass
+      - name: Push to test if buildAddress and tests pass
         if: success()
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}

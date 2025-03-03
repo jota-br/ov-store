@@ -23,7 +23,8 @@ public class SanitizeUtil {
         List<CategoryDTO> categories = sanitizeCategories(productDTO.getCategories());
         List<ProductImageDTO> images = sanitizeImages(productDTO.getImages());
 
-        return new ProductDTO(productId, name, description, price, stock, productDTO.isActive(), categories, images);
+        return new ProductDTO(productId, name, description, price, stock, productDTO.isActive(), categories, images,
+                productDTO.getCreatedAt(), productDTO.getUpdatedAt(), productDTO.getVersion());
     }
 
     public static List<CategoryDTO> sanitizeCategories(List<CategoryDTO> categoryDTOList) {
@@ -45,7 +46,8 @@ public class SanitizeUtil {
         categoryName = sanitize(categoryName);
         categoryDescription = sanitize(categoryDescription);
 
-        return new CategoryDTO(categoryId, categoryName, categoryDescription, category.isActive());
+        return new CategoryDTO(categoryId, categoryName, categoryDescription, category.isActive(),
+                category.getCreatedAt(), category.getUpdatedAt(), category.getVersion());
     }
 
     public static List<ProductImageDTO> sanitizeImages(List<ProductImageDTO> imageDTOList) {
@@ -57,7 +59,7 @@ public class SanitizeUtil {
             String url = productImage.getImageUrl();
             url = encodeUrl(url);
 
-            cleanProductImageList.add(new ProductImageDTO(productImageId, url, productImage.isMain()));
+            cleanProductImageList.add(new ProductImageDTO(productImageId, url, productImage.isMain(), productImage.getVersion()));
         }
         return cleanProductImageList;
     }
@@ -72,7 +74,7 @@ public class SanitizeUtil {
 
         return new UserDTO(userDTO.getUserId(), username, userDTO.getSalt(), userDTO.getHash(), email, firstName,
                 lastName, userDTO.getPhone(), userDTO.isActive(), userDTO.getRole(), addressDTOList,
-                userDTO.getCreatedAt(), userDTO.getUpdatedAt());
+                userDTO.getCreatedAt(), userDTO.getUpdatedAt(), userDTO.getVersion());
     }
 
     public static List<AddressDTO> sanitizeAddress(List<AddressDTO> addressDTOList) {
@@ -87,7 +89,7 @@ public class SanitizeUtil {
     public static AddressDTO sanitizeAddress(AddressDTO addressDTO) {
 
         int id = addressDTO.getAddressId();
-        int userId = addressDTO.getUserId();
+        UserDTO userDTO = addressDTO.getUser();
         String streetAddress = sanitize(addressDTO.getStreetAddress());
         String addressNumber = sanitize(addressDTO.getAddressNumber());
         String addressType = sanitize(addressDTO.getAddressType());
@@ -97,8 +99,8 @@ public class SanitizeUtil {
         String country = sanitize(addressDTO.getCountry());
         boolean isActive = addressDTO.isActive();
 
-        return new AddressDTO(id, userId, streetAddress, addressNumber, addressType, city, state, zipCode,
-                country, isActive, addressDTO.getCreatedAt(), addressDTO.getUpdatedAt());
+        return new AddressDTO(id, userDTO, streetAddress, addressNumber, addressType, city, state, zipCode,
+                country, isActive, addressDTO.getCreatedAt(), addressDTO.getUpdatedAt(), addressDTO.getVersion());
     }
 
     public static String sanitize(String input) {

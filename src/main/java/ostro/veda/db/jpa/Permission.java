@@ -1,12 +1,18 @@
 package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import ostro.veda.common.dto.PermissionDTO;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@AllArgsConstructor
 @Entity
 @Table(name = "permissions")
 public class Permission {
@@ -30,30 +36,14 @@ public class Permission {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Version
+    private int version;
+
     public Permission() {
     }
 
-    public int getPermissionId() {
-        return permissionId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
     public PermissionDTO transformToDto() {
-        return new PermissionDTO(this.getPermissionId(), this.getName(), this.getDescription(), this.getCreatedAt(), this.getUpdatedAt());
+        return new PermissionDTO(this.getPermissionId(), this.getName(), this.getDescription(),
+                this.getCreatedAt(), this.getUpdatedAt(), this.getVersion());
     }
 }
