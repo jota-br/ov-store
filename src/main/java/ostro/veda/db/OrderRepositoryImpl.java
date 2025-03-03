@@ -41,6 +41,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     @Transactional
     public OrderDTO add(@NonNull OrderDTO orderDTO) {
+
         log.info("add() new Order = {}", orderDTO.getOrderId());
         Order order = buildOrder(orderDTO);
         if (order == null) return null;
@@ -48,40 +49,47 @@ public class OrderRepositoryImpl implements OrderRepository {
         try {
 
             this.entityManager.persist(order);
+            return order.transformToDto();
 
-            orderDTO = order.transformToDto();
         } catch (Exception e) {
-            log.warn(e.getMessage());
-        }
 
-        return orderDTO;
+            log.warn(e.getMessage());
+            return null;
+
+        }
     }
 
     @Override
     @Transactional
     public OrderDTO update(@NonNull OrderDTO orderDTO) {
+
         log.info("update() Order = {}", orderDTO.getOrderId());
         Order order = this.entityManager.find(Order.class, orderDTO.getOrderId());
+        if (order == null) return null;
         order.updateOrderStatus(orderDTO.getStatus());
         order = buildNewOrderStatusHistory(order);
+        if (order == null) return null;
 
         try {
 
             this.entityManager.persist(order);
+            return order.transformToDto();
 
-            orderDTO = order.transformToDto();
-            return orderDTO;
         } catch (Exception e) {
+
             log.warn(e.getMessage());
+            return null;
+
         }
-        return null;
     }
 
     @Override
     @Transactional
     public OrderDTO cancelOrder(int orderId) {
+
         log.info("cancelOrder() Order = {}", orderId);
         Order order = this.entityManager.find(Order.class, orderId);
+        if (order == null) return null;
 
         if (!isCancellationAvailable(order.getStatus())) return null;
 
@@ -109,20 +117,24 @@ public class OrderRepositoryImpl implements OrderRepository {
                         .setProduct(product);
             }
             this.entityManager.merge(order);
-
             return order.transformToDto();
+
         } catch (Exception e) {
+
             log.warn(e.getMessage());
+            return null;
+
         }
-        return null;
     }
 
     @Override
     @Transactional
     public OrderDTO returnItem(@NonNull OrderDetailDTO orderDetailDTO) {
+
         log.info("returnItem() Product and Quantity for Order = [{}, {}, {}]", orderDetailDTO.getProduct().getProductId(),
                 orderDetailDTO.getQuantity(), orderDetailDTO.getOrder().getOrderId());
         Order order = this.entityManager.find(Order.class, orderDetailDTO.getOrder().getOrderId());
+        if (order == null) return null;
 
         try {
             if (!isReturnAvailable(order.getUpdatedAt(), order.getStatus())) return null;
@@ -133,21 +145,25 @@ public class OrderRepositoryImpl implements OrderRepository {
             order = buildNewOrderStatusHistory(order);
 
             this.entityManager.persist(order);
-
             return order.transformToDto();
+
         } catch (Exception e) {
+
             log.warn(e.getMessage());
+            return null;
+
         }
-        return null;
     }
 
     @Override
     public Order buildOrder(@NonNull OrderDTO orderDTO) {
+
         log.info("buildOrder() Order = {}", orderDTO.getOrderId());
         double totalAmount = 0.0;
 
         for (OrderDetailDTO orderDetail : orderDTO.getOrderDetails()) {
             Product product = this.entityManager.find(Product.class, orderDetail.getProduct().getProductId());
+            if (product == null) return null;
 
             int quantity = orderDetail.getQuantity();
             if (!hasStock(product.getStock(), quantity)) return null;
@@ -159,6 +175,8 @@ public class OrderRepositoryImpl implements OrderRepository {
         Address shipping = this.entityManager.find(Address.class, orderDTO.getShippingAddress().getAddressId());
         Address billing = this.entityManager.find(Address.class, orderDTO.getBillingAddress().getAddressId());
 
+        if (shipping == null || billing == null) return null;
+
         Order order = new Order()
                 .setOrderId(orderDTO.getOrderId())
                 .setUserId(orderDTO.getUserId())
@@ -168,9 +186,12 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .setBillingAddress(billing)
                 .setUpdatedAt(orderDTO.getUpdatedAt());
 
+        List<OrderDetail> orderDetails = buildOrderDetails(order, orderDTO.getOrderDetails());
+        List<OrderStatusHistory> orderStatusHistoryList = buildOrderStatusHistories(order, orderDTO.getOrderStatusHistory());
+        if (orderDetails == null || orderStatusHistoryList == null) return null;
         order
-                .setOrderDetails(buildOrderDetails(order, orderDTO.getOrderDetails()))
-                .setOrderStatusHistory(buildOrderStatusHistories(order, orderDTO.getOrderStatusHistory()));
+                .setOrderDetails(orderDetails)
+                .setOrderStatusHistory(orderStatusHistoryList);
 
         order = buildNewOrderStatusHistory(order);
 
@@ -187,30 +208,36 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Order buildNewOrderStatusHistory(@NonNull Order order) {
+
         log.info("buildNewOrderStatusHistory() Order = {}", order.getOrderId());
         OrderStatusHistory orderStatusHistory = new OrderStatusHistory()
                 .setOrder(order)
                 .setStatus(order.getStatus());
         order.getOrderStatusHistory().add(orderStatusHistory);
-
         return order;
     }
 
     @Override
     public List<OrderDetail> buildOrderDetails(@NonNull Order order, @NonNull List<OrderDetailDTO> orderDetailDTOS) {
+
         log.info("buildOrderDetails() OrderDetail list size = {}", orderDetailDTOS.size());
         List<OrderDetail> orderDetailList = new ArrayList<>();
         for (OrderDetailDTO orderDetailDTO : orderDetailDTOS) {
 
-            orderDetailList.add(buildOrderDetail(order, orderDetailDTO));
+            OrderDetail orderDetail = buildOrderDetail(order, orderDetailDTO);
+            if (orderDetail == null) return  null;
+            orderDetailList.add(orderDetail);
         }
         return orderDetailList;
     }
 
     @Override
     public OrderDetail buildOrderDetail(@NonNull Order order, @NonNull OrderDetailDTO orderDetailDTO) {
+
         log.info("buildOrderDetail() Order = {}", order.getOrderId());
         Product product = this.entityManager.find(Product.class, orderDetailDTO.getProduct().getProductId());
+        if (product == null) return null;
+
         int quantity = orderDetailDTO.getQuantity();
         double price = product.getPrice();
 
@@ -225,7 +252,8 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public List<OrderStatusHistory> buildOrderStatusHistories(@NonNull Order order, List<OrderStatusHistoryDTO> orderStatusHistoryDTOS) {
+    public List<OrderStatusHistory> buildOrderStatusHistories(@NonNull Order order, @NonNull List<OrderStatusHistoryDTO> orderStatusHistoryDTOS) {
+
         log.info("buildOrderStatusHistories() Order = {}", order.getOrderId());
         List<OrderStatusHistory> orderStatusHistoryList = new ArrayList<>();
 
@@ -234,14 +262,16 @@ public class OrderRepositoryImpl implements OrderRepository {
                 OrderStatusHistory orderStatusHistory = buildOrderStatusHistory(order, orderStatusHistoryDTO);
                 orderStatusHistoryList.add(orderStatusHistory);
             }
+            return orderStatusHistoryList;
         } catch (Exception e) {
-            log.info("orderStatusHistoryDTOS is null");
+            log.warn(e.getMessage());
+            return null;
         }
-        return orderStatusHistoryList;
     }
 
     @Override
     public OrderStatusHistory buildOrderStatusHistory(@NonNull Order order, @NonNull OrderStatusHistoryDTO orderStatusHistoryDTO) {
+
         log.info("buildOrderStatusHistory() Order = {}", order.getOrderId());
         return new OrderStatusHistory()
                 .setOrderStatusHistoryId(orderStatusHistoryDTO.getOrderStatusHistoryId())
@@ -251,12 +281,14 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     private List<OrderDetail> updateProductInventory(@NonNull List<OrderDetailDTO> orderDetailList, @NonNull OrderOperation orderOperation) {
-        log.info("updateProductInventory() OrderDetail list size = {}", orderDetailList.size());
 
+        log.info("updateProductInventory() OrderDetail list size = {}", orderDetailList.size());
         List<OrderDetail> newOrderDetailList = new ArrayList<>();
         for (OrderDetailDTO orderDetail : orderDetailList) {
 
             Product product = this.entityManager.find(Product.class, orderDetail.getProduct().getProductId());
+            if (product == null) return null;
+
             int newStock = product.getStock();
             int quantity = orderDetail.getQuantity();
 
@@ -286,6 +318,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     private boolean isCancellationAvailable(@NonNull String orderStatus) throws UnsupportedOperationException {
+
         log.info("isCancellationAvailable() Order Status = {}", orderStatus);
         final int NO_CANCELLATION_ORDINAL = 4;
         final int ordinal = OrderStatus.getOrdinal(orderStatus);
@@ -297,6 +330,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     private boolean isReturnAvailable(@NonNull LocalDateTime orderDate, @NonNull String status)
             throws ErrorHandling.InvalidInputException {
+
         log.info("isReturnAvailable() Order Date and Status = [{}, {}]", orderDate, status);
         final int MAXIMUM_AMOUNT_OF_DAY_TO_RETURN = 30;
         LocalDateTime elapsedTime = LocalDateTime.now().minusDays(MAXIMUM_AMOUNT_OF_DAY_TO_RETURN);

@@ -77,8 +77,8 @@ public class UserServiceImpl implements UserService {
             return salt;
         } catch (NoSuchAlgorithmException e) {
             log.warn(e.getMessage());
+            return null;
         }
-        return null;
     }
 
     private String getHash(@NonNull String password, byte[] salt) {
@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService {
             return Base64.getEncoder().encodeToString(hashedPassword);
         } catch (NoSuchAlgorithmException e) {
             log.warn(e.getMessage());
+            return null;
         }
-        return null;
     }
 }

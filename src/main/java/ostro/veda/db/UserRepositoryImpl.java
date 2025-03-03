@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.common.dto.UserDTO;
+import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.db.helpers.columns.UserColumns;
 import ostro.veda.db.jpa.Address;
@@ -40,9 +41,8 @@ public class UserRepositoryImpl implements UserRepository {
 
         List<User> hasUser = this.entityManagerHelper.findByFields(this.entityManager, User.class,
                 Map.of(UserColumns.USERNAME.getColumnName(), userDTO.getUsername()));
-        if (hasUser != null && !hasUser.isEmpty()) {
-            return null;
-        }
+        if (hasUser != null && !hasUser.isEmpty())
+            throw new IllegalArgumentException("Cannot add user %s, it already exists".formatted(userDTO.getUsername()));
 
         try {
             User newUser = buildUser(userDTO);
@@ -68,7 +68,8 @@ public class UserRepositoryImpl implements UserRepository {
 
         try {
 
-            user.updateUser(buildUser(userDTO));
+            User newUserData = buildUser(userDTO);
+            user.updateUser(newUserData);
             this.entityManager.persist(user);
             return user.transformToDto();
 
@@ -79,11 +80,14 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User buildUser(@NonNull UserDTO userDTO) {
+    public User buildUser(@NonNull UserDTO userDTO) throws ErrorHandling.InvalidInputException {
         log.info("buildUser() User = [{}, {}, {}]", userDTO.getUserId(), userDTO.getUsername(), userDTO.getEmail());
 
         List<Address> addressList = buildAddress(userDTO);
         Role role = this.entityManager.find(Role.class, userDTO.getRole().getRoleId());
+
+        if (role == null)
+            throw new ErrorHandling.InvalidInputException("Invalid Role id, roleId:", String.valueOf(userDTO.getRole().getRoleId()));
 
         User user = new User()
                 .setUserId(userDTO.getUserId())

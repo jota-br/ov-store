@@ -46,11 +46,13 @@ public class CategoryRepositoryImpl implements CategoryRepository {
             Category category = new Category(0, name, description, isActive, null, null, 0);
 
             this.entityManager.persist(category);
-
             return category.transformToDto();
+
         } catch (Exception e) {
+
             log.warn(e.getMessage());
             return null;
+
         }
     }
 
@@ -71,17 +73,19 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
             Category categoryNewData = new Category()
                     .setCategoryId(categoryDTO.getCategoryId())
-                    .setName(categoryDTO.getName())
-                    .setDescription(categoryDTO.getDescription())
-                    .setActive(category.isActive());
+                    .setName(name)
+                    .setDescription(description)
+                    .setActive(active);
 
             category.updateCategory(categoryNewData);
             this.entityManager.merge(category);
-
             return category.transformToDto();
+
         } catch (Exception e) {
+
             log.warn(e.getMessage());
             return null;
+
         }
     }
 

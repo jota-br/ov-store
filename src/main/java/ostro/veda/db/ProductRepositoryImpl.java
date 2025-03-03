@@ -2,7 +2,6 @@ package ostro.veda.db;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.PersistenceException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,11 +51,10 @@ public class ProductRepositoryImpl implements ProductRepository {
             Product product = buildProduct(productDTO);
 
             this.entityManager.persist(product);
-
             return product.transformToDto();
         } catch (Exception e) {
             log.warn(e.getMessage());
-            throw new PersistenceException("Transaction was Rolled Back");
+            return null;
         }
     }
 
@@ -71,12 +69,11 @@ public class ProductRepositoryImpl implements ProductRepository {
             product.updateProduct(buildProduct(productDTO));
 
             this.entityManager.merge(product);
-
+            return product.transformToDto();
         }  catch (Exception e) {
             log.warn(e.getMessage());
+            return null;
         }
-
-        return product.transformToDto();
     }
 
 
