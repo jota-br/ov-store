@@ -56,6 +56,7 @@ public class EntityManagerHelper {
         return null;
     }
 
+    @Deprecated
     public <T> boolean executePersist(EntityManager em, T entity) {
 
         if (entity == null) {
@@ -76,6 +77,7 @@ public class EntityManagerHelper {
         return false;
     }
 
+    @Deprecated
     public <T> boolean executeMerge(EntityManager em, T entity) {
 
         if (entity == null) {
@@ -96,6 +98,7 @@ public class EntityManagerHelper {
         return false;
     }
 
+    @Deprecated
     public <T> List<T> executePersistBatch(EntityManager em, List<T> entities) {
 
         if (entities == null || entities.isEmpty()) {
@@ -120,6 +123,7 @@ public class EntityManagerHelper {
         return null;
     }
 
+    @Deprecated
     public <T> List<T> executeMergeBatch(EntityManager em, List<T> entities) {
 
         if (entities == null || entities.isEmpty()) {

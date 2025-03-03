@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.db.helpers.JPAUtil;
 
+@Deprecated
 public abstract class RepositoryOld implements AutoCloseable {
 
     protected final EntityManager em;

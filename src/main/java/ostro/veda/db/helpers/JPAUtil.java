@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
+@Deprecated
 public class JPAUtil {
 
     public static EntityManagerFactory entityManagerFactory;

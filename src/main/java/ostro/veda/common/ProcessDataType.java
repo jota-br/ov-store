@@ -1,5 +1,6 @@
 package ostro.veda.common;
 
+@Deprecated
 public enum ProcessDataType {
 
     ADD("ADD"),
