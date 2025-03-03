@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.db.helpers.EntityManagerHelper;
-import ostro.veda.db.helpers.columns.CategoryColumns;
+import ostro.veda.db.helpers.database.CategoryColumns;
 import ostro.veda.db.jpa.Category;
 
 import java.util.List;

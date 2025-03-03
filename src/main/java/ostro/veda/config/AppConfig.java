@@ -110,4 +110,14 @@ public class AppConfig {
     public OrderRepository orderRepositoryImpl(EntityManagerHelper entityManagerHelper) {
         return new OrderRepositoryImpl(entityManagerHelper);
     }
+
+    @Bean
+    public AuditService auditServiceImpl(AuditRepository auditRepository) {
+        return new AuditServiceImpl(auditRepository);
+    }
+
+    @Bean
+    public AuditRepository auditRepositoryImpl() {
+        return new AuditRepositoryImpl();
+    }
 }

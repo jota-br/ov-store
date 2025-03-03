@@ -63,14 +63,13 @@ Create Table If Not Exists role_permissions (
   Constraint Foreign Key (permission_id) References permissions (permission_id) On Delete Cascade On Update Cascade
 );
 
-Create Table If Not Exists user_audit (
+Create Table If Not Exists audits (
   audit_id Int Primary Key Auto_Increment,
-  user_id Int,
-  action Varchar(50), -- 'CREATE', 'UPDATE', 'DELETE'
-  changed_data Text,
+  action Varchar(50) Not Null, -- 'CREATE', 'UPDATE', 'DELETE'
+  changed_table Varchar(50) Not Null,
+  changed_data Text Not Null,
   changed_at Timestamp Default Current_Timestamp,
-  changed_by Int,
-  Constraint Foreign Key (user_id) References users (user_id) On Delete Cascade On Update Cascade,
+  changed_by Int Not Null,
   Constraint Foreign Key (changed_by) References users (user_id)
 );
 

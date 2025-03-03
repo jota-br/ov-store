@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.db.helpers.EntityManagerHelper;
-import ostro.veda.db.helpers.columns.AddressColumns;
+import ostro.veda.db.helpers.database.AddressColumns;
 import ostro.veda.db.jpa.Address;
 import ostro.veda.db.jpa.User;
 
