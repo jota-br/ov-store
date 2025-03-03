@@ -1,28 +1,43 @@
 package test.ostro.veda.test;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
-import ostro.veda.db.helpers.JPAUtil;
+import org.mariadb.jdbc.MariaDbDataSource;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 public class ResetTables {
 
+    public static DataSource getDataSource() {
+
+        var dataSource = new MariaDbDataSource();
+        try {
+            dataSource.setUrl("jdbc:mariadb://localhost:3306/");
+            dataSource.setUser(System.getenv().getOrDefault("SQL_USER", "root"));
+            dataSource.setPassword(System.getenv().getOrDefault("SQL_PASS", "root"));
+        } catch (SQLException e) {
+            System.err.printf("SQL State: %s%nError Code: %s%nMessage: %s%n", e.getSQLState(), e.getErrorCode(), e.getMessage());
+            return null;
+        }
+
+        return dataSource;
+    }
+
     public static void resetTables() {
         Path path = Path.of("src/test/ostro/veda/test/resetTables.sql");
-        EntityManager em = JPAUtil.getEm();
-        try {
+
+        try (Connection con = getDataSource().getConnection(); Statement statement = con.createStatement()) {
             List<String> files = Files.readAllLines(path);
-            EntityTransaction transaction = em.getTransaction();
-            transaction.begin();
+            statement.execute("USE ov_store");
             for (String str : files) {
-                em.createNativeQuery(str).executeUpdate();
+                statement.execute(str);
             }
-            transaction.commit();
-        } catch (IOException ignored) {
+        } catch (IOException | SQLException ignored) {
         }
     }
 }

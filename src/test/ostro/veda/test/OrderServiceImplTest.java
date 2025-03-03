@@ -49,6 +49,11 @@ public class OrderServiceImplTest {
                 99.99,10, true, categoryDTOS, productImageDTOS, null, null, 0);
     }
 
+    private OrderDetailDTO getOrderDetail(OrderDTO orderDTO, ProductDTO productDTO) {
+        return new OrderDetailDTO(0, orderDTO, productDTO,
+                1, productDTO.getPrice(), 0);
+    }
+
     private OrderDTO getOrder(ProductDTO productDTO, AddressDTO addressDTO, int userId) {
 
         OrderDTO orderDTO = new OrderDTO(0, userId, null, 0,
@@ -66,9 +71,8 @@ public class OrderServiceImplTest {
     @Test
     public void add() {
 
-        ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
-
         ResetTables.resetTables();
+        ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 
         UserServiceImpl userService = context.getBean(UserServiceImpl.class);
         ProductServiceImpl productService = context.getBean(ProductServiceImpl.class);
@@ -92,9 +96,9 @@ public class OrderServiceImplTest {
 
     @Test
     public void update() {
-        ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 
         ResetTables.resetTables();
+        ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 
         UserServiceImpl userService = context.getBean(UserServiceImpl.class);
         ProductServiceImpl productService = context.getBean(ProductServiceImpl.class);
@@ -121,9 +125,9 @@ public class OrderServiceImplTest {
 
     @Test
     public void cancelOrder() {
-        ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 
         ResetTables.resetTables();
+        ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 
         UserServiceImpl userService = context.getBean(UserServiceImpl.class);
         ProductServiceImpl productService = context.getBean(ProductServiceImpl.class);
@@ -148,5 +152,33 @@ public class OrderServiceImplTest {
 
     @Test
     public void returnItem() {
+
+        ResetTables.resetTables();
+        ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+
+        UserServiceImpl userService = context.getBean(UserServiceImpl.class);
+        ProductServiceImpl productService = context.getBean(ProductServiceImpl.class);
+        OrderServiceImpl orderService = context.getBean(OrderServiceImpl.class);
+
+        UserDTO userDTO = getUserDTO();
+        userDTO = userService.add(userDTO, "password123*@");
+        assertNotNull(userDTO);
+
+        ProductDTO productDTO = getProductDTO();
+        productDTO = productService.add(productDTO);
+        assertNotNull(productDTO);
+
+        OrderDTO orderDTO = getOrder(productDTO, userDTO.getAddresses().get(0), userDTO.getUserId());
+        orderDTO = orderService.add(orderDTO);
+
+        OrderDetailDTO orderDetailDTO = getOrderDetail(orderDTO, productDTO);
+        orderDTO = orderService.update(new OrderDTO(orderDTO.getOrderId(), orderDTO.getUserId(),
+                null, 0, OrderStatus.DELIVERED.getStatus(), null, null,
+                null, null, null, 0));
+        orderDTO = orderService.returnItem(orderDetailDTO);
+        assertNotNull(orderDTO);
+
+        // close context (container)
+        context.close();
     }
 }

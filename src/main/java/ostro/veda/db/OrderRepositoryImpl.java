@@ -33,6 +33,11 @@ public class OrderRepositoryImpl implements OrderRepository {
         this.entityManagerHelper = entityManagerHelper;
     }
 
+    enum OrderOperation {
+        INCREASE,
+        DECREASE;
+    }
+
     @Override
     @Transactional
     public OrderDTO add(@NonNull OrderDTO orderDTO) {
@@ -85,7 +90,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         List<OrderDetail> newOrderDetails = updateProductInventory(
                 orderDetailList.stream().map(
                 OrderDetail::transformToDto).toList(),
-                OrderDetailRepository.OrderOperation.INCREASE
+                OrderOperation.INCREASE
         );
         if (newOrderDetails == null || newOrderDetails.isEmpty()) return null;
 
@@ -98,10 +103,10 @@ public class OrderRepositoryImpl implements OrderRepository {
         try {
 
             for (OrderDetail orderDetail : newOrderDetails) {
-                Product product = orderDetail.getProduct();
-                orderDetail.setOrder(order);
-                this.entityManager.merge(product);
-                this.entityManager.merge(orderDetail);
+                Product product = this.entityManager.find(Product.class, orderDetail.getProduct().getProductId());
+                orderDetail
+                        .setOrder(order)
+                        .setProduct(product);
             }
             this.entityManager.merge(order);
 
@@ -125,7 +130,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
             String status = OrderStatus.RETURN_REQUESTED.getStatus();
             order.updateOrderStatus(status);
-
+            order = buildNewOrderStatusHistory(order);
 
             this.entityManager.persist(order);
 
@@ -209,7 +214,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         int quantity = orderDetailDTO.getQuantity();
         double price = product.getPrice();
 
-        updateProductInventory(List.of(orderDetailDTO), OrderDetailRepository.OrderOperation.DECREASE);
+        updateProductInventory(List.of(orderDetailDTO), OrderOperation.DECREASE);
 
         return new OrderDetail()
                 .setOrderDetailId(orderDetailDTO.getOrderDetailId())
@@ -245,7 +250,7 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .setChangedAt(orderStatusHistoryDTO.getChangedAt());
     }
 
-    private List<OrderDetail> updateProductInventory(@NonNull List<OrderDetailDTO> orderDetailList, @NonNull OrderDetailRepository.OrderOperation orderOperation) {
+    private List<OrderDetail> updateProductInventory(@NonNull List<OrderDetailDTO> orderDetailList, @NonNull OrderOperation orderOperation) {
         log.info("updateProductInventory() OrderDetail list size = {}", orderDetailList.size());
 
         List<OrderDetail> newOrderDetailList = new ArrayList<>();
@@ -256,7 +261,7 @@ public class OrderRepositoryImpl implements OrderRepository {
             int quantity = orderDetail.getQuantity();
 
 
-            if (orderOperation.equals(OrderDetailRepository.OrderOperation.INCREASE)) {
+            if (orderOperation.equals(OrderOperation.INCREASE)) {
                 newStock = newStock + quantity;
                 quantity = -quantity;
             } else {
@@ -265,7 +270,7 @@ public class OrderRepositoryImpl implements OrderRepository {
             }
 
             OrderDetail newOrderDetail = new OrderDetail()
-                    .setOrderDetailId(orderDetail.getOrderDetailId())
+//                    .setOrderDetailId(orderDetail.getOrderDetailId())
                     .setProduct(product)
                     .setQuantity(quantity)
                     .setUnitPrice(product.getPrice());
@@ -317,7 +322,7 @@ public class OrderRepositoryImpl implements OrderRepository {
             int productId = od.getProduct().getProductId();
             int quantity = od.getQuantity();
 
-            if (productId == orderDetail.getProduct().getProductId() && quantity <= orderDetail.getQuantity()) return true;
+            if (productId == orderDetail.getProduct().getProductId() && quantity >= orderDetail.getQuantity()) return true;
         }
         return false;
     }
