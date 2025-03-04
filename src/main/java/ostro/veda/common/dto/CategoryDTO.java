@@ -1,4 +1,4 @@
-package ostro.veda.common.dto;
+package main.java.ostro.veda.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

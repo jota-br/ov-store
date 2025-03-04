@@ -1,7 +1,10 @@
-package ostro.veda.config;
+package main.java.ostro.veda.config;
 
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
+import main.java.ostro.veda.db.*;
+import main.java.ostro.veda.db.helpers.EntityManagerHelper;
+import main.java.ostro.veda.service.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -10,9 +13,6 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import ostro.veda.db.*;
-import ostro.veda.db.helpers.EntityManagerHelper;
-import ostro.veda.service.*;
 
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -72,8 +72,8 @@ public class AppConfig {
     }
 
     @Bean
-    public UserService userServiceImpl(UserRepository userRepository) {
-        return new UserServiceImpl(userRepository);
+    public UserService userServiceImpl(UserRepository userRepository, AuditService auditService) {
+        return new UserServiceImpl(userRepository, auditService);
     }
 
     @Bean

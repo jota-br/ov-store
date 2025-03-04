@@ -1,8 +1,13 @@
-package ostro.veda.service;
+package main.java.ostro.veda.service;
 
-import ostro.veda.common.dto.AuditDTO;
+
+import main.java.ostro.veda.common.dto.AuditDTO;
+import main.java.ostro.veda.common.dto.AuditDataDTO;
+
+import java.util.List;
 
 public interface AuditService {
 
-    AuditDTO add(AuditDTO auditDTO);
+    List<AuditDTO> add(List<AuditDataDTO> auditDataDTO);
+    List<AuditDTO> buildAuditDTO(List<AuditDataDTO> auditDataDTO);
 }

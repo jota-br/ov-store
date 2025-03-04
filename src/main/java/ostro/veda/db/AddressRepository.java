@@ -1,7 +1,7 @@
-package ostro.veda.db;
+package main.java.ostro.veda.db;
 
-import ostro.veda.common.dto.AddressDTO;
-import ostro.veda.db.jpa.Address;
+import main.java.ostro.veda.common.dto.AddressDTO;
+import main.java.ostro.veda.db.jpa.Address;
 
 public interface AddressRepository extends Repository<AddressDTO> {
 

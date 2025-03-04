@@ -5,7 +5,7 @@
 
     <groupId>ostro.veda</groupId>
     <artifactId>ov-store</artifactId>
-    <version>0.17.0</version>
+    <version>0.17.1</version>
     <packaging>jar</packaging>
 
     <name>Ostro Veda Store</name>
@@ -119,6 +119,8 @@
     </dependencies>
 
     <build>
+        <sourceDirectory>${project.basedir}/src</sourceDirectory>
+
         <plugins>
 
             <!-- Maven Compiler Plugin -->

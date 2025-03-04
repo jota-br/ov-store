@@ -1,6 +1,6 @@
-package ostro.veda.service;
+package main.java.ostro.veda.service;
 
-import ostro.veda.common.dto.CategoryDTO;
+import main.java.ostro.veda.common.dto.CategoryDTO;
 
 public interface CategoryService extends Service<CategoryDTO> {
 }

@@ -1,15 +1,15 @@
-package ostro.veda.db.jpa;
+package main.java.ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import main.java.ostro.veda.common.dto.CategoryDTO;
+import main.java.ostro.veda.common.dto.ProductDTO;
+import main.java.ostro.veda.common.dto.ProductImageDTO;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import ostro.veda.common.dto.CategoryDTO;
-import ostro.veda.common.dto.ProductDTO;
-import ostro.veda.common.dto.ProductImageDTO;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

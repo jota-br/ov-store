@@ -1,5 +1,8 @@
-package ostro.veda.common;
+package main.java.ostro.veda.common;
 
+import lombok.Getter;
+
+@Getter
 @Deprecated
 public enum ProcessDataType {
 
@@ -13,7 +16,4 @@ public enum ProcessDataType {
         this.type = type;
     }
 
-    public String getType() {
-        return this.type;
-    }
 }

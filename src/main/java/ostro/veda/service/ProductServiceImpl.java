@@ -1,14 +1,14 @@
-package ostro.veda.service;
+package main.java.ostro.veda.service;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import main.java.ostro.veda.common.dto.ProductDTO;
+import main.java.ostro.veda.common.error.ErrorHandling;
+import main.java.ostro.veda.common.validation.SanitizeUtil;
+import main.java.ostro.veda.common.validation.ValidateUtil;
+import main.java.ostro.veda.db.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ostro.veda.common.dto.ProductDTO;
-import ostro.veda.common.error.ErrorHandling;
-import ostro.veda.common.validation.SanitizeUtil;
-import ostro.veda.common.validation.ValidateUtil;
-import ostro.veda.db.ProductRepository;
 
 @Slf4j
 @Component

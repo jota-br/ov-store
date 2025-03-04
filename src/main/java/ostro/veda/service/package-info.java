@@ -1,1 +1,1 @@
-package ostro.veda.service;
+package main.java.ostro.veda.service;

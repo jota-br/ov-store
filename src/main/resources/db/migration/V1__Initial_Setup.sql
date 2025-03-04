@@ -66,7 +66,7 @@ Create Table If Not Exists role_permissions (
 Create Table If Not Exists audits (
   audit_id Int Primary Key Auto_Increment,
   action Varchar(50) Not Null, -- 'CREATE', 'UPDATE', 'DELETE'
-  changed_table Varchar(50) Not Null,
+  changed_table Varchar(50),
   changed_data Text Not Null,
   changed_at Timestamp Default Current_Timestamp,
   changed_by Int Not Null,

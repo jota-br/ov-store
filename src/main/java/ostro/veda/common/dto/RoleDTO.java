@@ -1,8 +1,8 @@
-package ostro.veda.common.dto;
+package main.java.ostro.veda.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import ostro.veda.db.jpa.Permission;
+import main.java.ostro.veda.db.jpa.Permission;
 
 import java.time.LocalDateTime;
 import java.util.List;

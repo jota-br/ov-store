@@ -1,12 +1,12 @@
-package ostro.veda.db.jpa;
+package main.java.ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import main.java.ostro.veda.common.dto.AuditDTO;
 import org.hibernate.annotations.CreationTimestamp;
-import ostro.veda.common.dto.AuditDTO;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 @AllArgsConstructor
 @Entity
-@Table(name = "audit")
+@Table(name = "audits")
 public class Audit {
 
     @Id
@@ -26,7 +26,7 @@ public class Audit {
     @Column(name = "action", length = 50, nullable = false)
     private String action;
 
-    @Column(name = "change_table", length = 50, nullable = false)
+    @Column(name = "changed_table", length = 50, nullable = false)
     private String changedTable;
 
     @Column(name = "changed_data", columnDefinition = "TEXT", nullable = false)
@@ -45,6 +45,6 @@ public class Audit {
 
     public AuditDTO transformToDto() {
         return new AuditDTO(this.getAuditId(), this.getAction(), this.getChangedTable(),
-                this.getChangedData(), this.getChangedAt(), this.getChangedBy().transformToDto());
+                this.getChangedData(), this.getChangedAt(), this.getChangedBy().transformToDto(), this.getChangedBy().getUserId());
     }
 }

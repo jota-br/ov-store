@@ -1,20 +1,20 @@
-package ostro.veda.db;
+package main.java.ostro.veda.db;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import main.java.ostro.veda.common.dto.AddressDTO;
+import main.java.ostro.veda.common.dto.UserDTO;
+import main.java.ostro.veda.common.error.ErrorHandling;
+import main.java.ostro.veda.db.helpers.EntityManagerHelper;
+import main.java.ostro.veda.db.helpers.database.UserColumns;
+import main.java.ostro.veda.db.jpa.Address;
+import main.java.ostro.veda.db.jpa.Role;
+import main.java.ostro.veda.db.jpa.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import ostro.veda.common.dto.AddressDTO;
-import ostro.veda.common.dto.UserDTO;
-import ostro.veda.common.error.ErrorHandling;
-import ostro.veda.db.helpers.EntityManagerHelper;
-import ostro.veda.db.helpers.database.UserColumns;
-import ostro.veda.db.jpa.Address;
-import ostro.veda.db.jpa.Role;
-import ostro.veda.db.jpa.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +47,7 @@ public class UserRepositoryImpl implements UserRepository {
         try {
             User newUser = buildUser(userDTO);
             this.entityManager.persist(newUser);
+
 
             return newUser.transformToDto();
 
@@ -84,7 +85,7 @@ public class UserRepositoryImpl implements UserRepository {
         log.info("buildUser() User = [{}, {}, {}]", userDTO.getUserId(), userDTO.getUsername(), userDTO.getEmail());
 
         List<Address> addressList = buildAddress(userDTO);
-        Role role = this.entityManager.find(Role.class, userDTO.getRole().getRoleId());
+        main.java.ostro.veda.db.jpa.Role role = this.entityManager.find(Role.class, userDTO.getRole().getRoleId());
 
         if (role == null)
             throw new ErrorHandling.InvalidInputException("Invalid Role id, roleId:", String.valueOf(userDTO.getRole().getRoleId()));

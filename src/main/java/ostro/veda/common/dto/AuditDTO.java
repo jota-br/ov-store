@@ -1,4 +1,4 @@
-package ostro.veda.common.dto;
+package main.java.ostro.veda.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,4 +15,5 @@ public class AuditDTO {
     private final String changedData;
     private final LocalDateTime changedAt;
     private final UserDTO changedBy;
+    private final int userId;
 }

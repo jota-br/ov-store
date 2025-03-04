@@ -1,19 +1,19 @@
-package ostro.veda.db;
+package main.java.ostro.veda.db;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import main.java.ostro.veda.common.dto.OrderDTO;
+import main.java.ostro.veda.common.dto.OrderDetailDTO;
+import main.java.ostro.veda.common.dto.OrderStatusHistoryDTO;
+import main.java.ostro.veda.common.error.ErrorHandling;
+import main.java.ostro.veda.db.helpers.EntityManagerHelper;
+import main.java.ostro.veda.db.helpers.OrderStatus;
+import main.java.ostro.veda.db.jpa.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import ostro.veda.common.dto.OrderDTO;
-import ostro.veda.common.dto.OrderDetailDTO;
-import ostro.veda.common.dto.OrderStatusHistoryDTO;
-import ostro.veda.common.error.ErrorHandling;
-import ostro.veda.db.helpers.EntityManagerHelper;
-import ostro.veda.db.helpers.OrderStatus;
-import ostro.veda.db.jpa.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

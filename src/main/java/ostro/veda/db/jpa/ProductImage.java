@@ -1,11 +1,11 @@
-package ostro.veda.db.jpa;
+package main.java.ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import ostro.veda.common.dto.ProductImageDTO;
+import main.java.ostro.veda.common.dto.ProductImageDTO;
 
 @Getter
 @Setter
