@@ -1,4 +1,4 @@
-package main.java.ostro.veda.db;
+package ostro.veda.db;
 
 public interface Repository<T> extends AutoCloseable {
 

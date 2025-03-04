@@ -1,7 +1,7 @@
-package main.java.ostro.veda.service;
+package ostro.veda.service;
 
 
-import main.java.ostro.veda.common.dto.UserDTO;
+import ostro.veda.common.dto.UserDTO;
 
 public interface UserService {
 

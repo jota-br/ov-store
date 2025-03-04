@@ -1,23 +1,28 @@
-package main.java.ostro.veda.service;
+package ostro.veda.service;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import main.java.ostro.veda.common.dto.AddressDTO;
-import main.java.ostro.veda.common.error.ErrorHandling;
-import main.java.ostro.veda.common.validation.SanitizeUtil;
-import main.java.ostro.veda.common.validation.ValidateUtil;
-import main.java.ostro.veda.db.AddressRepository;
+import org.springframework.context.ApplicationEventPublisher;
+import ostro.veda.common.dto.AddressDTO;
+import ostro.veda.common.error.ErrorHandling;
+import ostro.veda.common.validation.SanitizeUtil;
+import ostro.veda.common.validation.ValidateUtil;
+import ostro.veda.db.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ostro.veda.db.helpers.database.Action;
+import ostro.veda.service.events.AuditEvent;
 
 @Slf4j
 @Component
 public class AddressServiceImpl implements AddressService {
 
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final AddressRepository addressRepository;
 
     @Autowired
-    public AddressServiceImpl(AddressRepository addressRepository) {
+    public AddressServiceImpl(ApplicationEventPublisher applicationEventPublisher, AddressRepository addressRepository) {
+        this.applicationEventPublisher = applicationEventPublisher;
         this.addressRepository = addressRepository;
     }
 
@@ -27,7 +32,20 @@ public class AddressServiceImpl implements AddressService {
             log.info("add() Address for User = {}", addressDTO.getUser().getUserId());
             ValidateUtil.validateAddress(addressDTO);
             addressDTO = SanitizeUtil.sanitizeAddress(addressDTO);
-            return addressRepository.add(addressDTO);
+
+            addressDTO = addressRepository.add(addressDTO);
+
+            AuditEvent event = AuditEvent.builder()
+                    .source(this)
+                    .action(Action.INSERT)
+                    .addressDTO(addressDTO)
+                    .userId(1)
+                    .id(addressDTO.getAddressId())
+                    .build();
+            applicationEventPublisher.publishEvent(event);
+
+            return addressDTO;
+
         } catch (ErrorHandling.InvalidInputException e) {
             log.warn(e.getMessage());
             return null;
@@ -40,7 +58,20 @@ public class AddressServiceImpl implements AddressService {
             log.info("update() Address for User = {}", addressDTO.getUser().getUserId());
             ValidateUtil.validateAddress(addressDTO);
             addressDTO = SanitizeUtil.sanitizeAddress(addressDTO);
-            return addressRepository.update(addressDTO);
+
+            addressDTO = addressRepository.update(addressDTO);
+
+            AuditEvent event = AuditEvent.builder()
+                    .source(this)
+                    .action(Action.INSERT)
+                    .addressDTO(addressDTO)
+                    .userId(1)
+                    .id(addressDTO.getAddressId())
+                    .build();
+            applicationEventPublisher.publishEvent(event);
+
+            return addressDTO;
+
         } catch (ErrorHandling.InvalidInputException e) {
             log.warn(e.getMessage());
             return null;

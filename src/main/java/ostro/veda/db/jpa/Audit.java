@@ -1,11 +1,11 @@
-package main.java.ostro.veda.db.jpa;
+package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import main.java.ostro.veda.common.dto.AuditDTO;
+import ostro.veda.common.dto.AuditDTO;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;

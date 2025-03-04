@@ -1,36 +1,34 @@
-package main.java.ostro.veda.service;
+package ostro.veda.service;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import main.java.ostro.veda.common.dto.AuditDataDTO;
-import main.java.ostro.veda.common.dto.UserDTO;
-import main.java.ostro.veda.common.error.ErrorHandling;
-import main.java.ostro.veda.common.validation.SanitizeUtil;
-import main.java.ostro.veda.common.validation.ValidateUtil;
-import main.java.ostro.veda.db.UserRepository;
-import main.java.ostro.veda.db.helpers.database.Action;
-import main.java.ostro.veda.db.helpers.database.DbTables;
-import main.java.ostro.veda.db.helpers.database.UserColumns;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
+import ostro.veda.common.dto.UserDTO;
+import ostro.veda.common.error.ErrorHandling;
+import ostro.veda.common.validation.SanitizeUtil;
+import ostro.veda.common.validation.ValidateUtil;
+import ostro.veda.db.UserRepository;
+import ostro.veda.db.helpers.database.Action;
+import ostro.veda.service.events.AuditEvent;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
-import java.util.List;
 
 @Slf4j
 @Component
 public class UserServiceImpl implements UserService {
 
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final UserRepository userRepositoryImpl;
-    private final AuditService auditServiceImpl;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepositoryImpl, AuditService auditServiceImpl) {
+    public UserServiceImpl(ApplicationEventPublisher applicationEventPublisher, UserRepository userRepositoryImpl) {
+        this.applicationEventPublisher = applicationEventPublisher;
         this.userRepositoryImpl = userRepositoryImpl;
-        this.auditServiceImpl = auditServiceImpl;
     }
 
     @Override
@@ -42,11 +40,18 @@ public class UserServiceImpl implements UserService {
             UserDTO user = getUserWithSaltAndHash(userDTO, password);
 
             UserDTO userReturned = userRepositoryImpl.add(user);
-        auditServiceImpl.add(List.of(new AuditDataDTO(userReturned.getUsername(), 0, 0,
-                UserColumns.USERNAME.getColumnName(), Action.INSERT.getActionName(),
-                DbTables.USER.getTableName(), userReturned.getUserId(), userReturned.getUserId())));
 
-        return userReturned;
+            AuditEvent event = AuditEvent.builder()
+                    .source(this)
+                    .action(Action.INSERT)
+                    .userDTO(userReturned)
+                    .userId(user.getUserId())
+                    .id(user.getUserId())
+                    .build();
+            applicationEventPublisher.publishEvent(event);
+
+            return userReturned;
+
         } catch (ErrorHandling.InvalidInputException e) {
             log.warn(e.getMessage());
             return null;
@@ -59,12 +64,20 @@ public class UserServiceImpl implements UserService {
         try {
             ValidateUtil.validateUser(userDTO, password);
             UserDTO user = getUserWithSaltAndHash(userDTO, password);
+
             UserDTO userReturned = userRepositoryImpl.update(user);
-            auditServiceImpl.add(List.of(new AuditDataDTO(userReturned.getUsername(), 0, 0,
-                    UserColumns.USERNAME.getColumnName(), Action.INSERT.getActionName(),
-                    DbTables.USER.getTableName(), userReturned.getUserId(), userReturned.getUserId())));
+
+            AuditEvent event = AuditEvent.builder()
+                    .source(this)
+                    .action(Action.UPDATE)
+                    .userDTO(userReturned)
+                    .userId(user.getUserId())
+                    .id(user.getUserId())
+                    .build();
+            applicationEventPublisher.publishEvent(event);
 
             return userReturned;
+
         } catch (ErrorHandling.InvalidInputException e) {
             log.warn(e.getMessage());
             return null;

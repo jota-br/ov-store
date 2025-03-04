@@ -1,11 +1,11 @@
 package test.ostro.veda.test;
 
-import main.java.ostro.veda.common.dto.*;
-import main.java.ostro.veda.config.AppConfig;
-import main.java.ostro.veda.db.helpers.OrderStatus;
-import main.java.ostro.veda.service.OrderServiceImpl;
-import main.java.ostro.veda.service.ProductServiceImpl;
-import main.java.ostro.veda.service.UserServiceImpl;
+import ostro.veda.common.dto.*;
+import ostro.veda.config.AppConfig;
+import ostro.veda.db.helpers.OrderStatus;
+import ostro.veda.service.OrderServiceImpl;
+import ostro.veda.service.ProductServiceImpl;
+import ostro.veda.service.UserServiceImpl;
 import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

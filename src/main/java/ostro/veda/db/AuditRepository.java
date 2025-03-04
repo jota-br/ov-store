@@ -1,14 +1,12 @@
-package main.java.ostro.veda.db;
+package ostro.veda.db;
 
-import main.java.ostro.veda.common.dto.AuditDTO;
-import main.java.ostro.veda.db.jpa.Audit;
-import main.java.ostro.veda.db.jpa.User;
-
-import java.util.List;
+import ostro.veda.common.dto.AuditDTO;
+import ostro.veda.db.jpa.Audit;
+import ostro.veda.db.jpa.User;
 
 public interface AuditRepository {
 
-    List<AuditDTO> add(List<AuditDTO> auditDTOS);
+    AuditDTO add(AuditDTO auditDTO);
 
-    List<Audit> buildAudit(List<AuditDTO> auditDTOS, User user);
+    Audit buildAudit(AuditDTO auditDTO, User user);
 }

@@ -1,8 +1,8 @@
-package main.java.ostro.veda.db;
+package ostro.veda.db;
 
 import jakarta.persistence.EntityManager;
-import main.java.ostro.veda.db.helpers.EntityManagerHelper;
-import main.java.ostro.veda.db.helpers.JPAUtil;
+import ostro.veda.db.helpers.EntityManagerHelper;
+import ostro.veda.db.helpers.JPAUtil;
 
 @Deprecated
 public abstract class RepositoryOld implements AutoCloseable {

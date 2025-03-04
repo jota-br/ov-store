@@ -1,4 +1,4 @@
-package main.java.ostro.veda.db.helpers;
+package ostro.veda.db.helpers;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;

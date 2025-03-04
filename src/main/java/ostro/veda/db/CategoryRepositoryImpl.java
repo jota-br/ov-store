@@ -1,12 +1,12 @@
-package main.java.ostro.veda.db;
+package ostro.veda.db;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
-import main.java.ostro.veda.common.dto.CategoryDTO;
-import main.java.ostro.veda.db.helpers.EntityManagerHelper;
-import main.java.ostro.veda.db.helpers.database.CategoryColumns;
-import main.java.ostro.veda.db.jpa.Category;
+import ostro.veda.common.dto.CategoryDTO;
+import ostro.veda.db.helpers.EntityManagerHelper;
+import ostro.veda.db.helpers.database.CategoryColumns;
+import ostro.veda.db.jpa.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

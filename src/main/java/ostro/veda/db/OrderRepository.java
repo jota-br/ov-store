@@ -1,11 +1,11 @@
-package main.java.ostro.veda.db;
+package ostro.veda.db;
 
-import main.java.ostro.veda.common.dto.OrderDTO;
-import main.java.ostro.veda.common.dto.OrderDetailDTO;
-import main.java.ostro.veda.common.dto.OrderStatusHistoryDTO;
-import main.java.ostro.veda.db.jpa.Order;
-import main.java.ostro.veda.db.jpa.OrderDetail;
-import main.java.ostro.veda.db.jpa.OrderStatusHistory;
+import ostro.veda.common.dto.OrderDTO;
+import ostro.veda.common.dto.OrderDetailDTO;
+import ostro.veda.common.dto.OrderStatusHistoryDTO;
+import ostro.veda.db.jpa.Order;
+import ostro.veda.db.jpa.OrderDetail;
+import ostro.veda.db.jpa.OrderStatusHistory;
 
 import java.util.List;
 

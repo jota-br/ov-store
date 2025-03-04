@@ -1,4 +1,4 @@
-package main.java.ostro.veda.db.helpers.database;
+package ostro.veda.db.helpers.database;
 
 public enum AddressColumns {
 

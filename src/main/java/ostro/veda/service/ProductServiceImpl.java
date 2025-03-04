@@ -1,23 +1,28 @@
-package main.java.ostro.veda.service;
+package ostro.veda.service;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import main.java.ostro.veda.common.dto.ProductDTO;
-import main.java.ostro.veda.common.error.ErrorHandling;
-import main.java.ostro.veda.common.validation.SanitizeUtil;
-import main.java.ostro.veda.common.validation.ValidateUtil;
-import main.java.ostro.veda.db.ProductRepository;
+import org.springframework.context.ApplicationEventPublisher;
+import ostro.veda.common.dto.ProductDTO;
+import ostro.veda.common.error.ErrorHandling;
+import ostro.veda.common.validation.SanitizeUtil;
+import ostro.veda.common.validation.ValidateUtil;
+import ostro.veda.db.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ostro.veda.db.helpers.database.Action;
+import ostro.veda.service.events.AuditEvent;
 
 @Slf4j
 @Component
 public class ProductServiceImpl implements ProductService {
 
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final ProductRepository productRepositoryImpl;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepositoryImpl) {
+    public ProductServiceImpl(ApplicationEventPublisher applicationEventPublisher, ProductRepository productRepositoryImpl) {
+        this.applicationEventPublisher = applicationEventPublisher;
         this.productRepositoryImpl = productRepositoryImpl;
     }
 
@@ -26,7 +31,20 @@ public class ProductServiceImpl implements ProductService {
         try {
             ValidateUtil.validateProduct(product);
             ProductDTO productDTO = SanitizeUtil.sanitizeProduct(product);
-            return this.productRepositoryImpl.add(productDTO);
+
+            productDTO = this.productRepositoryImpl.add(productDTO);
+
+            AuditEvent event = AuditEvent.builder()
+                    .source(this)
+                    .action(Action.INSERT)
+                    .productDTO(productDTO)
+                    .userId(1)
+                    .id(product.getProductId())
+                    .build();
+            applicationEventPublisher.publishEvent(event);
+
+            return productDTO;
+
         } catch (ErrorHandling.InvalidInputException e) {
             log.warn(e.getMessage());
             return null;
@@ -38,7 +56,20 @@ public class ProductServiceImpl implements ProductService {
         try {
             ValidateUtil.validateProduct(product);
             ProductDTO productDTO = SanitizeUtil.sanitizeProduct(product);
-            return this.productRepositoryImpl.update(productDTO);
+
+            productDTO = this.productRepositoryImpl.update(productDTO);
+
+            AuditEvent event = AuditEvent.builder()
+                    .source(this)
+                    .action(Action.UPDATE)
+                    .productDTO(productDTO)
+                    .userId(1)
+                    .id(product.getProductId())
+                    .build();
+            applicationEventPublisher.publishEvent(event);
+
+            return productDTO;
+
         } catch (ErrorHandling.InvalidInputException e) {
             log.warn(e.getMessage());
             return null;

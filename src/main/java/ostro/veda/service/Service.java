@@ -1,4 +1,4 @@
-package main.java.ostro.veda.service;
+package ostro.veda.service;
 
 public interface Service<T> {
 

@@ -1,6 +1,6 @@
-package main.java.ostro.veda.common.validation;
+package ostro.veda.common.validation;
 
-import main.java.ostro.veda.common.dto.*;
+import ostro.veda.common.dto.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,15 +103,12 @@ public class SanitizeUtil {
                 country, isActive, addressDTO.getCreatedAt(), addressDTO.getUpdatedAt(), addressDTO.getVersion());
     }
 
-    public static List<AuditDTO> sanitizeAudit(List<AuditDTO> auditDTOS) {
+    public static AuditDTO sanitizeAudit(AuditDTO auditDTO) {
 
-        List<AuditDTO> auditDTOList = new ArrayList<>();
-        for (AuditDTO auditDTO : auditDTOS){
             String changedData = sanitize(auditDTO.getChangedData());
-            auditDTOList.add(new AuditDTO(auditDTO.getAuditId(), auditDTO.getAction(), auditDTO.getChangedTable(),
-                    changedData, auditDTO.getChangedAt(), auditDTO.getChangedBy(), auditDTO.getUserId()));
-        }
-        return  auditDTOList;
+            return new AuditDTO(auditDTO.getAuditId(), auditDTO.getAction(), auditDTO.getChangedTable(),
+                    changedData, auditDTO.getChangedAt(), auditDTO.getChangedBy(), auditDTO.getUserId());
+
     }
 
     public static String sanitize(String input) {

@@ -1,4 +1,4 @@
-package main.java.ostro.veda.common.error;
+package ostro.veda.common.error;
 
 public class ErrorHandling {
 

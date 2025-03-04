@@ -1,1 +1,1 @@
-package main.java.ostro.veda.db.jpa;
+package ostro.veda.db.jpa;

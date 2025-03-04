@@ -1,8 +1,8 @@
 package test.ostro.veda.test;
 
-import main.java.ostro.veda.common.dto.CategoryDTO;
-import main.java.ostro.veda.config.AppConfig;
-import main.java.ostro.veda.service.CategoryServiceImpl;
+import ostro.veda.common.dto.CategoryDTO;
+import ostro.veda.config.AppConfig;
+import ostro.veda.service.CategoryServiceImpl;
 import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

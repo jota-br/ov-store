@@ -1,12 +1,12 @@
-package main.java.ostro.veda.common.validation;
+package ostro.veda.common.validation;
 
-import main.java.ostro.veda.common.dto.*;
-import main.java.ostro.veda.common.error.ErrorHandling;
-import main.java.ostro.veda.db.helpers.AddressType;
-import main.java.ostro.veda.db.helpers.OrderStatus;
-import main.java.ostro.veda.db.helpers.database.Action;
-import main.java.ostro.veda.db.helpers.database.DbTables;
 import org.apache.commons.validator.routines.EmailValidator;
+import ostro.veda.common.dto.*;
+import ostro.veda.common.error.ErrorHandling;
+import ostro.veda.db.helpers.AddressType;
+import ostro.veda.db.helpers.OrderStatus;
+import ostro.veda.db.helpers.database.Action;
+import ostro.veda.db.helpers.database.DbTables;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -115,12 +115,10 @@ public class ValidateUtil {
         // requires Maps API implementation
     }
 
-    public static void validateAudit(List<AuditDTO> auditDTOS) throws ErrorHandling.InvalidInputException {
-        for (AuditDTO auditDTO : auditDTOS){
-            hasValidZeroOrHigherNumber(auditDTO.getAuditId());
-            hasValidAction(auditDTO.getAction());
-            hasValidChangedTable(auditDTO.getChangedTable());
-        }
+    public static void validateAudit(AuditDTO auditDTO) throws ErrorHandling.InvalidInputException {
+        hasValidZeroOrHigherNumber(auditDTO.getAuditId());
+        hasValidAction(auditDTO.getAction());
+        hasValidChangedTable(auditDTO.getChangedTable());
     }
 
     public static void hasValidName(String input) throws ErrorHandling.InvalidInputException {

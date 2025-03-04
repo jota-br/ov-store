@@ -1,7 +1,7 @@
 package test.ostro.veda.test;
 
-import main.java.ostro.veda.db.helpers.SqlBuilder;
-import main.java.ostro.veda.db.jpa.User;
+import ostro.veda.db.helpers.SqlBuilder;
+import ostro.veda.db.jpa.User;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

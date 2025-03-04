@@ -1,11 +1,11 @@
-package main.java.ostro.veda.db;
+package ostro.veda.db;
 
-import main.java.ostro.veda.common.dto.CategoryDTO;
-import main.java.ostro.veda.common.dto.ProductDTO;
-import main.java.ostro.veda.common.dto.ProductImageDTO;
-import main.java.ostro.veda.db.jpa.Category;
-import main.java.ostro.veda.db.jpa.Product;
-import main.java.ostro.veda.db.jpa.ProductImage;
+import ostro.veda.common.dto.CategoryDTO;
+import ostro.veda.common.dto.ProductDTO;
+import ostro.veda.common.dto.ProductImageDTO;
+import ostro.veda.db.jpa.Category;
+import ostro.veda.db.jpa.Product;
+import ostro.veda.db.jpa.ProductImage;
 
 import java.util.List;
 

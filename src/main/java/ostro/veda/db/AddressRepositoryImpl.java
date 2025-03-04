@@ -1,14 +1,14 @@
-package main.java.ostro.veda.db;
+package ostro.veda.db;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import main.java.ostro.veda.common.dto.AddressDTO;
-import main.java.ostro.veda.db.helpers.EntityManagerHelper;
-import main.java.ostro.veda.db.helpers.database.AddressColumns;
-import main.java.ostro.veda.db.jpa.Address;
-import main.java.ostro.veda.db.jpa.User;
+import ostro.veda.common.dto.AddressDTO;
+import ostro.veda.db.helpers.EntityManagerHelper;
+import ostro.veda.db.helpers.database.AddressColumns;
+import ostro.veda.db.jpa.Address;
+import ostro.veda.db.jpa.User;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 

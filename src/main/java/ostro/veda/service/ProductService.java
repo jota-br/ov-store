@@ -1,7 +1,7 @@
-package main.java.ostro.veda.service;
+package ostro.veda.service;
 
 
-import main.java.ostro.veda.common.dto.ProductDTO;
+import ostro.veda.common.dto.ProductDTO;
 
 public interface ProductService extends Service<ProductDTO> {
 }

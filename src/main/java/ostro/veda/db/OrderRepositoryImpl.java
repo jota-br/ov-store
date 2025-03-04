@@ -1,16 +1,16 @@
-package main.java.ostro.veda.db;
+package ostro.veda.db;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import main.java.ostro.veda.common.dto.OrderDTO;
-import main.java.ostro.veda.common.dto.OrderDetailDTO;
-import main.java.ostro.veda.common.dto.OrderStatusHistoryDTO;
-import main.java.ostro.veda.common.error.ErrorHandling;
-import main.java.ostro.veda.db.helpers.EntityManagerHelper;
-import main.java.ostro.veda.db.helpers.OrderStatus;
-import main.java.ostro.veda.db.jpa.*;
+import ostro.veda.common.dto.OrderDTO;
+import ostro.veda.common.dto.OrderDetailDTO;
+import ostro.veda.common.dto.OrderStatusHistoryDTO;
+import ostro.veda.common.error.ErrorHandling;
+import ostro.veda.db.helpers.EntityManagerHelper;
+import ostro.veda.db.helpers.OrderStatus;
+import ostro.veda.db.jpa.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -218,7 +218,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public List<OrderDetail> buildOrderDetails(@NonNull Order order, @NonNull List<OrderDetailDTO> orderDetailDTOS) {
+    public List<OrderDetail> buildOrderDetails(@NonNull Order order, List<OrderDetailDTO> orderDetailDTOS) {
 
         log.info("buildOrderDetails() OrderDetail list size = {}", orderDetailDTOS.size());
         List<OrderDetail> orderDetailList = new ArrayList<>();
@@ -252,11 +252,12 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public List<OrderStatusHistory> buildOrderStatusHistories(@NonNull Order order, @NonNull List<OrderStatusHistoryDTO> orderStatusHistoryDTOS) {
+    public List<OrderStatusHistory> buildOrderStatusHistories(@NonNull Order order, List<OrderStatusHistoryDTO> orderStatusHistoryDTOS) {
 
         log.info("buildOrderStatusHistories() Order = {}", order.getOrderId());
         List<OrderStatusHistory> orderStatusHistoryList = new ArrayList<>();
 
+        if (orderStatusHistoryDTOS == null) return orderStatusHistoryList;
         try {
             for (OrderStatusHistoryDTO orderStatusHistoryDTO : orderStatusHistoryDTOS) {
                 OrderStatusHistory orderStatusHistory = buildOrderStatusHistory(order, orderStatusHistoryDTO);

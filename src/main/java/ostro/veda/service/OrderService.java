@@ -1,8 +1,8 @@
-package main.java.ostro.veda.service;
+package ostro.veda.service;
 
 
-import main.java.ostro.veda.common.dto.OrderDTO;
-import main.java.ostro.veda.common.dto.OrderDetailDTO;
+import ostro.veda.common.dto.OrderDTO;
+import ostro.veda.common.dto.OrderDetailDTO;
 
 public interface OrderService extends Service<OrderDTO> {
 

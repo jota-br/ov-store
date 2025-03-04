@@ -1,10 +1,11 @@
-package main.java.ostro.veda.config;
+package ostro.veda.config;
 
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
-import main.java.ostro.veda.db.*;
-import main.java.ostro.veda.db.helpers.EntityManagerHelper;
-import main.java.ostro.veda.service.*;
+import org.springframework.context.ApplicationEventPublisher;
+import ostro.veda.db.*;
+import ostro.veda.db.helpers.EntityManagerHelper;
+import ostro.veda.service.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import ostro.veda.service.events.AuditEventListener;
 
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -62,8 +64,8 @@ public class AppConfig {
     }
 
     @Bean
-    public AddressService addressServiceImpl(AddressRepository addressRepository) {
-        return new AddressServiceImpl(addressRepository);
+    public AddressService addressServiceImpl(ApplicationEventPublisher applicationEventPublisher, AddressRepository addressRepository) {
+        return new AddressServiceImpl(applicationEventPublisher, addressRepository);
     }
 
     @Bean
@@ -72,8 +74,8 @@ public class AppConfig {
     }
 
     @Bean
-    public UserService userServiceImpl(UserRepository userRepository, AuditService auditService) {
-        return new UserServiceImpl(userRepository, auditService);
+    public UserService userServiceImpl(ApplicationEventPublisher applicationEventPublisher, UserRepository userRepository) {
+        return new UserServiceImpl(applicationEventPublisher, userRepository);
     }
 
     @Bean
@@ -82,8 +84,8 @@ public class AppConfig {
     }
 
     @Bean
-    public CategoryService categoryServiceImpl(CategoryRepository categoryRepository) {
-        return new CategoryServiceImpl(categoryRepository);
+    public CategoryService categoryServiceImpl(ApplicationEventPublisher applicationEventPublisher, CategoryRepository categoryRepository) {
+        return new CategoryServiceImpl(applicationEventPublisher, categoryRepository);
     }
 
     @Bean
@@ -92,8 +94,8 @@ public class AppConfig {
     }
 
     @Bean
-    public ProductService productServiceImpl(ProductRepository productRepository) {
-        return new ProductServiceImpl(productRepository);
+    public ProductService productServiceImpl(ApplicationEventPublisher applicationEventPublisher, ProductRepository productRepository) {
+        return new ProductServiceImpl(applicationEventPublisher, productRepository);
     }
 
     @Bean
@@ -102,13 +104,18 @@ public class AppConfig {
     }
 
     @Bean
-    public OrderService orderServiceImpl(OrderRepository orderRepository) {
-        return new OrderServiceImpl(orderRepository);
+    public OrderService orderServiceImpl(ApplicationEventPublisher applicationEventPublisher, OrderRepository orderRepository) {
+        return new OrderServiceImpl(applicationEventPublisher, orderRepository);
     }
 
     @Bean
     public OrderRepository orderRepositoryImpl(EntityManagerHelper entityManagerHelper) {
         return new OrderRepositoryImpl(entityManagerHelper);
+    }
+
+    @Bean
+    public AuditEventListener auditEventListener(AuditService auditService) {
+        return new AuditEventListener(auditService);
     }
 
     @Bean

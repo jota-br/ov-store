@@ -1,21 +1,26 @@
-package main.java.ostro.veda.service;
+package ostro.veda.service;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import main.java.ostro.veda.common.dto.OrderDTO;
-import main.java.ostro.veda.common.dto.OrderDetailDTO;
-import main.java.ostro.veda.common.error.ErrorHandling;
-import main.java.ostro.veda.common.validation.ValidateUtil;
-import main.java.ostro.veda.db.OrderRepository;
+import org.springframework.context.ApplicationEventPublisher;
+import ostro.veda.common.dto.OrderDTO;
+import ostro.veda.common.dto.OrderDetailDTO;
+import ostro.veda.common.error.ErrorHandling;
+import ostro.veda.common.validation.ValidateUtil;
+import ostro.veda.db.OrderRepository;
 import org.springframework.stereotype.Component;
+import ostro.veda.db.helpers.database.Action;
+import ostro.veda.service.events.AuditEvent;
 
 @Slf4j
 @Component
 public class OrderServiceImpl implements OrderService {
 
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final OrderRepository orderRepositoryImpl;
 
-    public OrderServiceImpl(OrderRepository orderRepositoryImpl) {
+    public OrderServiceImpl(ApplicationEventPublisher applicationEventPublisher, OrderRepository orderRepositoryImpl) {
+        this.applicationEventPublisher = applicationEventPublisher;
         this.orderRepositoryImpl = orderRepositoryImpl;
     }
 
@@ -24,7 +29,20 @@ public class OrderServiceImpl implements OrderService {
         try {
             log.info("add() new Order for User = {}", orderDTO.getUserId());
             ValidateUtil.validateOrder(orderDTO);
-            return orderRepositoryImpl.add(orderDTO);
+
+            orderDTO = orderRepositoryImpl.add(orderDTO);
+
+            AuditEvent event = AuditEvent.builder()
+                    .source(this)
+                    .action(Action.INSERT)
+                    .orderDTO(orderDTO)
+                    .userId(1)
+                    .id(orderDTO.getOrderId())
+                    .build();
+            applicationEventPublisher.publishEvent(event);
+
+            return orderDTO;
+
         } catch (Exception e) {
             log.warn(e.getMessage());
             return null;
@@ -36,7 +54,20 @@ public class OrderServiceImpl implements OrderService {
         try {
             log.info("update() OrderStatus for Order = {}", orderDTO.getOrderId());
             ValidateUtil.validateOrderIdAndStatus(orderDTO.getOrderId(), orderDTO.getStatus());
-            return orderRepositoryImpl.update(orderDTO);
+
+            orderDTO = orderRepositoryImpl.update(orderDTO);
+
+            AuditEvent event = AuditEvent.builder()
+                    .source(this)
+                    .action(Action.UPDATE)
+                    .orderDTO(orderDTO)
+                    .userId(1)
+                    .id(orderDTO.getOrderId())
+                    .build();
+            applicationEventPublisher.publishEvent(event);
+
+            return orderDTO;
+
         } catch (ErrorHandling.InvalidInputException e) {
             log.warn(e.getMessage());
             return null;
@@ -48,7 +79,20 @@ public class OrderServiceImpl implements OrderService {
         try {
             log.info("cancelOrder() Order = {}", orderId);
             ValidateUtil.validateId(orderId);
-            return  orderRepositoryImpl.cancelOrder(orderId);
+
+            OrderDTO orderDTO = orderRepositoryImpl.cancelOrder(orderId);
+
+            AuditEvent event = AuditEvent.builder()
+                    .source(this)
+                    .action(Action.UPDATE)
+                    .orderDTO(orderDTO)
+                    .userId(1)
+                    .id(orderDTO.getOrderId())
+                    .build();
+            applicationEventPublisher.publishEvent(event);
+
+            return orderDTO;
+
         } catch (UnsupportedOperationException | ErrorHandling.InvalidInputException e) {
             log.warn(e.getMessage());
             return null;
@@ -59,7 +103,20 @@ public class OrderServiceImpl implements OrderService {
     public OrderDTO returnItem(@NonNull OrderDetailDTO returningItem) {
         try {
             log.info("returnItem() Product = {}", returningItem.getProduct().getProductId());
-            return orderRepositoryImpl.returnItem(returningItem);
+
+            OrderDTO orderDTO = orderRepositoryImpl.returnItem(returningItem);
+
+            AuditEvent event = AuditEvent.builder()
+                    .source(this)
+                    .action(Action.UPDATE)
+                    .orderDTO(orderDTO)
+                    .userId(1)
+                    .id(orderDTO.getOrderId())
+                    .build();
+            applicationEventPublisher.publishEvent(event);
+
+            return orderDTO;
+
         } catch (Exception e) {
             log.warn(e.getMessage());
             return null;

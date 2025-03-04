@@ -1,10 +1,10 @@
 package test.ostro.veda.test;
 
-import main.java.ostro.veda.common.dto.AddressDTO;
-import main.java.ostro.veda.common.dto.RoleDTO;
-import main.java.ostro.veda.common.dto.UserDTO;
-import main.java.ostro.veda.config.AppConfig;
-import main.java.ostro.veda.service.UserServiceImpl;
+import ostro.veda.common.dto.AddressDTO;
+import ostro.veda.common.dto.RoleDTO;
+import ostro.veda.common.dto.UserDTO;
+import ostro.veda.config.AppConfig;
+import ostro.veda.service.UserServiceImpl;
 import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

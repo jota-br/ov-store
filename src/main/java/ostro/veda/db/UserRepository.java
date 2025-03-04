@@ -1,9 +1,9 @@
-package main.java.ostro.veda.db;
+package ostro.veda.db;
 
-import main.java.ostro.veda.common.dto.UserDTO;
-import main.java.ostro.veda.common.error.ErrorHandling;
-import main.java.ostro.veda.db.jpa.Address;
-import main.java.ostro.veda.db.jpa.User;
+import ostro.veda.common.dto.UserDTO;
+import ostro.veda.common.error.ErrorHandling;
+import ostro.veda.db.jpa.Address;
+import ostro.veda.db.jpa.User;
 
 import java.util.List;
 
