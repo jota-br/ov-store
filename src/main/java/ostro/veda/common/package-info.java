@@ -1,1 +1,1 @@
-package main.java.ostro.veda.common;
+package ostro.veda.common;

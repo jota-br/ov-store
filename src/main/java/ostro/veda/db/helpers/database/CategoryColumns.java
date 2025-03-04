@@ -1,4 +1,4 @@
-package ostro.veda.db.helpers.columns;
+package ostro.veda.db.helpers.database;
 
 public enum CategoryColumns {
 

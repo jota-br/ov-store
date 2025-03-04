@@ -2,22 +2,21 @@ package ostro.veda.db;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.PersistenceException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.dto.ProductImageDTO;
 import ostro.veda.db.helpers.EntityManagerHelper;
-import ostro.veda.db.helpers.columns.CategoryColumns;
-import ostro.veda.db.helpers.columns.ProductColumns;
-import ostro.veda.db.helpers.columns.ProductImageColumns;
+import ostro.veda.db.helpers.database.CategoryColumns;
+import ostro.veda.db.helpers.database.ProductColumns;
+import ostro.veda.db.helpers.database.ProductImageColumns;
 import ostro.veda.db.jpa.Category;
 import ostro.veda.db.jpa.Product;
 import ostro.veda.db.jpa.ProductImage;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,11 +51,10 @@ public class ProductRepositoryImpl implements ProductRepository {
             Product product = buildProduct(productDTO);
 
             this.entityManager.persist(product);
-
             return product.transformToDto();
         } catch (Exception e) {
             log.warn(e.getMessage());
-            throw new PersistenceException("Transaction was Rolled Back");
+            return null;
         }
     }
 
@@ -71,12 +69,11 @@ public class ProductRepositoryImpl implements ProductRepository {
             product.updateProduct(buildProduct(productDTO));
 
             this.entityManager.merge(product);
-
+            return product.transformToDto();
         }  catch (Exception e) {
             log.warn(e.getMessage());
+            return null;
         }
-
-        return product.transformToDto();
     }
 
 

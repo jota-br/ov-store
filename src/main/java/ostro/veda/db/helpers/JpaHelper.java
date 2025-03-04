@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
+@Deprecated
 public class JpaHelper {
 
     public static EntityManagerFactory entityManagerFactory;

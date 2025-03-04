@@ -1,5 +1,6 @@
 package ostro.veda.service;
 
+
 import ostro.veda.common.dto.UserDTO;
 
 public interface UserService {

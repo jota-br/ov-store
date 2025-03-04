@@ -3,13 +3,13 @@ package ostro.veda.db;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
+import ostro.veda.common.dto.CategoryDTO;
+import ostro.veda.db.helpers.EntityManagerHelper;
+import ostro.veda.db.helpers.database.CategoryColumns;
+import ostro.veda.db.jpa.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import ostro.veda.common.dto.CategoryDTO;
-import ostro.veda.db.helpers.EntityManagerHelper;
-import ostro.veda.db.helpers.columns.CategoryColumns;
-import ostro.veda.db.jpa.Category;
 
 import java.util.List;
 import java.util.Map;
@@ -46,11 +46,13 @@ public class CategoryRepositoryImpl implements CategoryRepository {
             Category category = new Category(0, name, description, isActive, null, null, 0);
 
             this.entityManager.persist(category);
-
             return category.transformToDto();
+
         } catch (Exception e) {
+
             log.warn(e.getMessage());
             return null;
+
         }
     }
 
@@ -71,17 +73,19 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
             Category categoryNewData = new Category()
                     .setCategoryId(categoryDTO.getCategoryId())
-                    .setName(categoryDTO.getName())
-                    .setDescription(categoryDTO.getDescription())
-                    .setActive(category.isActive());
+                    .setName(name)
+                    .setDescription(description)
+                    .setActive(active);
 
             category.updateCategory(categoryNewData);
             this.entityManager.merge(category);
-
             return category.transformToDto();
+
         } catch (Exception e) {
+
             log.warn(e.getMessage());
             return null;
+
         }
     }
 

@@ -5,6 +5,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.StringJoiner;
 
 @Getter
 @AllArgsConstructor
@@ -24,4 +25,22 @@ public class UserDTO {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
     private final int version;
+
+    public String toJSON() {
+        return new StringJoiner(", ", "{", "}")
+                .add("\"userId\":" + userId)
+                .add("\"username\":\"" + username + "\"")
+                .add("\"salt\":\"*\"")
+                .add("\"hash\":\"*\"")
+                .add("\"email\":\"" + email + "\"")
+                .add("\"firstName\":\"" + firstName + "\"")
+                .add("\"lastName\":\"" + lastName + "\"")
+                .add("\"phone\":\"" + phone + "\"")
+                .add("\"isActive\":" + isActive)
+                .add("\"role\":" + role)
+                .add("\"addresses\":" + addresses)
+                .add("\"createdAt\":" + createdAt)
+                .add("\"updatedAt\":" + updatedAt)
+                .toString();
+    }
 }

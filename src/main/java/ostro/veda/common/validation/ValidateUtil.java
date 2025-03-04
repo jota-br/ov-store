@@ -5,6 +5,8 @@ import ostro.veda.common.dto.*;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.helpers.AddressType;
 import ostro.veda.db.helpers.OrderStatus;
+import ostro.veda.db.helpers.database.Action;
+import ostro.veda.db.helpers.database.DbTables;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -111,6 +113,12 @@ public class ValidateUtil {
         hasValidAddressType(addressDTO.getAddressType());
         // needs to implement the rest of the check
         // requires Maps API implementation
+    }
+
+    public static void validateAudit(AuditDTO auditDTO) throws ErrorHandling.InvalidInputException {
+        hasValidZeroOrHigherNumber(auditDTO.getAuditId());
+        hasValidAction(auditDTO.getAction());
+        hasValidChangedTable(auditDTO.getChangedTable());
     }
 
     public static void hasValidName(String input) throws ErrorHandling.InvalidInputException {
@@ -220,16 +228,35 @@ public class ValidateUtil {
         throw new ErrorHandling.InvalidInputException("Invalid Password", "password:*");
     }
 
-    private static void hasValidAddressType(String type)
-            throws ErrorHandling.InvalidInputException {
+    private static void hasValidAddressType(String type) throws ErrorHandling.InvalidInputException {
         for (AddressType addressType : AddressType.values()) {
-            if (addressType.getValue().equals(type)) {
+            if (addressType.getValue().equalsIgnoreCase(type)) {
                 return;
             }
         }
 
         throw new ErrorHandling.InvalidInputException(
                 "Invalid Address Type", "status:" + type
+        );
+    }
+
+    private static void hasValidAction(String input) throws ErrorHandling.InvalidInputException {
+        for (Action action : Action.values()) {
+            if (action.getActionName().equalsIgnoreCase(input)) return;
+        }
+
+        throw new ErrorHandling.InvalidInputException(
+                "Invalid Action", "action:" + input
+        );
+    }
+
+    private static void hasValidChangedTable(String input) throws ErrorHandling.InvalidInputException {
+        for (DbTables table : DbTables.values()) {
+            if (table.getTableName().equalsIgnoreCase(input)) return;
+        }
+
+        throw new ErrorHandling.InvalidInputException(
+                "Invalid Table Name", "changedTable:" + input
         );
     }
 }

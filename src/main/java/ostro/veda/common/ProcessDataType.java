@@ -1,5 +1,9 @@
 package ostro.veda.common;
 
+import lombok.Getter;
+
+@Getter
+@Deprecated
 public enum ProcessDataType {
 
     ADD("ADD"),
@@ -12,7 +16,4 @@ public enum ProcessDataType {
         this.type = type;
     }
 
-    public String getType() {
-        return this.type;
-    }
 }

@@ -103,6 +103,14 @@ public class SanitizeUtil {
                 country, isActive, addressDTO.getCreatedAt(), addressDTO.getUpdatedAt(), addressDTO.getVersion());
     }
 
+    public static AuditDTO sanitizeAudit(AuditDTO auditDTO) {
+
+            String changedData = sanitize(auditDTO.getChangedData());
+            return new AuditDTO(auditDTO.getAuditId(), auditDTO.getAction(), auditDTO.getChangedTable(),
+                    changedData, auditDTO.getChangedAt(), auditDTO.getChangedBy(), auditDTO.getUserId());
+
+    }
+
     public static String sanitize(String input) {
 
         Map<Character, String> sanitize = getSanitizeMap();

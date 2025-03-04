@@ -15,6 +15,7 @@ import java.util.Map;
 @Getter
 @Component
 @Scope("singleton")
+@Deprecated
 public class EntityManagerFactoryManager {
 
     private final EntityManagerFactory entityManagerFactory;

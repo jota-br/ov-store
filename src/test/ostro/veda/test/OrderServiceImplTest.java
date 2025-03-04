@@ -1,14 +1,14 @@
 package test.ostro.veda.test;
 
-import org.junit.Test;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import ostro.veda.common.dto.*;
 import ostro.veda.config.AppConfig;
 import ostro.veda.db.helpers.OrderStatus;
 import ostro.veda.service.OrderServiceImpl;
 import ostro.veda.service.ProductServiceImpl;
 import ostro.veda.service.UserServiceImpl;
+import org.junit.Test;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;

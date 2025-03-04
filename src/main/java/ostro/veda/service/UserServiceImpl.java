@@ -3,12 +3,15 @@ package ostro.veda.service;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import ostro.veda.common.dto.UserDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.common.validation.SanitizeUtil;
 import ostro.veda.common.validation.ValidateUtil;
 import ostro.veda.db.UserRepository;
+import ostro.veda.db.helpers.database.Action;
+import ostro.veda.service.events.AuditEvent;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -19,10 +22,12 @@ import java.util.Base64;
 @Component
 public class UserServiceImpl implements UserService {
 
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final UserRepository userRepositoryImpl;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepositoryImpl) {
+    public UserServiceImpl(ApplicationEventPublisher applicationEventPublisher, UserRepository userRepositoryImpl) {
+        this.applicationEventPublisher = applicationEventPublisher;
         this.userRepositoryImpl = userRepositoryImpl;
     }
 
@@ -34,7 +39,19 @@ public class UserServiceImpl implements UserService {
             userDTO = SanitizeUtil.sanitizeUser(userDTO);
             UserDTO user = getUserWithSaltAndHash(userDTO, password);
 
-            return userRepositoryImpl.add(user);
+            UserDTO userReturned = userRepositoryImpl.add(user);
+
+            AuditEvent event = AuditEvent.builder()
+                    .source(this)
+                    .action(Action.INSERT)
+                    .userDTO(userReturned)
+                    .userId(user.getUserId())
+                    .id(user.getUserId())
+                    .build();
+            applicationEventPublisher.publishEvent(event);
+
+            return userReturned;
+
         } catch (ErrorHandling.InvalidInputException e) {
             log.warn(e.getMessage());
             return null;
@@ -47,7 +64,20 @@ public class UserServiceImpl implements UserService {
         try {
             ValidateUtil.validateUser(userDTO, password);
             UserDTO user = getUserWithSaltAndHash(userDTO, password);
-            return userRepositoryImpl.update(user);
+
+            UserDTO userReturned = userRepositoryImpl.update(user);
+
+            AuditEvent event = AuditEvent.builder()
+                    .source(this)
+                    .action(Action.UPDATE)
+                    .userDTO(userReturned)
+                    .userId(user.getUserId())
+                    .id(user.getUserId())
+                    .build();
+            applicationEventPublisher.publishEvent(event);
+
+            return userReturned;
+
         } catch (ErrorHandling.InvalidInputException e) {
             log.warn(e.getMessage());
             return null;
@@ -77,8 +107,8 @@ public class UserServiceImpl implements UserService {
             return salt;
         } catch (NoSuchAlgorithmException e) {
             log.warn(e.getMessage());
+            return null;
         }
-        return null;
     }
 
     private String getHash(@NonNull String password, byte[] salt) {
@@ -89,7 +119,7 @@ public class UserServiceImpl implements UserService {
             return Base64.getEncoder().encodeToString(hashedPassword);
         } catch (NoSuchAlgorithmException e) {
             log.warn(e.getMessage());
+            return null;
         }
-        return null;
     }
 }

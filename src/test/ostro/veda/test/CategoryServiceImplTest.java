@@ -1,11 +1,11 @@
 package test.ostro.veda.test;
 
-import org.junit.Test;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.config.AppConfig;
 import ostro.veda.service.CategoryServiceImpl;
+import org.junit.Test;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import static org.junit.Assert.assertNotNull;
 
