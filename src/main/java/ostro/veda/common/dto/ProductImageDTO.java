@@ -1,42 +1,25 @@
 package ostro.veda.common.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+import java.util.StringJoiner;
+
+@Getter
+@AllArgsConstructor
 public class ProductImageDTO {
 
     private final int productImageId;
     private final String imageUrl;
     private final boolean isMain;
+    private final int version;
 
-    /**
-     *
-     * @param productImageId int
-     * @param imageUrl String
-     * @param isMain boolean
-     */
-    public ProductImageDTO(int productImageId, String imageUrl, boolean isMain) {
-        this.productImageId = productImageId;
-        this.imageUrl = imageUrl;
-        this.isMain = isMain;
-    }
-
-    /**
-     *
-     * @param imageUrl String
-     * @param isMain boolean
-     */
-    public ProductImageDTO(String imageUrl, boolean isMain) {
-        this(0, imageUrl, isMain);
-    }
-
-    // GETTERS
-    public int getProductImageId() {
-        return productImageId;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public boolean isMain() {
-        return isMain;
+    public String toJSON() {
+        return new StringJoiner(", ", "{", "}")
+                .add("\"productImageId\":" + productImageId)
+                .add("\"imageUrl\":\"" + imageUrl + "\"")
+                .add("\"isMain\":" + isMain)
+                .add("\"version\":" + version)
+                .toString();
     }
 }

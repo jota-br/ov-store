@@ -1,11 +1,19 @@
 package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import ostro.veda.common.dto.OrderStatusHistoryDTO;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@Accessors(chain = true)
+@AllArgsConstructor
 @Entity
 @Table(name = "order_status_history")
 public class OrderStatusHistory {
@@ -26,35 +34,14 @@ public class OrderStatusHistory {
     @Column(name = "changed_at")
     private LocalDateTime changedAt;
 
+    @Version
+    private int version;
+
     public OrderStatusHistory() {
     }
 
-    public OrderStatusHistory(Order order, String status) {
-        this.order = order;
-        this.status = status;
-    }
-
-    public OrderStatusHistory(String status) {
-        this(null , status);
-    }
-
-    public int getOrderStatusHistoryId() {
-        return orderStatusHistoryId;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public LocalDateTime getChangedAt() {
-        return changedAt;
-    }
-
     public OrderStatusHistoryDTO transformToDto() {
-        return new OrderStatusHistoryDTO(this.getOrderStatusHistoryId(), null, this.getStatus(), this.getChangedAt());
+        return new OrderStatusHistoryDTO(this.getOrderStatusHistoryId(), null, this.getStatus(),
+                this.getChangedAt(), this.getVersion());
     }
 }

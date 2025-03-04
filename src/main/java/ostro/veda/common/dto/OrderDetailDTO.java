@@ -1,5 +1,12 @@
 package ostro.veda.common.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+import java.util.StringJoiner;
+
+@Getter
+@AllArgsConstructor
 public class OrderDetailDTO {
 
     private final int orderDetailId;
@@ -7,36 +14,15 @@ public class OrderDetailDTO {
     private final ProductDTO product;
     private final int quantity;
     private final double unitPrice;
+    private final int version;
 
-    public OrderDetailDTO(int orderDetailId, OrderDTO order, ProductDTO product, int quantity, double unitPrice) {
-        this.orderDetailId = orderDetailId;
-        this.order = order;
-        this.product = product;
-        this.quantity = quantity;
-        this.unitPrice = unitPrice;
-    }
-
-    public OrderDetailDTO(OrderDTO order, ProductDTO product, int quantity, double unitPrice) {
-        this(0, order, product, quantity, unitPrice);
-    }
-
-    public int getOrderDetailId() {
-        return orderDetailId;
-    }
-
-    public OrderDTO getOrder() {
-        return order;
-    }
-
-    public ProductDTO getProduct() {
-        return product;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public double getUnitPrice() {
-        return unitPrice;
+    public String toJSON() {
+        return new StringJoiner(", ", "{", "}")
+                .add("\"orderDetailId\":" + orderDetailId)
+                .add("\"order\":" + order.getOrderId())
+                .add("\"product\":" + product)
+                .add("\"quantity\":" + quantity)
+                .add("\"unitPrice\":" + unitPrice)
+                .toString();
     }
 }

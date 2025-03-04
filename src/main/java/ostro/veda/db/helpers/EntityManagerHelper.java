@@ -4,25 +4,19 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
+@Component
 public class EntityManagerHelper {
-
-    private static EntityManagerHelper entityManagerHelper;
-
-    public static EntityManagerHelper getEntityManagerHelper() {
-        if (entityManagerHelper == null) {
-            entityManagerHelper = new EntityManagerHelper();
-        }
-        return entityManagerHelper;
-    }
 
     public <T> List<T> findByFields(EntityManager em, Class<T> entityClass, Map<String, String> columnsAndValues) {
 
+        log.info("findByFields() = {}", columnsAndValues);
         String[] columns = columnsAndValues.keySet().toArray(new String[0]);
         String[] values = columnsAndValues.values().toArray(new String[0]);
 
@@ -43,6 +37,7 @@ public class EntityManagerHelper {
 
     public <T> List<T> findByFieldId(EntityManager em, Class<T> entityClass, Map<String, Integer> columnsAndValues) {
 
+        log.info("findByFieldId() = {}", columnsAndValues);
         String[] columns = columnsAndValues.keySet().toArray(new String[0]);
         Integer[] values = columnsAndValues.values().toArray(new Integer[0]);
 
@@ -61,6 +56,7 @@ public class EntityManagerHelper {
         return null;
     }
 
+    @Deprecated
     public <T> boolean executePersist(EntityManager em, T entity) {
 
         if (entity == null) {
@@ -81,6 +77,7 @@ public class EntityManagerHelper {
         return false;
     }
 
+    @Deprecated
     public <T> boolean executeMerge(EntityManager em, T entity) {
 
         if (entity == null) {
@@ -101,6 +98,7 @@ public class EntityManagerHelper {
         return false;
     }
 
+    @Deprecated
     public <T> List<T> executePersistBatch(EntityManager em, List<T> entities) {
 
         if (entities == null || entities.isEmpty()) {
@@ -125,6 +123,7 @@ public class EntityManagerHelper {
         return null;
     }
 
+    @Deprecated
     public <T> List<T> executeMergeBatch(EntityManager em, List<T> entities) {
 
         if (entities == null || entities.isEmpty()) {

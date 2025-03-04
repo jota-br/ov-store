@@ -1,16 +1,24 @@
 package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.dto.ProductImageDTO;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
+@Accessors(chain = true)
+@AllArgsConstructor
 @Entity
 @Table(name = "products")
 public class Product {
@@ -35,7 +43,7 @@ public class Product {
     @Column(name = "is_active")
     private boolean isActive;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "product_category",
             joinColumns = @JoinColumn(name = "product_id"),
@@ -43,7 +51,7 @@ public class Product {
     )
     private List<Category> categories = new ArrayList<>();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "products_images",
             joinColumns = @JoinColumn(name = "product_id"),
@@ -63,68 +71,6 @@ public class Product {
     private int version;
 
     public Product() {
-    }
-
-    public Product(String name, String description, double price, int stock, boolean isActive) {
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.stock = stock;
-        this.isActive = isActive;
-    }
-
-    public Product(String name, String description, double price, int stock, boolean isActive, List<Category> categories, List<ProductImage> images) {
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.stock = stock;
-        this.isActive = isActive;
-        this.categories = categories;
-        this.images = images;
-    }
-
-    public int getProductId() {
-        return productId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public List<Category> getCategories() {
-        return categories;
-    }
-
-    public List<ProductImage> getImages() {
-        return images;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public int getVersion() {
-        return version;
     }
 
     public Product updateProduct(Product updatedData) {

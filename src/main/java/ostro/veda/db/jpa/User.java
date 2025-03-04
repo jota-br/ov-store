@@ -1,15 +1,23 @@
 package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.common.dto.UserDTO;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
+@Accessors(chain = true)
+@AllArgsConstructor
 @Entity
 @Table(name = "users")
 public class User {
@@ -48,8 +56,7 @@ public class User {
     @JoinColumn(name = "user_role_id", referencedColumnName = "role_id")
     private Role role;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "address_id", referencedColumnName = "user_id")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
     private List<Address> addresses;
 
     @CreationTimestamp
@@ -60,80 +67,10 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Version
+    private int version;
+
     public User() {
-    }
-
-    public User(int userId, String username, String salt,
-                String hash, String email,
-                String firstName, String lastName,
-                String phone, boolean isActive,
-                Role role, List<Address> addresses,
-                LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.userId = userId;
-        this.username = username;
-        this.salt = salt;
-        this.hash = hash;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phone = phone;
-        this.isActive = isActive;
-        this.role = role;
-        this.addresses = addresses == null ? new ArrayList<>() : addresses;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getSalt() {
-        return salt;
-    }
-
-    public String getHash() {
-        return hash;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public List<Address> getAddresses() {
-        return addresses;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
     }
 
     public User updateUser(User updatedData) {
@@ -152,14 +89,17 @@ public class User {
 
     public UserDTO transformToDto() {
         List<AddressDTO> addressDTOList = new ArrayList<>();
-        if (this.getAddresses().isEmpty()) {
-            for (Address address : this.getAddresses()) {
-                addressDTOList.add(new AddressDTO(address.getAddressId(), address.getUserId(), address.getStreetAddress(),
-                        address.getAddressNumber(), address.getAddressType(), address.getCity(), address.getState(),
-                        address.getZipCode(), address.getCountry(), address.isActive(), address.getCreatedAt(), address.getUpdatedAt()));
-            }
+        for (Address address : this.getAddresses()) {
+            addressDTOList.add(
+                    new AddressDTO(address.getAddressId(), null, address.getStreetAddress(),
+                            address.getAddressNumber(), address.getAddressType(), address.getCity(), address.getState(),
+                            address.getZipCode(), address.getCountry(), address.isActive(), address.getCreatedAt(),
+                            address.getUpdatedAt(), this.getVersion())
+            );
         }
-        return new UserDTO(this.getUserId(), this.getUsername(), this.getSalt(), this.getHash(), this.getEmail(), this.getFirstName(), this.getLastName(),
-                this.getPhone(), this.isActive(), this.getRole().transformToDto(), addressDTOList, this.getCreatedAt(), this.getUpdatedAt());
+        return new UserDTO(this.getUserId(), this.getUsername(), this.getSalt(), this.getHash(),
+                this.getEmail(), this.getFirstName(), this.getLastName(), this.getPhone(),
+                this.isActive(), this.getRole().transformToDto(), addressDTOList, this.getCreatedAt(),
+                this.getUpdatedAt(), this.getVersion());
     }
 }

@@ -1,24 +1,20 @@
 package ostro.veda.common.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 @Getter
-@ToString
+@AllArgsConstructor
 public class UserDTO {
 
     private final int userId;
     private final String username;
-
-    @ToString.Exclude
     private final String salt;
-    @ToString.Exclude
     private final String hash;
-
     private final String email;
     private final String firstName;
     private final String lastName;
@@ -28,22 +24,23 @@ public class UserDTO {
     private final List<AddressDTO> addresses;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
+    private final int version;
 
-    public UserDTO(int userId, String username, String salt, String hash, String email, String firstName,
-                   String lastName, String phone, boolean isActive, RoleDTO role, List<AddressDTO> addresses,
-                   LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.userId = userId;
-        this.username = username;
-        this.salt = salt;
-        this.hash = hash;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phone = phone;
-        this.isActive = isActive;
-        this.role = role;
-        this.addresses = addresses == null ? new ArrayList<>() : addresses;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+    public String toJSON() {
+        return new StringJoiner(", ", "{", "}")
+                .add("\"userId\":" + userId)
+                .add("\"username\":\"" + username + "\"")
+                .add("\"salt\":\"*\"")
+                .add("\"hash\":\"*\"")
+                .add("\"email\":\"" + email + "\"")
+                .add("\"firstName\":\"" + firstName + "\"")
+                .add("\"lastName\":\"" + lastName + "\"")
+                .add("\"phone\":\"" + phone + "\"")
+                .add("\"isActive\":" + isActive)
+                .add("\"role\":" + role)
+                .add("\"addresses\":" + addresses)
+                .add("\"createdAt\":" + createdAt)
+                .add("\"updatedAt\":" + updatedAt)
+                .toString();
     }
 }

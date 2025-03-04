@@ -1,13 +1,19 @@
 package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import ostro.veda.common.dto.RoleDTO;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import ostro.veda.common.dto.RoleDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Getter
+@Setter
+@AllArgsConstructor
 @Entity
 @Table(name = "roles")
 public class Role {
@@ -23,7 +29,7 @@ public class Role {
     @Column(name = "description", length = 155)
     private String description;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "roles_permissions",
             joinColumns = @JoinColumn(name = "role_id"),
@@ -39,39 +45,14 @@ public class Role {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Version
+    private int version;
+
     public Role() {
     }
 
-    public Role(String name, String description) {
-        this.name = name;
-        this.description = description;
-    }
-
-    public int getRoleId() {
-        return roleId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public List<Permission> getPermissions() {
-        return permissions;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
     public RoleDTO transformToDto() {
-        return new RoleDTO(this.getRoleId(), this.getName(), this.getDescription(), this.getPermissions(), this.getCreatedAt(), this.getUpdatedAt());
+        return new RoleDTO(this.getRoleId(), this.getName(), this.getDescription(),
+                this.getPermissions(), this.getCreatedAt(), this.getUpdatedAt(), this.getVersion());
     }
 }
