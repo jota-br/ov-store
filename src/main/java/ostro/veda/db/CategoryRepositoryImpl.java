@@ -43,7 +43,13 @@ public class CategoryRepositoryImpl implements CategoryRepository {
                     Map.of(CategoryColumns.NAME.getColumnName(), name));
 
             if (result != null && !result.isEmpty()) return null;
-            Category category = new Category(0, name, description, isActive, null, null, 0);
+            Category category = Category
+                    .builder()
+                    .categoryId(0)
+                    .name(name)
+                    .description(description)
+                    .isActive(isActive)
+                    .build();
 
             this.entityManager.persist(category);
             return category.transformToDto();
@@ -71,11 +77,13 @@ public class CategoryRepositoryImpl implements CategoryRepository {
             Category category = this.entityManager.find(Category.class, categoryId);
             if (category == null) return null;
 
-            Category categoryNewData = new Category()
-                    .setCategoryId(categoryDTO.getCategoryId())
-                    .setName(name)
-                    .setDescription(description)
-                    .setActive(active);
+            Category categoryNewData = Category
+                    .builder()
+                    .categoryId(categoryDTO.getCategoryId())
+                    .name(name)
+                    .description(description)
+                    .isActive(active)
+                    .build();
 
             category.updateCategory(categoryNewData);
             this.entityManager.merge(category);

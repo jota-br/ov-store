@@ -2,16 +2,16 @@ package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
-import ostro.veda.common.dto.PermissionDTO;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import ostro.veda.common.dto.PermissionDTO;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
+@Builder
 @AllArgsConstructor
 @Entity
 @Table(name = "permissions")

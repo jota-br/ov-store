@@ -2,13 +2,14 @@ package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import ostro.veda.common.dto.OrderDetailDTO;
 
 @Getter
-@Setter
+@Builder
 @Accessors(chain = true)
 @AllArgsConstructor
 @Entity
@@ -20,13 +21,12 @@ public class OrderDetail {
     @Column(name = "order_detail_id")
     private int orderDetailId;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "product_id")
-//    private Product product;
+    @Setter
     @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id", referencedColumnName = "product_id")
     private Product product;

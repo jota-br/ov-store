@@ -2,17 +2,16 @@ package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.Accessors;
-import ostro.veda.common.dto.OrderStatusHistoryDTO;
 import org.hibernate.annotations.CreationTimestamp;
+import ostro.veda.common.dto.OrderStatusHistoryDTO;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
-@Accessors(chain = true)
+@Builder
 @AllArgsConstructor
 @Entity
 @Table(name = "order_status_history")
@@ -23,6 +22,7 @@ public class OrderStatusHistory {
     @Column(name = "order_status_history_id")
     private int orderStatusHistoryId;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;

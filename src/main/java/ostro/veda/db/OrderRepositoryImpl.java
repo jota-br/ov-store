@@ -4,6 +4,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ostro.veda.common.dto.OrderDTO;
 import ostro.veda.common.dto.OrderDetailDTO;
 import ostro.veda.common.dto.OrderStatusHistoryDTO;
@@ -11,9 +14,6 @@ import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.db.helpers.OrderStatus;
 import ostro.veda.db.jpa.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -97,7 +97,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
         List<OrderDetail> newOrderDetails = updateProductInventory(
                 orderDetailList.stream().map(
-                OrderDetail::transformToDto).toList(),
+                        OrderDetail::transformToDto).toList(),
                 OrderOperation.INCREASE
         );
         if (newOrderDetails == null || newOrderDetails.isEmpty()) return null;
@@ -177,14 +177,16 @@ public class OrderRepositoryImpl implements OrderRepository {
 
         if (shipping == null || billing == null) return null;
 
-        Order order = new Order()
-                .setOrderId(orderDTO.getOrderId())
-                .setUserId(orderDTO.getUserId())
-                .setTotalAmount(totalAmount)
-                .setStatus(orderDTO.getStatus())
-                .setShippingAddress(shipping)
-                .setBillingAddress(billing)
-                .setUpdatedAt(orderDTO.getUpdatedAt());
+        Order order = Order
+                .builder()
+                .orderId(orderDTO.getOrderId())
+                .userId(orderDTO.getUserId())
+                .totalAmount(totalAmount)
+                .status(orderDTO.getStatus())
+                .shippingAddress(shipping)
+                .billingAddress(billing)
+                .updatedAt(orderDTO.getUpdatedAt())
+                .build();
 
         List<OrderDetail> orderDetails = buildOrderDetails(order, orderDTO.getOrderDetails());
         List<OrderStatusHistory> orderStatusHistoryList = buildOrderStatusHistories(order, orderDTO.getOrderStatusHistory());
@@ -210,9 +212,11 @@ public class OrderRepositoryImpl implements OrderRepository {
     public Order buildNewOrderStatusHistory(@NonNull Order order) {
 
         log.info("buildNewOrderStatusHistory() Order = {}", order.getOrderId());
-        OrderStatusHistory orderStatusHistory = new OrderStatusHistory()
-                .setOrder(order)
-                .setStatus(order.getStatus());
+        OrderStatusHistory orderStatusHistory = OrderStatusHistory
+                .builder()
+                .order(order)
+                .status(order.getStatus())
+                .build();
         order.getOrderStatusHistory().add(orderStatusHistory);
         return order;
     }
@@ -225,7 +229,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         for (OrderDetailDTO orderDetailDTO : orderDetailDTOS) {
 
             OrderDetail orderDetail = buildOrderDetail(order, orderDetailDTO);
-            if (orderDetail == null) return  null;
+            if (orderDetail == null) return null;
             orderDetailList.add(orderDetail);
         }
         return orderDetailList;
@@ -243,12 +247,14 @@ public class OrderRepositoryImpl implements OrderRepository {
 
         updateProductInventory(List.of(orderDetailDTO), OrderOperation.DECREASE);
 
-        return new OrderDetail()
-                .setOrderDetailId(orderDetailDTO.getOrderDetailId())
-                .setProduct(product)
-                .setQuantity(quantity)
-                .setUnitPrice(price)
-                .setOrder(order);
+        return OrderDetail
+                .builder()
+                .orderDetailId(orderDetailDTO.getOrderDetailId())
+                .product(product)
+                .quantity(quantity)
+                .unitPrice(price)
+                .order(order)
+                .build();
     }
 
     @Override
@@ -274,11 +280,13 @@ public class OrderRepositoryImpl implements OrderRepository {
     public OrderStatusHistory buildOrderStatusHistory(@NonNull Order order, @NonNull OrderStatusHistoryDTO orderStatusHistoryDTO) {
 
         log.info("buildOrderStatusHistory() Order = {}", order.getOrderId());
-        return new OrderStatusHistory()
-                .setOrderStatusHistoryId(orderStatusHistoryDTO.getOrderStatusHistoryId())
-                .setOrder(order)
-                .setStatus(orderStatusHistoryDTO.getStatus())
-                .setChangedAt(orderStatusHistoryDTO.getChangedAt());
+        return OrderStatusHistory
+                .builder()
+                .orderStatusHistoryId(orderStatusHistoryDTO.getOrderStatusHistoryId())
+                .order(order)
+                .status(orderStatusHistoryDTO.getStatus())
+                .changedAt(orderStatusHistoryDTO.getChangedAt())
+                .build();
     }
 
     private List<OrderDetail> updateProductInventory(@NonNull List<OrderDetailDTO> orderDetailList, @NonNull OrderOperation orderOperation) {
@@ -302,11 +310,13 @@ public class OrderRepositoryImpl implements OrderRepository {
                 newStock = newStock - quantity;
             }
 
-            OrderDetail newOrderDetail = new OrderDetail()
-//                    .setOrderDetailId(orderDetail.getOrderDetailId())
-                    .setProduct(product)
-                    .setQuantity(quantity)
-                    .setUnitPrice(product.getPrice());
+            OrderDetail newOrderDetail = OrderDetail
+                    .builder()
+//                    .orderDetailId(orderDetail.getOrderDetailId())
+                    .product(product)
+                    .quantity(quantity)
+                    .unitPrice(product.getPrice())
+                    .build();
             newOrderDetailList.add(newOrderDetail);
             product.updateStock(newStock);
         }
@@ -357,7 +367,8 @@ public class OrderRepositoryImpl implements OrderRepository {
             int productId = od.getProduct().getProductId();
             int quantity = od.getQuantity();
 
-            if (productId == orderDetail.getProduct().getProductId() && quantity >= orderDetail.getQuantity()) return true;
+            if (productId == orderDetail.getProduct().getProductId() && quantity >= orderDetail.getQuantity())
+                return true;
         }
         return false;
     }

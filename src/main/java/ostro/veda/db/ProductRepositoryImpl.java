@@ -80,17 +80,19 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public Product buildProduct(@NonNull ProductDTO productDTO) {
         log.info("buildProduct() Product = [{}, {}]", productDTO.getProductId(), productDTO.getName());
-        return new Product()
-                .setProductId(productDTO.getProductId())
-                .setName(productDTO.getName())
-                .setDescription(productDTO.getDescription())
-                .setPrice(productDTO.getPrice())
-                .setStock(productDTO.getStock())
-                .setActive(productDTO.isActive())
-                .setCategories(buildCategories(productDTO.getCategories()))
-                .setImages(buildImages(productDTO.getImages()))
-                .setCreatedAt(productDTO.getCreatedAt())
-                .setUpdatedAt(productDTO.getUpdatedAt());
+        return Product
+                .builder()
+                .productId(productDTO.getProductId())
+                .name(productDTO.getName())
+                .description(productDTO.getDescription())
+                .price(productDTO.getPrice())
+                .stock(productDTO.getStock())
+                .isActive(productDTO.isActive())
+                .categories(buildCategories(productDTO.getCategories()))
+                .images(buildImages(productDTO.getImages()))
+                .createdAt(productDTO.getCreatedAt())
+                .updatedAt(productDTO.getUpdatedAt())
+                .build();
     }
 
     @Override
@@ -121,13 +123,15 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public Category buildCategory(@NonNull CategoryDTO categoryDTO) {
         log.info("buildCategory() Category = [{}, {}]", categoryDTO.getCategoryId(), categoryDTO.getName());
-        return new Category()
-                .setCategoryId(categoryDTO.getCategoryId())
-                .setName(categoryDTO.getName())
-                .setDescription(categoryDTO.getDescription())
-                .setActive(categoryDTO.isActive())
-                .setCreatedAt(categoryDTO.getCreatedAt())
-                .setUpdatedAt(categoryDTO.getUpdatedAt());
+        return Category
+                .builder()
+                .categoryId(categoryDTO.getCategoryId())
+                .name(categoryDTO.getName())
+                .description(categoryDTO.getDescription())
+                .isActive(categoryDTO.isActive())
+                .createdAt(categoryDTO.getCreatedAt())
+                .updatedAt(categoryDTO.getUpdatedAt())
+                .build();
     }
 
     @Override
@@ -158,10 +162,12 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public ProductImage buildImage(@NonNull ProductImageDTO productImageDTO) {
         log.info("buildImage() ProductImage = [{}, {}]", productImageDTO.getProductImageId(), productImageDTO.getImageUrl());
-        return new ProductImage()
-                .setProductImageId(productImageDTO.getProductImageId())
-                .setImageUrl(productImageDTO.getImageUrl())
-                .setMain(productImageDTO.isMain());
+        return ProductImage
+                .builder()
+                .productImageId(productImageDTO.getProductImageId())
+                .imageUrl(productImageDTO.getImageUrl())
+                .isMain(productImageDTO.isMain())
+                .build();
     }
 
     @Override
