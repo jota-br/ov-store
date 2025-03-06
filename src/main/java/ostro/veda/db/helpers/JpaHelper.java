@@ -1,11 +1,11 @@
 package ostro.veda.db.helpers;
 
+import jakarta.annotation.PreDestroy;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.annotation.PreDestroy;
 import java.util.HashMap;
 import java.util.Map;
 
