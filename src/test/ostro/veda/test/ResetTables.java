@@ -1,4 +1,4 @@
-package test.ostro.veda.test;
+package ostro.veda.test;
 
 import org.mariadb.jdbc.MariaDbDataSource;
 
@@ -29,7 +29,7 @@ public class ResetTables {
     }
 
     public static void resetTables() {
-        Path path = Path.of("src/test/ostro/veda/test/resetTables.sql");
+        Path path = Path.of("src/test/resources/resetTables.sql");
 
         try (Connection con = getDataSource().getConnection(); Statement statement = con.createStatement()) {
             List<String> files = Files.readAllLines(path);

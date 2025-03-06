@@ -2,17 +2,18 @@ package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import ostro.veda.common.dto.AddressDTO;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import ostro.veda.common.dto.AddressDTO;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
+@Builder
 @Accessors(chain = true)
 @AllArgsConstructor
 @Entity
@@ -24,6 +25,7 @@ public class Address {
     @Column(name = "address_id")
     private int addressId;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

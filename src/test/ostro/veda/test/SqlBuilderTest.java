@@ -1,4 +1,4 @@
-package test.ostro.veda.test;
+package ostro.veda.test;
 
 import ostro.veda.db.helpers.SqlBuilder;
 import ostro.veda.db.jpa.User;

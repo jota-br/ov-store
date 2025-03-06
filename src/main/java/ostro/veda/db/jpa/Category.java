@@ -2,19 +2,17 @@ package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-import ostro.veda.common.dto.CategoryDTO;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import ostro.veda.common.dto.CategoryDTO;
 
 import java.time.LocalDateTime;
 
 
 @Getter
-@Setter
-@Accessors(chain = true)
+@Builder
 @AllArgsConstructor
 @Entity
 @Table(name = "categories")

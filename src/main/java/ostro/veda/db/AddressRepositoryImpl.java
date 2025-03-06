@@ -101,19 +101,21 @@ public class AddressRepositoryImpl implements AddressRepository {
         User user = this.entityManager.find(User.class, addressDTO.getUser().getUserId());
         if (user == null) return null;
 
-        return new Address()
-                .setAddressId(addressDTO.getAddressId())
-                .setUser(user)
-                .setStreetAddress(addressDTO.getStreetAddress())
-                .setAddressNumber(addressDTO.getAddressNumber())
-                .setAddressType(addressDTO.getAddressType())
-                .setCity(addressDTO.getCity())
-                .setState(addressDTO.getState())
-                .setZipCode(addressDTO.getZipCode())
-                .setCountry(addressDTO.getCountry())
-                .setActive(addressDTO.isActive())
-                .setCreatedAt(addressDTO.getCreatedAt())
-                .setUpdatedAt(addressDTO.getUpdatedAt());
+        return Address
+                .builder()
+                .addressId(addressDTO.getAddressId())
+                .user(user)
+                .streetAddress(addressDTO.getStreetAddress())
+                .addressNumber(addressDTO.getAddressNumber())
+                .addressType(addressDTO.getAddressType())
+                .city(addressDTO.getCity())
+                .state(addressDTO.getState())
+                .zipCode(addressDTO.getZipCode())
+                .country(addressDTO.getCountry())
+                .isActive(addressDTO.isActive())
+                .createdAt(addressDTO.getCreatedAt())
+                .updatedAt(addressDTO.getUpdatedAt())
+                .build();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package ostro.veda.db.helpers;
 
+import jakarta.annotation.PreDestroy;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import lombok.Getter;
@@ -7,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PreDestroy;
 import java.util.HashMap;
 import java.util.Map;
 
