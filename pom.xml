@@ -33,9 +33,9 @@
         <commons.validator.version>1.9.0</commons.validator.version>
 
         <jakarta.version>3.0.0</jakarta.version>
-        <jakarta.enterprise.version>4.1.0</jakarta.enterprise.version>
-        <jakarta.inject.version>2.0.1</jakarta.inject.version>
         <jakarta.servlet.version>6.1.0</jakarta.servlet.version>
+        <jakarta.jsp.version>3.0.1</jakarta.jsp.version>
+        <tomcat.embed.jasper.version>10.1.29</tomcat.embed.jasper.version>
 
         <!-- Maven Plugins version -->
         <surefire.version>2.22.2</surefire.version>
@@ -67,16 +67,16 @@
         </dependency>
 
         <!-- Spring MVC -->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework</groupId>-->
+        <!--            <artifactId>spring-webmvc</artifactId>-->
+        <!--            <version>${spring.mvc.version}</version>-->
+        <!--        </dependency>-->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>${spring.mvc.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring.boot.web.version}</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-web</artifactId>-->
-<!--            <version>${spring.boot.web.version}</version>-->
-<!--        </dependency>-->
 
         <!-- SPRING TX -->
         <dependency>
@@ -129,6 +129,19 @@
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <version>${jakarta.servlet.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-jasper</artifactId>
+            <version>${tomcat.embed.jasper.version}</version> <!-- Match your Tomcat version -->
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+            <version>${jakarta.jsp.version}</version>
         </dependency>
     </dependencies>
 
@@ -181,7 +194,7 @@
                 <version>1.10.12</version>
                 <configuration>
                     <container>
-                        <containerId>tomcat11.0.5</containerId>
+                        <containerId>tomcat10x</containerId>
                         <type>embedded</type>
                     </container>
                 </configuration>
