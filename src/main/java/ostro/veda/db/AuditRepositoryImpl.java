@@ -48,11 +48,13 @@ public class AuditRepositoryImpl implements AuditRepository {
         log.info("buildAudit()");
         int userId = user.getUserId();
         if (userId != auditDTO.getUserId()) return null;
-        return new Audit()
-                .setAuditId(auditDTO.getAuditId())
-                .setAction(auditDTO.getAction())
-                .setChangedTable(auditDTO.getChangedTable())
-                .setChangedData(auditDTO.getChangedData())
-                .setChangedBy(user);
+
+        return Audit.builder()
+                .auditId(auditDTO.getAuditId())
+                .action(auditDTO.getAction())
+                .changedTable(auditDTO.getChangedTable())
+                .changedData(auditDTO.getChangedData())
+                .changedBy(user)
+                .build();
     }
 }

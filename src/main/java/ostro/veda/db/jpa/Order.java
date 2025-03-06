@@ -2,21 +2,22 @@ package ostro.veda.db.jpa;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import ostro.veda.common.dto.OrderDTO;
 import ostro.veda.common.dto.OrderDetailDTO;
 import ostro.veda.common.dto.OrderStatusHistoryDTO;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
+@Builder
 @Accessors(chain = true)
 @AllArgsConstructor
 @Entity
@@ -41,6 +42,7 @@ public class Order {
     @Column(name = "status")
     private String status;
 
+    @Setter
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<OrderDetail> orderDetails;
 
@@ -52,6 +54,7 @@ public class Order {
     @JoinColumn(name = "billing_address_id", referencedColumnName = "address_id")
     private Address billingAddress;
 
+    @Setter
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<OrderStatusHistory> orderStatusHistory;
 

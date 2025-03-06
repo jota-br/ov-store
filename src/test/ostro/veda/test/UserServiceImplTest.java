@@ -1,4 +1,4 @@
-package test.ostro.veda.test;
+package ostro.veda.test;
 
 import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.common.dto.RoleDTO;

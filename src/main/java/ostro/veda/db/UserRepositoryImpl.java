@@ -90,20 +90,22 @@ public class UserRepositoryImpl implements UserRepository {
         if (role == null)
             throw new ErrorHandling.InvalidInputException("Invalid Role id, roleId:", String.valueOf(userDTO.getRole().getRoleId()));
 
-        User user = new User()
-                .setUserId(userDTO.getUserId())
-                .setUsername(userDTO.getUsername())
-                .setSalt(userDTO.getSalt())
-                .setHash(userDTO.getHash())
-                .setEmail(userDTO.getEmail())
-                .setFirstName(userDTO.getFirstName())
-                .setLastName(userDTO.getLastName())
-                .setPhone(userDTO.getPhone())
-                .setActive(userDTO.isActive())
-                .setRole(role)
-                .setAddresses(addressList)
-                .setCreatedAt(userDTO.getCreatedAt())
-                .setUpdatedAt(userDTO.getUpdatedAt());
+        User user = User
+                .builder()
+                .userId(userDTO.getUserId())
+                .username(userDTO.getUsername())
+                .salt(userDTO.getSalt())
+                .hash(userDTO.getHash())
+                .email(userDTO.getEmail())
+                .firstName(userDTO.getFirstName())
+                .lastName(userDTO.getLastName())
+                .phone(userDTO.getPhone())
+                .isActive(userDTO.isActive())
+                .role(role)
+                .addresses(addressList)
+                .createdAt(userDTO.getCreatedAt())
+                .updatedAt(userDTO.getUpdatedAt())
+                .build();
 
         for (Address address : addressList) {
             address.setUser(user);
@@ -118,19 +120,21 @@ public class UserRepositoryImpl implements UserRepository {
         User user = this.entityManager.find(User.class, userDTO.getUserId());
         List<Address> addressList = new ArrayList<>();
         for (AddressDTO addressDTO : userDTO.getAddresses()) {
-            Address address = new Address()
-                    .setAddressId(addressDTO.getAddressId())
-                    .setUser(user)
-                    .setStreetAddress(addressDTO.getStreetAddress())
-                    .setAddressNumber(addressDTO.getAddressNumber())
-                    .setAddressType(addressDTO.getAddressType())
-                    .setCity(addressDTO.getCity())
-                    .setState(addressDTO.getState())
-                    .setZipCode(addressDTO.getZipCode())
-                    .setCountry(addressDTO.getCountry())
-                    .setActive(addressDTO.isActive())
-                    .setCreatedAt(addressDTO.getCreatedAt())
-                    .setUpdatedAt(addressDTO.getUpdatedAt());
+            Address address = Address
+                    .builder()
+                    .addressId(addressDTO.getAddressId())
+                    .user(user)
+                    .streetAddress(addressDTO.getStreetAddress())
+                    .addressNumber(addressDTO.getAddressNumber())
+                    .addressType(addressDTO.getAddressType())
+                    .city(addressDTO.getCity())
+                    .state(addressDTO.getState())
+                    .zipCode(addressDTO.getZipCode())
+                    .country(addressDTO.getCountry())
+                    .isActive(addressDTO.isActive())
+                    .createdAt(addressDTO.getCreatedAt())
+                    .updatedAt(addressDTO.getUpdatedAt())
+                    .build();
             addressList.add(address);
         }
         return addressList;
