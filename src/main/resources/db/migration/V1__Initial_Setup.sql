@@ -176,10 +176,11 @@ Create Table If Not Exists coupons (
   coupon_id Int Primary Key Auto_Increment,
   code Varchar(50) Not Null Unique,
   description Varchar(255),
-  discount_type Varchar(50), -- 'percentage', 'amount'
+  discount_type Varchar(50) Not Null, -- 'percentage', 'amount'
   discount_value Decimal(10,2) Not Null,
-  expiration_date Date,
-  usage_limit Int,
+  expiration_date Date Not Null,
+  usage_limit Int Not Null,
+  version int Default 0,
   created_at Timestamp Default Current_Timestamp
 );
 

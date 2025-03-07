@@ -9,7 +9,7 @@ import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.common.validation.ValidateUtil;
 import ostro.veda.db.OrderRepository;
 import org.springframework.stereotype.Component;
-import ostro.veda.db.helpers.database.Action;
+import ostro.veda.common.util.Action;
 import ostro.veda.service.events.AuditEvent;
 
 @Slf4j

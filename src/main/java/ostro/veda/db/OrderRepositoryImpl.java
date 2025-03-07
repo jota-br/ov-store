@@ -12,7 +12,7 @@ import ostro.veda.common.dto.OrderDetailDTO;
 import ostro.veda.common.dto.OrderStatusHistoryDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.helpers.EntityManagerHelper;
-import ostro.veda.db.helpers.OrderStatus;
+import ostro.veda.common.validation.OrderStatus;
 import ostro.veda.db.jpa.*;
 
 import java.time.LocalDateTime;

@@ -3,11 +3,10 @@ package ostro.veda.common.validation;
 import org.apache.commons.validator.routines.EmailValidator;
 import ostro.veda.common.dto.*;
 import ostro.veda.common.error.ErrorHandling;
-import ostro.veda.db.helpers.AddressType;
-import ostro.veda.db.helpers.OrderStatus;
-import ostro.veda.db.helpers.database.Action;
+import ostro.veda.common.util.Action;
 import ostro.veda.db.helpers.database.DbTables;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -119,6 +118,14 @@ public class ValidateUtil {
         hasValidZeroOrHigherNumber(auditDTO.getAuditId());
         hasValidAction(auditDTO.getAction());
         hasValidChangedTable(auditDTO.getChangedTable());
+    }
+
+    public static void validateCoupon(CouponDTO couponDTO) throws ErrorHandling.InvalidInputException {
+        hasValidZeroOrHigherNumber(couponDTO.getCouponId());
+        hasValidZeroOrHigherPrice(couponDTO.getDiscountValue());
+        hasValidExpirationDate(couponDTO.getExpirationDate());
+        hasValidDiscountType(couponDTO.getDiscountType());
+        hasValidCode(couponDTO.getCode());
     }
 
     public static void hasValidName(String input) throws ErrorHandling.InvalidInputException {
@@ -258,5 +265,32 @@ public class ValidateUtil {
         throw new ErrorHandling.InvalidInputException(
                 "Invalid Table Name", "changedTable:" + input
         );
+    }
+
+    private static void hasValidExpirationDate(LocalDateTime input) throws ErrorHandling.InvalidInputException {
+        final int MINIMUM_NUMBER_OF_HOURS_TO_EXPIRATION = 1;
+        LocalDateTime minimumValidExpiration = LocalDateTime.now().plusHours(MINIMUM_NUMBER_OF_HOURS_TO_EXPIRATION);
+        if (input.isAfter(minimumValidExpiration) || input.equals(minimumValidExpiration)) {
+            return;
+        }
+
+        throw new ErrorHandling.InvalidInputException("Invalid Expiration Date", "expirationDate:" + input);
+    }
+
+    private static void hasValidDiscountType(String input) throws ErrorHandling.InvalidInputException {
+        for (DiscountType discountType : DiscountType.values()) {
+            if (discountType.getDiscountType().equalsIgnoreCase(input)) return;
+        }
+
+        throw new ErrorHandling.InvalidInputException("Invalid Discount Type", "discountType:" + input);
+    }
+
+    private static void hasValidCode(String input) throws ErrorHandling.InvalidInputException {
+        Pattern pattern = Pattern.compile("[a-zA-Z0-9]{0,36}");
+        Matcher matcher = pattern.matcher(input);
+
+        if (matcher.matches()) return;
+
+        throw new ErrorHandling.InvalidInputException("Invalid Code", "code:" + input);
     }
 }

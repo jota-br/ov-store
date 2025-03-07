@@ -1,4 +1,4 @@
-package ostro.veda.db.helpers;
+package ostro.veda.common.validation;
 
 public enum OrderStatus {
 
