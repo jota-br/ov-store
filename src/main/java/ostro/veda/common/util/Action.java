@@ -1,4 +1,4 @@
-package ostro.veda.db.helpers.database;
+package ostro.veda.common.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

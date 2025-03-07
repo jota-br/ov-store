@@ -17,7 +17,8 @@ public enum DbTables {
     PRODUCT("products"),
     PRODUCT_IMAGE("product_images"),
     ROLES("roles"),
-    USER("users");
+    USER("users"),
+    COUPONS("coupons");
 
     private final String tableName;
 }

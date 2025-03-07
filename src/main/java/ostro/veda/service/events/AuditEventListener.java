@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import ostro.veda.common.dto.AuditDataDTO;
-import ostro.veda.db.helpers.database.Action;
+import ostro.veda.common.util.Action;
 import ostro.veda.db.helpers.database.DbTables;
 import ostro.veda.service.*;
 
@@ -57,6 +57,12 @@ public class AuditEventListener {
             log.info("handleAuditEvent() -> UserDTO.class found");
             table = DbTables.USER.getTableName();
             string = auditEvent.getUserDTO().toJSON();
+
+        } else if  (source.getClass().equals(CouponServiceImpl.class)) {
+
+            log.info("handleAuditEvent() -> CouponDTO.class found");
+            table = DbTables.USER.getTableName();
+            string = auditEvent.getCouponDTO().toJSON();
 
         } else {
 

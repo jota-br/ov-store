@@ -24,8 +24,7 @@ public class AuditRepositoryImpl implements AuditRepository {
         log.info("add() new Audit trail");
         User user = this.entityManager.find(User.class, auditDTO.getUserId());
         if (user == null) {
-            log.info("add() AuditRepository with null user, a new user is being created or an invalid userId has been provided");
-            return null;
+            log.warn("add() AuditRepository with null user, a new user is being created or an invalid userId has been provided");
         }
 
         try {

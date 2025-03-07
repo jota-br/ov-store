@@ -24,6 +24,7 @@ public class OrderDTO {
     private final AddressDTO shippingAddress;
     private final AddressDTO billingAddress;
     private final List<OrderStatusHistoryDTO> orderStatusHistory;
+    private final CouponDTO coupon;
     private final LocalDateTime updatedAt;
     private final int version;
 
@@ -38,6 +39,7 @@ public class OrderDTO {
                 .add("\"shippingAddress\":" + shippingAddress)
                 .add("\"billingAddress\":" + billingAddress)
                 .add("\"orderStatusHistory\":" + orderStatusHistory)
+                .add("\"coupon\":" + coupon)
                 .add("\"updatedAt\":" + updatedAt)
                 .toString();
     }

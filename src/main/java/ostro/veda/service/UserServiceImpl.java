@@ -10,7 +10,7 @@ import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.common.validation.SanitizeUtil;
 import ostro.veda.common.validation.ValidateUtil;
 import ostro.veda.db.UserRepository;
-import ostro.veda.db.helpers.database.Action;
+import ostro.veda.common.util.Action;
 import ostro.veda.service.events.AuditEvent;
 
 import java.security.MessageDigest;

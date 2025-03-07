@@ -58,6 +58,10 @@ public class Order {
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<OrderStatusHistory> orderStatusHistory;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "coupon_id")
+    private Coupon coupon;
+
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
@@ -92,7 +96,7 @@ public class Order {
                 this.getOrderDate(), this.getTotalAmount(),
                 this.getStatus(), orderDetailDTOList,
                 this.getShippingAddress().transformToDto(), this.getBillingAddress().transformToDto(),
-                orderStatusHistoryDTOList, this.getUpdatedAt(),
-                this.getVersion());
+                orderStatusHistoryDTOList, this.getCoupon().transformToDto(),
+                this.getUpdatedAt(), this.getVersion());
     }
 }

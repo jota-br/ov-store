@@ -10,7 +10,7 @@ import ostro.veda.common.validation.ValidateUtil;
 import ostro.veda.db.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ostro.veda.db.helpers.database.Action;
+import ostro.veda.common.util.Action;
 import ostro.veda.service.events.AuditEvent;
 
 @Slf4j
