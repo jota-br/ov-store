@@ -8,7 +8,7 @@ import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.common.dto.UserDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.db.helpers.EntityManagerHelper;
-import ostro.veda.db.helpers.database.UserColumns;
+import ostro.veda.db.helpers.enums.UserColumns;
 import ostro.veda.db.jpa.Address;
 import ostro.veda.db.jpa.Role;
 import ostro.veda.db.jpa.User;

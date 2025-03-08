@@ -2,6 +2,8 @@ package ostro.veda.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import ostro.veda.common.util.Auditable;
+import ostro.veda.common.util.TableNames;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.StringJoiner;
 
 @Getter
 @AllArgsConstructor
+@Auditable(tableName = TableNames.USER)
 public class UserDTO {
 
     private final int userId;
@@ -26,6 +29,11 @@ public class UserDTO {
     private final LocalDateTime updatedAt;
     private final int version;
 
+    @Override
+    public String toString() {
+        return toJSON();
+    }
+
     public String toJSON() {
         return new StringJoiner(", ", "{", "}")
                 .add("\"userId\":" + userId)
@@ -37,7 +45,6 @@ public class UserDTO {
                 .add("\"lastName\":\"" + lastName + "\"")
                 .add("\"phone\":\"" + phone + "\"")
                 .add("\"isActive\":" + isActive)
-                .add("\"role\":" + role)
                 .add("\"addresses\":" + addresses)
                 .add("\"createdAt\":" + createdAt)
                 .add("\"updatedAt\":" + updatedAt)

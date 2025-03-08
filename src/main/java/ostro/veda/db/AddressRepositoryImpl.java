@@ -6,7 +6,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.db.helpers.EntityManagerHelper;
-import ostro.veda.db.helpers.database.AddressColumns;
+import ostro.veda.db.helpers.enums.AddressColumns;
 import ostro.veda.db.jpa.Address;
 import ostro.veda.db.jpa.User;
 import org.springframework.stereotype.Repository;

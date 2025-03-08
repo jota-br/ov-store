@@ -3,12 +3,15 @@ package ostro.veda.common.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import ostro.veda.common.util.Auditable;
+import ostro.veda.common.util.TableNames;
 
 import java.time.LocalDateTime;
 import java.util.StringJoiner;
 
 @Getter
 @AllArgsConstructor
+@Auditable(tableName = TableNames.ADDRESS)
 public class AddressDTO {
 
     private final int addressId;
@@ -28,6 +31,11 @@ public class AddressDTO {
     private final LocalDateTime updatedAt;
     private final int version;
 
+    @Override
+    public String toString() {
+        return toJSON();
+    }
+
     public String toJSON() {
         return new StringJoiner(", ", "{", "}")
                 .add("\"addressId\":" + addressId)
@@ -39,8 +47,8 @@ public class AddressDTO {
                 .add("\"zipCode\":\"" + zipCode + "\"")
                 .add("\"country\":\"" + country + "\"")
                 .add("\"isActive\":" + isActive)
-                .add("\"createdAt\":" + createdAt)
-                .add("\"updatedAt\":" + updatedAt)
+                .add("\"createdAt\":\"" + createdAt + "\"")
+                .add("\"updatedAt\":\"" + updatedAt + "\"")
                 .toString();
     }
 }

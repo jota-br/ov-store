@@ -5,10 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import ostro.veda.common.dto.CouponDTO;
+import ostro.veda.common.util.Action;
 import ostro.veda.common.validation.ValidateUtil;
 import ostro.veda.db.CouponRepository;
-import ostro.veda.common.util.Action;
-import ostro.veda.service.events.AuditEvent;
 
 import java.util.UUID;
 
@@ -32,14 +31,7 @@ public class CouponServiceImpl implements CouponService {
             couponDTO = buildValidCoupon(couponDTO);
             couponDTO = couponRepository.add(couponDTO);
 
-            AuditEvent event = AuditEvent.builder()
-                    .source(this)
-                    .action(Action.INSERT)
-                    .couponDTO(couponDTO)
-                    .userId(1)
-                    .id(couponDTO.getCouponId())
-                    .build();
-            applicationEventPublisher.publishEvent(event);
+            this.auditCaller(applicationEventPublisher, this, Action.INSERT, couponDTO, 1);
 
             return couponDTO;
         } catch (Exception e) {

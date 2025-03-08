@@ -4,7 +4,7 @@ import org.apache.commons.validator.routines.EmailValidator;
 import ostro.veda.common.dto.*;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.common.util.Action;
-import ostro.veda.db.helpers.database.DbTables;
+import ostro.veda.common.util.TableNames;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -258,8 +258,8 @@ public class ValidateUtil {
     }
 
     private static void hasValidChangedTable(String input) throws ErrorHandling.InvalidInputException {
-        for (DbTables table : DbTables.values()) {
-            if (table.getTableName().equalsIgnoreCase(input)) return;
+        for (String table : TableNames.tableNameList) {
+            if (table.equals(input)) return;
         }
 
         throw new ErrorHandling.InvalidInputException(

@@ -2,12 +2,15 @@ package ostro.veda.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import ostro.veda.common.util.Auditable;
+import ostro.veda.common.util.TableNames;
 
 import java.time.LocalDateTime;
 import java.util.StringJoiner;
 
 @Getter
 @AllArgsConstructor
+@Auditable(tableName = TableNames.COUPON)
 public class CouponDTO {
 
     private final int couponId;
@@ -20,6 +23,11 @@ public class CouponDTO {
     private final LocalDateTime createdAt;
     private final int version;
 
+    @Override
+    public String toString() {
+        return toJSON();
+    }
+
     public String toJSON() {
         return new StringJoiner(", ", "{", "}")
                 .add("\"couponId\":" + couponId)
@@ -27,9 +35,9 @@ public class CouponDTO {
                 .add("\"description\":\"" + description + "\"")
                 .add("\"discountType\":\"" + discountType + "\"")
                 .add("\"discountValue\":" + discountValue)
-                .add("\"expirationDate\":" + expirationDate)
+                .add("\"expirationDate\":\"" + expirationDate + "\"")
                 .add("\"usageLimit\":" + usageLimit)
-                .add("\"createdAt\":" + createdAt)
+                .add("\"createdAt\":\"" + createdAt + "\"")
                 .toString();
     }
 }

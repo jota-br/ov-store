@@ -2,16 +2,15 @@ package ostro.veda.service;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Component;
 import ostro.veda.common.dto.ProductDTO;
 import ostro.veda.common.error.ErrorHandling;
+import ostro.veda.common.util.Action;
 import ostro.veda.common.validation.SanitizeUtil;
 import ostro.veda.common.validation.ValidateUtil;
 import ostro.veda.db.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import ostro.veda.common.util.Action;
-import ostro.veda.service.events.AuditEvent;
 
 @Slf4j
 @Component
@@ -34,14 +33,7 @@ public class ProductServiceImpl implements ProductService {
 
             productDTO = this.productRepositoryImpl.add(productDTO);
 
-            AuditEvent event = AuditEvent.builder()
-                    .source(this)
-                    .action(Action.INSERT)
-                    .productDTO(productDTO)
-                    .userId(1)
-                    .id(product.getProductId())
-                    .build();
-            applicationEventPublisher.publishEvent(event);
+            this.auditCaller(applicationEventPublisher, this, Action.INSERT, productDTO, 1);
 
             return productDTO;
 
@@ -59,14 +51,7 @@ public class ProductServiceImpl implements ProductService {
 
             productDTO = this.productRepositoryImpl.update(productDTO);
 
-            AuditEvent event = AuditEvent.builder()
-                    .source(this)
-                    .action(Action.UPDATE)
-                    .productDTO(productDTO)
-                    .userId(1)
-                    .id(product.getProductId())
-                    .build();
-            applicationEventPublisher.publishEvent(event);
+            this.auditCaller(applicationEventPublisher, this, Action.UPDATE, productDTO, 1);
 
             return productDTO;
 

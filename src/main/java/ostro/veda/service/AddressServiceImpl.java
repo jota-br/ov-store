@@ -2,16 +2,15 @@ package ostro.veda.service;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Component;
 import ostro.veda.common.dto.AddressDTO;
 import ostro.veda.common.error.ErrorHandling;
+import ostro.veda.common.util.Action;
 import ostro.veda.common.validation.SanitizeUtil;
 import ostro.veda.common.validation.ValidateUtil;
 import ostro.veda.db.AddressRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import ostro.veda.common.util.Action;
-import ostro.veda.service.events.AuditEvent;
 
 @Slf4j
 @Component
@@ -35,14 +34,7 @@ public class AddressServiceImpl implements AddressService {
 
             addressDTO = addressRepository.add(addressDTO);
 
-            AuditEvent event = AuditEvent.builder()
-                    .source(this)
-                    .action(Action.INSERT)
-                    .addressDTO(addressDTO)
-                    .userId(1)
-                    .id(addressDTO.getAddressId())
-                    .build();
-            applicationEventPublisher.publishEvent(event);
+            this.auditCaller(applicationEventPublisher, this, Action.INSERT, addressDTO, 1);
 
             return addressDTO;
 
@@ -61,14 +53,7 @@ public class AddressServiceImpl implements AddressService {
 
             addressDTO = addressRepository.update(addressDTO);
 
-            AuditEvent event = AuditEvent.builder()
-                    .source(this)
-                    .action(Action.INSERT)
-                    .addressDTO(addressDTO)
-                    .userId(1)
-                    .id(addressDTO.getAddressId())
-                    .build();
-            applicationEventPublisher.publishEvent(event);
+            this.auditCaller(applicationEventPublisher, this, Action.UPDATE, addressDTO, 1);
 
             return addressDTO;
 

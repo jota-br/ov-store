@@ -1,4 +1,4 @@
-package ostro.veda.db.helpers.database;
+package ostro.veda.db.helpers.enums;
 
 public enum ProductColumns {
 

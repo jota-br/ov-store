@@ -21,10 +21,11 @@ public class AuditRepositoryImpl implements AuditRepository {
     @Transactional
     public AuditDTO add(AuditDTO auditDTO) {
 
-        log.info("add() new Audit trail");
+        log.info("add() new Audit");
         User user = this.entityManager.find(User.class, auditDTO.getUserId());
         if (user == null) {
             log.warn("add() AuditRepository with null user, a new user is being created or an invalid userId has been provided");
+            return null;
         }
 
         try {
