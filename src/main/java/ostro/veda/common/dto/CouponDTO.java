@@ -3,6 +3,8 @@ package ostro.veda.common.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import ostro.veda.common.util.Auditable;
+import ostro.veda.common.util.MainService;
+import ostro.veda.common.util.MainServiceNames;
 import ostro.veda.common.util.TableNames;
 
 import java.time.LocalDateTime;
@@ -11,7 +13,8 @@ import java.util.StringJoiner;
 @Getter
 @AllArgsConstructor
 @Auditable(tableName = TableNames.COUPON)
-public class CouponDTO {
+@MainService(getServiceClass = MainServiceNames.COUPON_SERVICE)
+public class CouponDTO implements Dto {
 
     private final int couponId;
     private final String code;

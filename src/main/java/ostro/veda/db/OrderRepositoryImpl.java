@@ -11,8 +11,9 @@ import ostro.veda.common.dto.OrderDTO;
 import ostro.veda.common.dto.OrderDetailDTO;
 import ostro.veda.common.dto.OrderStatusHistoryDTO;
 import ostro.veda.common.error.ErrorHandling;
-import ostro.veda.db.helpers.EntityManagerHelper;
+import ostro.veda.common.validation.DiscountType;
 import ostro.veda.common.validation.OrderStatus;
+import ostro.veda.db.helpers.EntityManagerHelper;
 import ostro.veda.db.jpa.*;
 
 import java.time.LocalDateTime;
@@ -177,6 +178,21 @@ public class OrderRepositoryImpl implements OrderRepository {
 
         if (shipping == null || billing == null) return null;
 
+        Coupon coupon = null;
+        if (orderDTO.getCoupon() != null) {
+            coupon = this.entityManager.find(Coupon.class, orderDTO.getCoupon().getCouponId());
+            if (coupon == null) {
+                return null;
+            }
+
+            String discountType = coupon.getDiscountType();
+            if (DiscountType.AMOUNT.getDiscountType().equals(discountType)) {
+                totalAmount -= coupon.getDiscountValue();
+            } else if (DiscountType.PERCENTAGE.getDiscountType().equals(discountType)) {
+                totalAmount *= (100 - coupon.getDiscountValue()) / 100;
+            }
+        }
+
         Order order = Order
                 .builder()
                 .orderId(orderDTO.getOrderId())
@@ -186,6 +202,7 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .shippingAddress(shipping)
                 .billingAddress(billing)
                 .updatedAt(orderDTO.getUpdatedAt())
+                .coupon(coupon)
                 .build();
 
         List<OrderDetail> orderDetails = buildOrderDetails(order, orderDTO.getOrderDetails());

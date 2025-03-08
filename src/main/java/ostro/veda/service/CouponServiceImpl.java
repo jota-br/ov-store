@@ -42,7 +42,19 @@ public class CouponServiceImpl implements CouponService {
 
     @Override
     public CouponDTO update(@NonNull CouponDTO couponDTO) {
-        return null;
+
+        log.info("update() Coupon = {}", couponDTO.getCode());
+
+        if (couponDTO.getUsageLimit() <= 0) {
+            log.info("Coupon {} Usage Limit reached", couponDTO.getCode());
+            return null;
+        }
+
+        couponDTO = couponRepository.update(couponDTO);
+
+        this.auditCaller(applicationEventPublisher, this, Action.UPDATE, couponDTO, 1);
+        return couponDTO;
+
     }
 
     @Override

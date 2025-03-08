@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import ostro.veda.common.util.Auditable;
+import ostro.veda.common.util.MainService;
+import ostro.veda.common.util.MainServiceNames;
 import ostro.veda.common.util.TableNames;
 
 import java.time.LocalDateTime;
@@ -13,6 +15,7 @@ import java.util.StringJoiner;
 @Getter
 @AllArgsConstructor
 @Auditable(tableName = TableNames.ORDER)
+@MainService(getServiceClass = MainServiceNames.ORDER_SERVICE)
 public class OrderDTO {
 
     private final int orderId;
@@ -31,11 +34,16 @@ public class OrderDTO {
     private final LocalDateTime updatedAt;
     private final int version;
 
+    @Override
+    public String toString() {
+        return toJSON();
+    }
+
     public String toJSON() {
         return new StringJoiner(", ", "{", "}")
                 .add("\"orderId\":" + orderId)
                 .add("\"userId\":" + userId)
-                .add("\"orderDate\":" + orderDate)
+                .add("\"orderDate\":\"" + orderDate + "\"")
                 .add("\"totalAmount\":" + totalAmount)
                 .add("\"status\":\"" + status + "\"")
                 .add("\"orderDetails\":" + orderDetails)
@@ -43,7 +51,7 @@ public class OrderDTO {
                 .add("\"billingAddress\":" + billingAddress)
                 .add("\"orderStatusHistory\":" + orderStatusHistory)
                 .add("\"coupon\":" + coupon)
-                .add("\"updatedAt\":" + updatedAt)
+                .add("\"updatedAt\":\"" + updatedAt + "\"")
                 .toString();
     }
 }

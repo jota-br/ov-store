@@ -66,6 +66,8 @@ public class ValidateUtil {
         hasValidZeroOrHigherPrice(orderDTO.getTotalAmount());
         hasValidOrderStatus(orderDTO.getStatus());
 
+        if (orderDTO.getCoupon() != null) validateCoupon(orderDTO.getCoupon());
+
         validateOrderDetail(orderDTO.getOrderDetails());
     }
 
@@ -129,7 +131,7 @@ public class ValidateUtil {
     }
 
     public static void hasValidName(String input) throws ErrorHandling.InvalidInputException {
-        Pattern validPattern = Pattern.compile("^[\\sA-Za-z\\p{Punct}]{1,255}$");
+        Pattern validPattern = Pattern.compile("^[\\sA-Za-z\\p{Punct}0-9]{1,255}$");
         Matcher matcher = validPattern.matcher(input);
         if (matcher.matches()) {
             return;
@@ -141,7 +143,7 @@ public class ValidateUtil {
     }
 
     public static void hasValidDescription(String input) throws ErrorHandling.InvalidInputException {
-        Pattern validPattern = Pattern.compile("^[a-zA-Z\\s\\p{Punct}\n]{0,510}$");
+        Pattern validPattern = Pattern.compile("^[a-zA-Z\\s\\p{Punct}0-9\n]{0,510}$");
         Matcher matcher = validPattern.matcher(input);
         if (matcher.matches()) {
             return;
@@ -286,7 +288,7 @@ public class ValidateUtil {
     }
 
     private static void hasValidCode(String input) throws ErrorHandling.InvalidInputException {
-        Pattern pattern = Pattern.compile("[a-zA-Z0-9]{0,36}");
+        Pattern pattern = Pattern.compile("[a-zA-Z0-9\\-]{0,36}");
         Matcher matcher = pattern.matcher(input);
 
         if (matcher.matches()) return;
