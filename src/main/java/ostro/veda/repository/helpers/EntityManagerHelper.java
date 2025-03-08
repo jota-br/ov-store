@@ -1,12 +1,10 @@
 package ostro.veda.repository.helpers;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -53,106 +51,6 @@ public class EntityManagerHelper {
             return query.getResultList();
         }
 
-        return null;
-    }
-
-    @Deprecated
-    public <T> boolean executePersist(EntityManager em, T entity) {
-
-        if (entity == null) {
-            return false;
-        }
-
-        EntityTransaction transaction = null;
-        try {
-            transaction = em.getTransaction();
-            transaction.begin();
-            em.persist(entity);
-            transaction.commit();
-            return true;
-        } catch (Exception e) {
-            log.warn(e.getMessage());
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-        }
-        return false;
-    }
-
-    @Deprecated
-    public <T> boolean executeMerge(EntityManager em, T entity) {
-
-        if (entity == null) {
-            return false;
-        }
-
-        EntityTransaction transaction = null;
-        try {
-            transaction = em.getTransaction();
-            transaction.begin();
-            em.merge(entity);
-            transaction.commit();
-            return true;
-        } catch (Exception e) {
-            log.warn(e.getMessage());
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-        }
-        return false;
-    }
-
-    @Deprecated
-    public <T> List<T> executePersistBatch(EntityManager em, List<T> entities) {
-
-        if (entities == null || entities.isEmpty()) {
-            return null;
-        }
-
-        List<T> list = new ArrayList<>();
-        EntityTransaction transaction = null;
-        try {
-            transaction = em.getTransaction();
-            transaction.begin();
-            for (T entity : entities) {
-                em.persist(entity);
-                list.add(entity);
-            }
-            transaction.commit();
-            return list;
-        } catch (Exception e) {
-            log.warn(e.getMessage());
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-        }
-        return null;
-    }
-
-    @Deprecated
-    public <T> List<T> executeMergeBatch(EntityManager em, List<T> entities) {
-
-        if (entities == null || entities.isEmpty()) {
-            return null;
-        }
-
-        List<T> list = new ArrayList<>();
-        EntityTransaction transaction = null;
-        try {
-            transaction = em.getTransaction();
-            transaction.begin();
-            for (T entity : entities) {
-                em.merge(entity);
-                list.add(entity);
-            }
-            transaction.commit();
-            return list;
-        } catch (Exception e) {
-            log.warn(e.getMessage());
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-        }
         return null;
     }
 }
