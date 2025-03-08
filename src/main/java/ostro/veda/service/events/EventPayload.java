@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEvent;
-import ostro.veda.common.dto.Dto;
+import ostro.veda.model.dto.interfaces.Dto;
 
 @Slf4j
 @Getter

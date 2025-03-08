@@ -1,0 +1,55 @@
+package ostro.veda.model.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import ostro.veda.model.dto.interfaces.Dto;
+import ostro.veda.util.annotation.Auditable;
+import ostro.veda.util.constant.TableNames;
+
+import java.time.LocalDateTime;
+import java.util.StringJoiner;
+
+@Getter
+@AllArgsConstructor
+@Auditable(tableName = TableNames.ADDRESS)
+public class AddressDto implements Dto {
+
+    private final int addressId;
+
+    @Setter
+    private UserDto user;
+
+    private final String streetAddress;
+    private final String addressNumber;
+    private final String addressType;
+    private final String city;
+    private final String state;
+    private final String zipCode;
+    private final String country;
+    private final boolean isActive;
+    private final LocalDateTime createdAt;
+    private final LocalDateTime updatedAt;
+    private final int version;
+
+    @Override
+    public String toString() {
+        return toJSON();
+    }
+
+    public String toJSON() {
+        return new StringJoiner(", ", "{", "}")
+                .add("\"addressId\":" + addressId)
+                .add("\"streetAddress\":\"" + streetAddress + "\"")
+                .add("\"addressNumber\":\"" + addressNumber + "\"")
+                .add("\"addressType\":\"" + addressType + "\"")
+                .add("\"city\":\"" + city + "\"")
+                .add("\"state\":\"" + state + "\"")
+                .add("\"zipCode\":\"" + zipCode + "\"")
+                .add("\"country\":\"" + country + "\"")
+                .add("\"isActive\":" + isActive)
+                .add("\"createdAt\":\"" + createdAt + "\"")
+                .add("\"updatedAt\":\"" + updatedAt + "\"")
+                .toString();
+    }
+}

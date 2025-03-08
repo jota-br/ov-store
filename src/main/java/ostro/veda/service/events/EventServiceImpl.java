@@ -3,9 +3,10 @@ package ostro.veda.service.events;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import ostro.veda.common.dto.Dto;
-import ostro.veda.common.util.ApplicationContextProvider;
-import ostro.veda.common.util.MainService;
+import ostro.veda.model.dto.interfaces.Dto;
+import ostro.veda.service.events.interfaces.EventService;
+import ostro.veda.util.spring.ApplicationContextProvider;
+import ostro.veda.util.annotation.MainService;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

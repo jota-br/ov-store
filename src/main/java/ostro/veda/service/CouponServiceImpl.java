@@ -4,10 +4,11 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-import ostro.veda.common.dto.CouponDTO;
-import ostro.veda.common.util.Action;
-import ostro.veda.common.validation.ValidateUtil;
-import ostro.veda.db.CouponRepository;
+import ostro.veda.service.interfaces.CouponService;
+import ostro.veda.model.dto.CouponDto;
+import ostro.veda.util.enums.Action;
+import ostro.veda.util.validation.ValidateUtil;
+import ostro.veda.repository.interfaces.CouponRepository;
 
 import java.util.UUID;
 
@@ -24,7 +25,7 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
-    public CouponDTO add(@NonNull CouponDTO couponDTO) {
+    public CouponDto add(@NonNull CouponDto couponDTO) {
         try {
             log.info("add() new Coupon code = {}", couponDTO.getCode());
             ValidateUtil.validateCoupon(couponDTO);
@@ -41,7 +42,7 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
-    public CouponDTO update(@NonNull CouponDTO couponDTO) {
+    public CouponDto update(@NonNull CouponDto couponDTO) {
 
         log.info("update() Coupon = {}", couponDTO.getCode());
 
@@ -65,9 +66,9 @@ public class CouponServiceImpl implements CouponService {
         return code + UUID.randomUUID().toString().substring(0, FINAL_SIZE);
     }
 
-    private CouponDTO buildValidCoupon(CouponDTO couponDTO) {
+    private CouponDto buildValidCoupon(CouponDto couponDTO) {
         String code = generateCode(couponDTO.getCode());
-        couponDTO = new CouponDTO(couponDTO.getCouponId(), code, couponDTO.getDescription(),
+        couponDTO = new CouponDto(couponDTO.getCouponId(), code, couponDTO.getDescription(),
                 couponDTO.getDiscountType(), couponDTO.getDiscountValue(), couponDTO.getExpirationDate(),
                 couponDTO.getUsageLimit(), couponDTO.getCreatedAt(), couponDTO.getVersion());
         return couponDTO;

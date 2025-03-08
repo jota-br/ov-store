@@ -3,8 +3,8 @@ package ostro.veda.test;
 import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import ostro.veda.common.dto.*;
-import ostro.veda.common.validation.OrderStatus;
+import ostro.veda.model.dto.*;
+import ostro.veda.util.enums.OrderStatus;
 import ostro.veda.config.AppConfig;
 import ostro.veda.service.CouponServiceImpl;
 import ostro.veda.service.OrderServiceImpl;
@@ -28,19 +28,19 @@ public class OrderServiceImplTest {
         OrderServiceImpl orderService = context.getBean(OrderServiceImpl.class);
         CouponServiceImpl couponService = context.getBean(CouponServiceImpl.class);
 
-        UserDTO userDTO = helper.getUserDTO();
+        UserDto userDTO = helper.getUserDTO();
         userDTO = userService.add(userDTO, "password123*@");
         assertNotNull(userDTO);
 
-        ProductDTO productDTO = helper.getProductDTO();
+        ProductDto productDTO = helper.getProductDTO();
         productDTO = productService.add(productDTO);
         assertNotNull(productDTO);
 
-        OrderDTO orderDTO = helper.getOrder(productDTO, userDTO.getAddresses().get(0), userDTO.getUserId());
+        OrderDto orderDTO = helper.getOrder(productDTO, userDTO.getAddresses().get(0), userDTO.getUserId());
         orderDTO = orderService.add(orderDTO);
         assertNotNull(orderDTO);
 
-        CouponDTO couponDTO = couponService.add(helper.getCouponDTO());
+        CouponDto couponDTO = couponService.add(helper.getCouponDTO());
         orderDTO = orderService.add(helper.getOrderWithCoupon(productDTO, userDTO.getAddresses().get(0), userDTO.getUserId(), couponDTO));
         assertNotNull(orderDTO);
 
@@ -58,17 +58,17 @@ public class OrderServiceImplTest {
         ProductServiceImpl productService = context.getBean(ProductServiceImpl.class);
         OrderServiceImpl orderService = context.getBean(OrderServiceImpl.class);
 
-        UserDTO userDTO = helper.getUserDTO();
+        UserDto userDTO = helper.getUserDTO();
         userDTO = userService.add(userDTO, "password123*@");
         assertNotNull(userDTO);
 
-        ProductDTO productDTO = helper.getProductDTO();
+        ProductDto productDTO = helper.getProductDTO();
         productDTO = productService.add(productDTO);
         assertNotNull(productDTO);
 
-        OrderDTO orderDTO = helper.getOrder(productDTO, userDTO.getAddresses().get(0), userDTO.getUserId());
+        OrderDto orderDTO = helper.getOrder(productDTO, userDTO.getAddresses().get(0), userDTO.getUserId());
         orderDTO = orderService.add(orderDTO);
-        orderDTO = orderService.update(new OrderDTO(orderDTO.getOrderId(), orderDTO.getUserId(),
+        orderDTO = orderService.update(new OrderDto(orderDTO.getOrderId(), orderDTO.getUserId(),
                 null, 0, OrderStatus.PROCESSING.getStatus(), null, null,
                 null, null, null, null, 0));
         assertNotNull(orderDTO);
@@ -87,15 +87,15 @@ public class OrderServiceImplTest {
         ProductServiceImpl productService = context.getBean(ProductServiceImpl.class);
         OrderServiceImpl orderService = context.getBean(OrderServiceImpl.class);
 
-        UserDTO userDTO = helper.getUserDTO();
+        UserDto userDTO = helper.getUserDTO();
         userDTO = userService.add(userDTO, "password123*@");
         assertNotNull(userDTO);
 
-        ProductDTO productDTO = helper.getProductDTO();
+        ProductDto productDTO = helper.getProductDTO();
         productDTO = productService.add(productDTO);
         assertNotNull(productDTO);
 
-        OrderDTO orderDTO = helper.getOrder(productDTO, userDTO.getAddresses().get(0), userDTO.getUserId());
+        OrderDto orderDTO = helper.getOrder(productDTO, userDTO.getAddresses().get(0), userDTO.getUserId());
         orderDTO = orderService.add(orderDTO);
         orderDTO = orderService.cancelOrder(orderDTO.getOrderId());
         assertNotNull(orderDTO);
@@ -114,19 +114,19 @@ public class OrderServiceImplTest {
         ProductServiceImpl productService = context.getBean(ProductServiceImpl.class);
         OrderServiceImpl orderService = context.getBean(OrderServiceImpl.class);
 
-        UserDTO userDTO = helper.getUserDTO();
+        UserDto userDTO = helper.getUserDTO();
         userDTO = userService.add(userDTO, "password123*@");
         assertNotNull(userDTO);
 
-        ProductDTO productDTO = helper.getProductDTO();
+        ProductDto productDTO = helper.getProductDTO();
         productDTO = productService.add(productDTO);
         assertNotNull(productDTO);
 
-        OrderDTO orderDTO = helper.getOrder(productDTO, userDTO.getAddresses().get(0), userDTO.getUserId());
+        OrderDto orderDTO = helper.getOrder(productDTO, userDTO.getAddresses().get(0), userDTO.getUserId());
         orderDTO = orderService.add(orderDTO);
 
-        OrderDetailDTO orderDetailDTO = helper.getOrderDetail(orderDTO, productDTO);
-        orderDTO = orderService.update(new OrderDTO(orderDTO.getOrderId(), orderDTO.getUserId(),
+        OrderDetailDto orderDetailDTO = helper.getOrderDetail(orderDTO, productDTO);
+        orderDTO = orderService.update(new OrderDto(orderDTO.getOrderId(), orderDTO.getUserId(),
                 null, 0, OrderStatus.DELIVERED.getStatus(), null, null,
                 null, null, null, null, 0));
         orderDTO = orderService.returnItem(orderDetailDTO);

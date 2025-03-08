@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEvent;
-import ostro.veda.common.util.Action;
+import ostro.veda.util.enums.Action;
 
 @Slf4j
 @Getter

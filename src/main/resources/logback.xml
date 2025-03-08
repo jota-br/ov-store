@@ -6,8 +6,8 @@
     </appender>
 
     <logger name="ostro.veda.service" level="DEBUG"/>
-    <logger name="ostro.veda.db" level="DEBUG"/>
-    <logger name="ostro.veda.common" level="DEBUG"/>
+    <logger name="ostro.veda.repository" level="DEBUG"/>
+    <logger name="ostro.veda.util" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
