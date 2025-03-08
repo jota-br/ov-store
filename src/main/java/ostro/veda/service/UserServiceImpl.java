@@ -5,13 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-import ostro.veda.service.interfaces.UserService;
 import ostro.veda.model.dto.UserDto;
-import ostro.veda.util.exception.InputException;
+import ostro.veda.repository.interfaces.UserRepository;
+import ostro.veda.service.interfaces.UserService;
 import ostro.veda.util.enums.Action;
+import ostro.veda.util.exception.InputException;
 import ostro.veda.util.validation.SanitizeUtil;
 import ostro.veda.util.validation.ValidateUtil;
-import ostro.veda.repository.interfaces.UserRepository;
+import ostro.veda.util.validation.ValidatorUtil;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -21,18 +22,20 @@ import java.util.Base64;
 @Slf4j
 @Component
 public class UserServiceImpl implements UserService {
-    private final ApplicationEventPublisher applicationEventPublisher;
 
+    private final ValidatorUtil validatorUtil;
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final UserRepository userRepositoryImpl;
 
     @Autowired
-    public UserServiceImpl(ApplicationEventPublisher applicationEventPublisher, UserRepository userRepositoryImpl) {
+    public UserServiceImpl(ValidatorUtil validatorUtil, ApplicationEventPublisher applicationEventPublisher, UserRepository userRepositoryImpl) {
+        this.validatorUtil = validatorUtil;
         this.applicationEventPublisher = applicationEventPublisher;
         this.userRepositoryImpl = userRepositoryImpl;
     }
 
     @Override
-    public UserDto add(UserDto userDTO) {
+    public UserDto add(@NonNull UserDto userDTO) {
         log.info("add() -> add() new User");
         try {
             if (userDTO.getSalt().isBlank()) return null;
@@ -52,7 +55,8 @@ public class UserServiceImpl implements UserService {
     public UserDto add(@NonNull UserDto userDTO, @NonNull String password) {
         log.info("add() new User = [{}, {}]", userDTO.getUsername(), userDTO.getEmail());
         try {
-            ValidateUtil.validateUser(userDTO, password);
+//            ValidateUtil.validateUser(userDTO, password);
+            validatorUtil.validation(userDTO);
             userDTO = SanitizeUtil.sanitizeUser(userDTO);
             UserDto user = getUserWithSaltAndHash(userDTO, password);
 

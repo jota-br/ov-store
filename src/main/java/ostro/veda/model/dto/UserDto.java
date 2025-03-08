@@ -1,10 +1,15 @@
 package ostro.veda.model.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import ostro.veda.model.dto.interfaces.Dto;
 import ostro.veda.util.annotation.Auditable;
 import ostro.veda.util.constant.TableNames;
+import ostro.veda.util.validation.annotation.ValidEmail;
+import ostro.veda.util.validation.annotation.ValidPersonName;
+import ostro.veda.util.validation.annotation.ValidPhone;
+import ostro.veda.util.validation.annotation.ValidUsername;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,13 +21,28 @@ import java.util.StringJoiner;
 public class UserDto implements Dto {
 
     private final int userId;
+
+    @NotBlank(message = "Username cannot be empty")
+    @ValidUsername
     private final String username;
+
     private final String salt;
     private final String hash;
+
+    @NotBlank(message = "Email cannot be empty")
+    @ValidEmail
     private final String email;
+
+    @NotBlank(message = "First name cannot be empty")
+    @ValidPersonName
     private final String firstName;
+
+    @ValidPersonName
     private final String lastName;
+
+    @ValidPhone
     private final String phone;
+
     private final boolean isActive;
     private final RoleDto role;
     private final List<AddressDto> addresses;
