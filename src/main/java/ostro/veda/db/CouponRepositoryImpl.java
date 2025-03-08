@@ -54,8 +54,29 @@ public class CouponRepositoryImpl implements CouponRepository {
     }
 
     @Override
+    @Transactional
     public CouponDTO update(@NonNull CouponDTO couponDTO) {
-        return null;
+
+        log.info("update() Coupon = {}", couponDTO.getCode());
+        Coupon coupon = this.entityManager.find(Coupon.class, couponDTO.getCouponId());
+        if (coupon == null) {
+            log.warn("Invalid Coupon {}", couponDTO.toJSON());
+            return null;
+        }
+
+        try {
+
+            coupon.decreaseUsage();
+            this.entityManager.persist(coupon);
+
+            return coupon.transformToDto();
+
+        } catch (Exception e) {
+
+            log.warn(e.getMessage());
+            return null;
+
+        }
     }
 
     @Override

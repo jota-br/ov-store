@@ -131,7 +131,7 @@ public class ValidateUtil {
     }
 
     public static void hasValidName(String input) throws ErrorHandling.InvalidInputException {
-        Pattern validPattern = Pattern.compile("^[\\sA-Za-z\\p{Punct}]{1,255}$");
+        Pattern validPattern = Pattern.compile("^[\\sA-Za-z\\p{Punct}0-9]{1,255}$");
         Matcher matcher = validPattern.matcher(input);
         if (matcher.matches()) {
             return;
@@ -143,7 +143,7 @@ public class ValidateUtil {
     }
 
     public static void hasValidDescription(String input) throws ErrorHandling.InvalidInputException {
-        Pattern validPattern = Pattern.compile("^[a-zA-Z\\s\\p{Punct}\n]{0,510}$");
+        Pattern validPattern = Pattern.compile("^[a-zA-Z\\s\\p{Punct}0-9\n]{0,510}$");
         Matcher matcher = validPattern.matcher(input);
         if (matcher.matches()) {
             return;

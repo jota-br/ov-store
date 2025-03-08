@@ -1,6 +1,5 @@
 package ostro.veda.service.events;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -17,7 +16,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @EventListener
-    public void handleEvent(@NonNull EventPayload payload)
+    public void handleEvent(EventPayload payload)
             throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, ClassNotFoundException {
 
         log.info("EventServiceImpl() Started from source -> {}", payload.getSource());

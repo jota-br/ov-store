@@ -49,6 +49,11 @@ public class Coupon {
     public Coupon() {
     }
 
+    public Coupon decreaseUsage() {
+        this.usageLimit -= 1;
+        return this;
+    }
+
     public CouponDTO transformToDto() {
         return new CouponDTO(this.getCouponId(), this.getCode(), this.getDescription(), this.getDiscountType(),
                 this.getDiscountValue(), this.getExpirationDate(), this.getUsageLimit(), this.getCreatedAt(),
