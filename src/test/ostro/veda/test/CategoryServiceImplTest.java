@@ -3,7 +3,7 @@ package ostro.veda.test;
 import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import ostro.veda.common.dto.CategoryDTO;
+import ostro.veda.model.dto.CategoryDto;
 import ostro.veda.config.AppConfig;
 import ostro.veda.service.CategoryServiceImpl;
 
@@ -20,7 +20,7 @@ public class CategoryServiceImplTest {
 
         CategoryServiceImpl categoryService = context.getBean(CategoryServiceImpl.class);
 
-        CategoryDTO categoryDTO = categoryService.add(helper.getCategoryDTO());
+        CategoryDto categoryDTO = categoryService.add(helper.getCategoryDTO());
         assertNotNull(categoryDTO);
 
         context.close();
@@ -34,7 +34,7 @@ public class CategoryServiceImplTest {
 
         CategoryServiceImpl categoryService = context.getBean(CategoryServiceImpl.class);
 
-        CategoryDTO categoryDTO = categoryService.add(helper.getCategoryDTO());
+        CategoryDto categoryDTO = categoryService.add(helper.getCategoryDTO());
         categoryDTO = categoryService.update(helper.getCategoryDTOWithId(categoryDTO.getCategoryId()));
         assertNotNull(categoryDTO);
 

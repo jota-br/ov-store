@@ -3,7 +3,7 @@ package ostro.veda.test;
 import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import ostro.veda.common.dto.UserDTO;
+import ostro.veda.model.dto.UserDto;
 import ostro.veda.config.AppConfig;
 import ostro.veda.service.UserServiceImpl;
 
@@ -21,7 +21,7 @@ public class UserServiceImplTest {
 
         UserServiceImpl userService = context.getBean(UserServiceImpl.class);
 
-        UserDTO userDTO = userService.add(helper.getUserDTO(), "password90*&");
+        UserDto userDTO = userService.add(helper.getUserDTO(), "password90*&");
         assertNotNull(userDTO);
 
         context.close();
@@ -35,7 +35,7 @@ public class UserServiceImplTest {
 
         UserServiceImpl userService = context.getBean(UserServiceImpl.class);
 
-        UserDTO userDTO = userService.add(helper.getUserDTO(), "password90*&");
+        UserDto userDTO = userService.add(helper.getUserDTO(), "password90*&");
         userDTO = userService.update(helper.getUserDTOWithId(userDTO.getUserId()), "password90");
         assertNotNull(userDTO);
 

@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import ostro.veda.common.dto.AuditDataDTO;
-import ostro.veda.common.util.Action;
-import ostro.veda.common.util.Auditable;
-import ostro.veda.service.AuditService;
+import ostro.veda.model.dto.AuditDataDto;
+import ostro.veda.util.enums.Action;
+import ostro.veda.util.annotation.Auditable;
+import ostro.veda.service.interfaces.AuditService;
 
 @Slf4j
 @Component
@@ -39,7 +39,7 @@ public class AuditEventListener {
         String string = payload.toString();
         Action action = auditEvent.getAction();
 
-        AuditDataDTO auditDataDTO = new AuditDataDTO(string, action.getActionName(), table, auditEvent.getUserId());
+        AuditDataDto auditDataDTO = new AuditDataDto(string, action.getActionName(), table, auditEvent.getUserId());
         auditServiceImpl.add(auditDataDTO);
     }
 }

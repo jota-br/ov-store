@@ -5,12 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-import ostro.veda.common.dto.UserDTO;
-import ostro.veda.common.error.ErrorHandling;
-import ostro.veda.common.util.Action;
-import ostro.veda.common.validation.SanitizeUtil;
-import ostro.veda.common.validation.ValidateUtil;
-import ostro.veda.db.UserRepository;
+import ostro.veda.service.interfaces.UserService;
+import ostro.veda.model.dto.UserDto;
+import ostro.veda.util.exception.InputException;
+import ostro.veda.util.enums.Action;
+import ostro.veda.util.validation.SanitizeUtil;
+import ostro.veda.util.validation.ValidateUtil;
+import ostro.veda.repository.interfaces.UserRepository;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -31,7 +32,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO add(UserDTO userDTO) {
+    public UserDto add(UserDto userDTO) {
         log.info("add() -> add() new User");
         try {
             if (userDTO.getSalt().isBlank()) return null;
@@ -43,17 +44,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO update(UserDTO userDTO) {
+    public UserDto update(UserDto userDTO) {
         return null;
     }
 
     @Override
-    public UserDTO add(@NonNull UserDTO userDTO, @NonNull String password) {
+    public UserDto add(@NonNull UserDto userDTO, @NonNull String password) {
         log.info("add() new User = [{}, {}]", userDTO.getUsername(), userDTO.getEmail());
         try {
             ValidateUtil.validateUser(userDTO, password);
             userDTO = SanitizeUtil.sanitizeUser(userDTO);
-            UserDTO user = getUserWithSaltAndHash(userDTO, password);
+            UserDto user = getUserWithSaltAndHash(userDTO, password);
 
             userDTO = add(user);
 
@@ -61,18 +62,18 @@ public class UserServiceImpl implements UserService {
 
             return userDTO;
 
-        } catch (ErrorHandling.InvalidInputException e) {
+        } catch (InputException.InvalidInputException e) {
             log.warn(e.getMessage());
             return null;
         }
     }
 
     @Override
-    public UserDTO update(@NonNull UserDTO userDTO, @NonNull String password) {
+    public UserDto update(@NonNull UserDto userDTO, @NonNull String password) {
         log.info("update() User = [{}, {}, {}]", userDTO.getUserId(), userDTO.getUsername(), userDTO.getEmail());
         try {
             ValidateUtil.validateUser(userDTO, password);
-            UserDTO user = getUserWithSaltAndHash(userDTO, password);
+            UserDto user = getUserWithSaltAndHash(userDTO, password);
 
             userDTO = userRepositoryImpl.update(user);
 
@@ -80,19 +81,19 @@ public class UserServiceImpl implements UserService {
 
             return userDTO;
 
-        } catch (ErrorHandling.InvalidInputException e) {
+        } catch (InputException.InvalidInputException e) {
             log.warn(e.getMessage());
             return null;
         }
     }
 
-    private UserDTO getUserWithSaltAndHash(@NonNull UserDTO userDTO, @NonNull String password) {
+    private UserDto getUserWithSaltAndHash(@NonNull UserDto userDTO, @NonNull String password) {
 
         byte[] salt = getSalt();
         String encodedSalt = getEncodedSalt(salt);
         String hash = getHash(password, salt);
 
-        return new UserDTO(userDTO.getUserId(), userDTO.getUsername(), encodedSalt, hash, userDTO.getEmail(),
+        return new UserDto(userDTO.getUserId(), userDTO.getUsername(), encodedSalt, hash, userDTO.getEmail(),
                 userDTO.getFirstName(), userDTO.getLastName(), userDTO.getPhone(), userDTO.isActive(), userDTO.getRole(),
                 userDTO.getAddresses(), userDTO.getCreatedAt(), userDTO.getUpdatedAt(), userDTO.getVersion());
     }

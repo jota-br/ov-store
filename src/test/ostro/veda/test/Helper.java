@@ -1,7 +1,7 @@
 package ostro.veda.test;
 
-import ostro.veda.common.dto.*;
-import ostro.veda.common.validation.OrderStatus;
+import ostro.veda.model.dto.*;
+import ostro.veda.util.enums.OrderStatus;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -357,18 +357,18 @@ public class Helper {
         return random.nextDouble(10000);
     }
 
-    private RoleDTO getRoleDTO() {
-        return new RoleDTO(20, null, null,
+    private RoleDto getRoleDTO() {
+        return new RoleDto(20, null, null,
                 null, null, null, 0);
     }
 
-    public UserDTO getUserDTO() {
+    public UserDto getUserDTO() {
 
-        AddressDTO addressDTO = new AddressDTO(0, null, getRandomStreetAddress(),
+        AddressDto addressDTO = new AddressDto(0, null, getRandomStreetAddress(),
                 getRandomNumberString(), "Home", getRandomCity(), getRandomState(),
                 getRandomZipCode(), getRandomCountry(), true, null, null, 0);
 
-        UserDTO userDTO = new UserDTO(0, getRandomUsername(), null, null,
+        UserDto userDTO = new UserDto(0, getRandomUsername(), null, null,
                 getRandomEmail(), getRandomName(), getRandomLastName(), getRandomPhone(),
                 true, getRoleDTO(), List.of(addressDTO), null, null, 0);
 
@@ -376,13 +376,13 @@ public class Helper {
         return userDTO;
     }
 
-    public UserDTO getUserDTOWithId(int id) {
+    public UserDto getUserDTOWithId(int id) {
 
-        AddressDTO addressDTO = new AddressDTO(0, null, getRandomStreetAddress(),
+        AddressDto addressDTO = new AddressDto(0, null, getRandomStreetAddress(),
                 getRandomNumberString(), "Home", getRandomCity(), getRandomState(),
                 getRandomZipCode(), getRandomCountry(), true, null, null, 0);
 
-        UserDTO userDTO = new UserDTO(id, getRandomUsername(), null, null,
+        UserDto userDTO = new UserDto(id, getRandomUsername(), null, null,
                 getRandomEmail(), getRandomName(), getRandomLastName(), getRandomPhone(),
                 true, getRoleDTO(), List.of(addressDTO), null, null, 0);
 
@@ -390,73 +390,73 @@ public class Helper {
         return userDTO;
     }
 
-    public AddressDTO getAddressDTO(UserDTO userDTO) {
+    public AddressDto getAddressDTO(UserDto userDTO) {
 
-        return new AddressDTO(0, userDTO, getRandomStreetAddress(),
+        return new AddressDto(0, userDTO, getRandomStreetAddress(),
                 getRandomNumberString(), "Home", getRandomCity(), getRandomState(),
                 getRandomZipCode(), getRandomCountry(), true, null, null, 0);
     }
 
-    public AddressDTO getAddressDTOWithId(UserDTO userDTO, int id) {
+    public AddressDto getAddressDTOWithId(UserDto userDTO, int id) {
 
-        return new AddressDTO(id, userDTO, getRandomStreetAddress(),
+        return new AddressDto(id, userDTO, getRandomStreetAddress(),
                 getRandomNumberString(), "Work", getRandomCity(), getRandomState(),
                 getRandomZipCode(), getRandomCountry(), true, null, null, 0);
     }
 
-    public CategoryDTO getCategoryDTO() {
-        return new CategoryDTO(0, getRandomCategoryName(), getRandomCategoryDescription(),
+    public CategoryDto getCategoryDTO() {
+        return new CategoryDto(0, getRandomCategoryName(), getRandomCategoryDescription(),
                 true, null, null, 0);
     }
 
-    public CategoryDTO getCategoryDTOWithId(int id) {
-        return new CategoryDTO(id, getRandomCategoryName(), getRandomCategoryDescription(),
+    public CategoryDto getCategoryDTOWithId(int id) {
+        return new CategoryDto(id, getRandomCategoryName(), getRandomCategoryDescription(),
                 true, null, null, 0);
     }
 
-    public CouponDTO getCouponDTO() {
-        return new CouponDTO(0, getRandomCouponCode(), getRandomCouponDescription(),
+    public CouponDto getCouponDTO() {
+        return new CouponDto(0, getRandomCouponCode(), getRandomCouponDescription(),
                 getRandomDiscountType(), getRandomInt(100), getRandomDateTime(),
                 getRandomInt(999999), null, 0);
     }
 
-    public ProductDTO getProductDTO() {
-        return new ProductDTO(0, getProductName(), getProductDescription(),
+    public ProductDto getProductDTO() {
+        return new ProductDto(0, getProductName(), getProductDescription(),
                 getRandomValue(), getRandomInt(1000), true, List.of(getCategoryDTO()), getProductImageDto(), null, null, 0);
     }
 
-    public ProductDTO getProductDTOWithId(int id) {
-        List<CategoryDTO> categoryDTOS = new ArrayList<>();
-        CategoryDTO categoryDTO = new CategoryDTO(0, "Category Name", "Category Description",
+    public ProductDto getProductDTOWithId(int id) {
+        List<CategoryDto> categoryDtos = new ArrayList<>();
+        CategoryDto categoryDTO = new CategoryDto(0, "Category Name", "Category Description",
                 true, null, null, 0);
-        categoryDTOS.add(categoryDTO);
+        categoryDtos.add(categoryDTO);
 
 
 
-        return new ProductDTO(id, getProductName(), getProductDescription(),
-                getRandomValue(), getRandomInt(1000), true, categoryDTOS, getProductImageDto(), null, null, 0);
+        return new ProductDto(id, getProductName(), getProductDescription(),
+                getRandomValue(), getRandomInt(1000), true, categoryDtos, getProductImageDto(), null, null, 0);
     }
 
-    public List<ProductImageDTO> getProductImageDto() {
-        List<ProductImageDTO> productImageDTOS = new ArrayList<>();
-        ProductImageDTO productImageDTO = new ProductImageDTO(0,
+    public List<ProductImageDto> getProductImageDto() {
+        List<ProductImageDto> productImageDtos = new ArrayList<>();
+        ProductImageDto productImageDTO = new ProductImageDto(0,
                 "https://imagesemxaple.com/image.png", true, 0);
-        productImageDTOS.add(productImageDTO);
-        return productImageDTOS;
+        productImageDtos.add(productImageDTO);
+        return productImageDtos;
     }
 
-    public OrderDetailDTO getOrderDetail(OrderDTO orderDTO, ProductDTO productDTO) {
-        return new OrderDetailDTO(0, orderDTO, productDTO,
+    public OrderDetailDto getOrderDetail(OrderDto orderDTO, ProductDto productDTO) {
+        return new OrderDetailDto(0, orderDTO, productDTO,
                 1, productDTO.getPrice(), 0);
     }
 
-    public OrderDTO getOrder(ProductDTO productDTO, AddressDTO addressDTO, int userId) {
+    public OrderDto getOrder(ProductDto productDTO, AddressDto addressDTO, int userId) {
 
-        OrderDTO orderDTO = new OrderDTO(0, userId, null, 0,
+        OrderDto orderDTO = new OrderDto(0, userId, null, 0,
                 OrderStatus.PENDING_PAYMENT.getStatus(), List.of(), addressDTO, addressDTO,
                 null, null, null, 0);
 
-        OrderDetailDTO orderDetailDTO = new OrderDetailDTO(0, orderDTO, productDTO,
+        OrderDetailDto orderDetailDTO = new OrderDetailDto(0, orderDTO, productDTO,
                 3, productDTO.getPrice(), 0);
 
         orderDTO.setOrderDetails(List.of(orderDetailDTO));
@@ -464,13 +464,13 @@ public class Helper {
         return orderDTO;
     }
 
-    public OrderDTO getOrderWithCoupon(ProductDTO productDTO, AddressDTO addressDTO, int userId, CouponDTO couponDTO) {
+    public OrderDto getOrderWithCoupon(ProductDto productDTO, AddressDto addressDTO, int userId, CouponDto couponDTO) {
 
-        OrderDTO orderDTO = new OrderDTO(0, userId, null, 0,
+        OrderDto orderDTO = new OrderDto(0, userId, null, 0,
                 OrderStatus.PENDING_PAYMENT.getStatus(), List.of(), addressDTO, addressDTO,
                 null, couponDTO, null, 0);
 
-        OrderDetailDTO orderDetailDTO = new OrderDetailDTO(0, orderDTO, productDTO,
+        OrderDetailDto orderDetailDTO = new OrderDetailDto(0, orderDTO, productDTO,
                 3, productDTO.getPrice(), 0);
 
         orderDTO.setOrderDetails(List.of(orderDetailDTO));

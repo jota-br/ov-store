@@ -3,7 +3,7 @@ package ostro.veda.test;
 import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import ostro.veda.common.dto.ProductDTO;
+import ostro.veda.model.dto.ProductDto;
 import ostro.veda.config.AppConfig;
 import ostro.veda.service.ProductServiceImpl;
 
@@ -32,7 +32,7 @@ public class ProductServiceImplTest {
 
         ProductServiceImpl productService = context.getBean(ProductServiceImpl.class);
 
-        ProductDTO productDTO = productService.add(helper.getProductDTO());
+        ProductDto productDTO = productService.add(helper.getProductDTO());
         productService.update(helper.getProductDTOWithId(productDTO.getProductId()));
 
         context.close();

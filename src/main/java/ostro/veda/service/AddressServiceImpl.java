@@ -5,12 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-import ostro.veda.common.dto.AddressDTO;
-import ostro.veda.common.error.ErrorHandling;
-import ostro.veda.common.util.Action;
-import ostro.veda.common.validation.SanitizeUtil;
-import ostro.veda.common.validation.ValidateUtil;
-import ostro.veda.db.AddressRepository;
+import ostro.veda.service.interfaces.AddressService;
+import ostro.veda.model.dto.AddressDto;
+import ostro.veda.util.exception.InputException;
+import ostro.veda.util.enums.Action;
+import ostro.veda.util.validation.SanitizeUtil;
+import ostro.veda.util.validation.ValidateUtil;
+import ostro.veda.repository.interfaces.AddressRepository;
 
 @Slf4j
 @Component
@@ -26,7 +27,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public AddressDTO add(@NonNull AddressDTO addressDTO) {
+    public AddressDto add(@NonNull AddressDto addressDTO) {
         try {
             log.info("add() Address for User = {}", addressDTO.getUser().getUserId());
             ValidateUtil.validateAddress(addressDTO);
@@ -38,14 +39,14 @@ public class AddressServiceImpl implements AddressService {
 
             return addressDTO;
 
-        } catch (ErrorHandling.InvalidInputException e) {
+        } catch (InputException.InvalidInputException e) {
             log.warn(e.getMessage());
             return null;
         }
     }
 
     @Override
-    public AddressDTO update(@NonNull AddressDTO addressDTO) {
+    public AddressDto update(@NonNull AddressDto addressDTO) {
         try {
             log.info("update() Address for User = {}", addressDTO.getUser().getUserId());
             ValidateUtil.validateAddress(addressDTO);
@@ -57,7 +58,7 @@ public class AddressServiceImpl implements AddressService {
 
             return addressDTO;
 
-        } catch (ErrorHandling.InvalidInputException e) {
+        } catch (InputException.InvalidInputException e) {
             log.warn(e.getMessage());
             return null;
         }
