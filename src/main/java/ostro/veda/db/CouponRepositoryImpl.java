@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ostro.veda.common.dto.CouponDTO;
 import ostro.veda.db.helpers.EntityManagerHelper;
-import ostro.veda.db.helpers.database.CouponsColumns;
+import ostro.veda.db.helpers.enums.CouponsColumns;
 import ostro.veda.db.jpa.Coupon;
 
 import java.util.List;

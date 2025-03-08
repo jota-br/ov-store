@@ -3,14 +3,13 @@ package ostro.veda.service;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Component;
 import ostro.veda.common.dto.OrderDTO;
 import ostro.veda.common.dto.OrderDetailDTO;
 import ostro.veda.common.error.ErrorHandling;
+import ostro.veda.common.util.Action;
 import ostro.veda.common.validation.ValidateUtil;
 import ostro.veda.db.OrderRepository;
-import org.springframework.stereotype.Component;
-import ostro.veda.common.util.Action;
-import ostro.veda.service.events.AuditEvent;
 
 @Slf4j
 @Component
@@ -32,14 +31,7 @@ public class OrderServiceImpl implements OrderService {
 
             orderDTO = orderRepositoryImpl.add(orderDTO);
 
-            AuditEvent event = AuditEvent.builder()
-                    .source(this)
-                    .action(Action.INSERT)
-                    .orderDTO(orderDTO)
-                    .userId(1)
-                    .id(orderDTO.getOrderId())
-                    .build();
-            applicationEventPublisher.publishEvent(event);
+            this.auditCaller(applicationEventPublisher, this, Action.INSERT, orderDTO, 1);
 
             return orderDTO;
 
@@ -57,14 +49,7 @@ public class OrderServiceImpl implements OrderService {
 
             orderDTO = orderRepositoryImpl.update(orderDTO);
 
-            AuditEvent event = AuditEvent.builder()
-                    .source(this)
-                    .action(Action.UPDATE)
-                    .orderDTO(orderDTO)
-                    .userId(1)
-                    .id(orderDTO.getOrderId())
-                    .build();
-            applicationEventPublisher.publishEvent(event);
+            this.auditCaller(applicationEventPublisher, this, Action.UPDATE, orderDTO, 1);
 
             return orderDTO;
 
@@ -82,14 +67,7 @@ public class OrderServiceImpl implements OrderService {
 
             OrderDTO orderDTO = orderRepositoryImpl.cancelOrder(orderId);
 
-            AuditEvent event = AuditEvent.builder()
-                    .source(this)
-                    .action(Action.UPDATE)
-                    .orderDTO(orderDTO)
-                    .userId(1)
-                    .id(orderDTO.getOrderId())
-                    .build();
-            applicationEventPublisher.publishEvent(event);
+            this.auditCaller(applicationEventPublisher, this, Action.UPDATE, orderDTO, 1);
 
             return orderDTO;
 
@@ -106,14 +84,7 @@ public class OrderServiceImpl implements OrderService {
 
             OrderDTO orderDTO = orderRepositoryImpl.returnItem(returningItem);
 
-            AuditEvent event = AuditEvent.builder()
-                    .source(this)
-                    .action(Action.UPDATE)
-                    .orderDTO(orderDTO)
-                    .userId(1)
-                    .id(orderDTO.getOrderId())
-                    .build();
-            applicationEventPublisher.publishEvent(event);
+            this.auditCaller(applicationEventPublisher, this, Action.UPDATE, orderDTO, 1);
 
             return orderDTO;
 

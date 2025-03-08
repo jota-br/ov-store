@@ -17,13 +17,18 @@ public class PermissionDTO {
     private final LocalDateTime updatedAt;
     private final int version;
 
+    @Override
+    public String toString() {
+        return toJSON();
+    }
+
     public String toJSON() {
         return new StringJoiner(", ", "{", "}")
                 .add("\"permissionId\":" + permissionId)
                 .add("\"name\":\"" + name + "\"")
                 .add("\"description\":\"" + description + "\"")
-                .add("\"createdAt\":" + createdAt)
-                .add("\"updatedAt\":" + updatedAt)
+                .add("\"createdAt\":\"" + createdAt + "\"")
+                .add("\"updatedAt\":\"" + updatedAt + "\"")
                 .toString();
     }
 }

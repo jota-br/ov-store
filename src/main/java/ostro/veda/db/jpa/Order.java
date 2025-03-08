@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import ostro.veda.common.dto.CouponDTO;
 import ostro.veda.common.dto.OrderDTO;
 import ostro.veda.common.dto.OrderDetailDTO;
 import ostro.veda.common.dto.OrderStatusHistoryDTO;
@@ -92,11 +93,13 @@ public class Order {
             }
         }
 
+        CouponDTO couponDTO = this.getCoupon() != null ? this.getCoupon().transformToDto() : null;
+
         return new OrderDTO(this.getOrderId(), this.getUserId(),
                 this.getOrderDate(), this.getTotalAmount(),
                 this.getStatus(), orderDetailDTOList,
                 this.getShippingAddress().transformToDto(), this.getBillingAddress().transformToDto(),
-                orderStatusHistoryDTOList, this.getCoupon().transformToDto(),
+                orderStatusHistoryDTOList, couponDTO,
                 this.getUpdatedAt(), this.getVersion());
     }
 }

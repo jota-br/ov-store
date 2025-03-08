@@ -1,12 +1,12 @@
-package ostro.veda.db.helpers.database;
+package ostro.veda.db.helpers.enums;
 
-public enum CategoryColumns {
+public enum ProductImageColumns {
 
-    NAME("name");
+    IMAGE_URL("imageUrl");
 
     private final String columnName;
 
-    CategoryColumns(String columnName) {
+    ProductImageColumns(String columnName) {
         this.columnName = columnName;
     }
 

@@ -1,12 +1,12 @@
-package ostro.veda.db.helpers.database;
+package ostro.veda.db.helpers.enums;
 
-public enum CouponsColumns {
+public enum CategoryColumns {
 
-    CODE("code");
+    NAME("name");
 
     private final String columnName;
 
-    CouponsColumns(String columnName) {
+    CategoryColumns(String columnName) {
         this.columnName = columnName;
     }
 

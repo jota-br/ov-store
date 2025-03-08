@@ -3,6 +3,8 @@ package ostro.veda.common.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import ostro.veda.common.util.Auditable;
+import ostro.veda.common.util.TableNames;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.StringJoiner;
 
 @Getter
 @AllArgsConstructor
+@Auditable(tableName = TableNames.ORDER)
 public class OrderDTO {
 
     private final int orderId;

@@ -2,6 +2,8 @@ package ostro.veda.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import ostro.veda.common.util.Auditable;
+import ostro.veda.common.util.TableNames;
 import ostro.veda.db.jpa.Permission;
 
 import java.time.LocalDateTime;
@@ -10,6 +12,7 @@ import java.util.StringJoiner;
 
 @Getter
 @AllArgsConstructor
+@Auditable(tableName = TableNames.ROLE)
 public class RoleDTO {
 
     private final int roleId;
@@ -18,6 +21,11 @@ public class RoleDTO {
     private final List<Permission> permissions;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
+
+    @Override
+    public String toString() {
+        return toJSON();
+    }
 
     public String toJSON() {
         return new StringJoiner(", ", "{", "}")
