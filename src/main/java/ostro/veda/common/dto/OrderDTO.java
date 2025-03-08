@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import ostro.veda.common.util.Auditable;
+import ostro.veda.common.util.MainService;
+import ostro.veda.common.util.MainServiceNames;
 import ostro.veda.common.util.TableNames;
 
 import java.time.LocalDateTime;
@@ -13,6 +15,7 @@ import java.util.StringJoiner;
 @Getter
 @AllArgsConstructor
 @Auditable(tableName = TableNames.ORDER)
+@MainService(getServiceClass = MainServiceNames.ORDER_SERVICE)
 public class OrderDTO {
 
     private final int orderId;

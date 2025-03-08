@@ -42,6 +42,7 @@ public class CouponServiceImpl implements CouponService {
 
     @Override
     public CouponDTO update(@NonNull CouponDTO couponDTO) {
+        log.warn("update() Coupon = {}", couponDTO.getCode());
         return null;
     }
 

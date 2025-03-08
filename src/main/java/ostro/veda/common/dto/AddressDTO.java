@@ -12,7 +12,7 @@ import java.util.StringJoiner;
 @Getter
 @AllArgsConstructor
 @Auditable(tableName = TableNames.ADDRESS)
-public class AddressDTO {
+public class AddressDTO implements Dto {
 
     private final int addressId;
 

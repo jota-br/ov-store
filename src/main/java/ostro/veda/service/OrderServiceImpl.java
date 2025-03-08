@@ -8,8 +8,10 @@ import ostro.veda.common.dto.OrderDTO;
 import ostro.veda.common.dto.OrderDetailDTO;
 import ostro.veda.common.error.ErrorHandling;
 import ostro.veda.common.util.Action;
+import ostro.veda.common.util.MainServicesMethodsNames;
 import ostro.veda.common.validation.ValidateUtil;
 import ostro.veda.db.OrderRepository;
+import ostro.veda.service.events.EventPayload;
 
 @Slf4j
 @Component
@@ -32,6 +34,11 @@ public class OrderServiceImpl implements OrderService {
             orderDTO = orderRepositoryImpl.add(orderDTO);
 
             this.auditCaller(applicationEventPublisher, this, Action.INSERT, orderDTO, 1);
+
+            if (orderDTO.getCoupon() != null)
+                this.applicationEventPublisher.publishEvent(
+                        new EventPayload(this, orderDTO.getCoupon(), MainServicesMethodsNames.UPDATE)
+                );
 
             return orderDTO;
 
