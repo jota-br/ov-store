@@ -27,6 +27,6 @@ module ostro.veda.project {
     opens ostro.veda.db;
     opens ostro.veda.db.jpa to org.hibernate.orm.core;
     opens ostro.veda.db.helpers to org.hibernate.orm.core;
-    opens ostro.veda.db.helpers.database to org.hibernate.orm.core;
+    opens ostro.veda.db.helpers.enums to org.hibernate.orm.core;
     opens ostro.veda.config;
 }

@@ -1,16 +1,15 @@
 package ostro.veda.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Component;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.common.error.ErrorHandling;
+import ostro.veda.common.util.Action;
 import ostro.veda.common.validation.SanitizeUtil;
 import ostro.veda.common.validation.ValidateUtil;
 import ostro.veda.db.CategoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import ostro.veda.db.helpers.database.Action;
-import ostro.veda.service.events.AuditEvent;
 
 @Slf4j
 @Component
@@ -34,14 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
 
             categoryDTO = categoryRepositoryImpl.add(categoryDTO);
 
-            AuditEvent event = AuditEvent.builder()
-                    .source(this)
-                    .action(Action.INSERT)
-                    .categoryDTO(categoryDTO)
-                    .userId(1)
-                    .id(categoryDTO.getCategoryId())
-                    .build();
-            applicationEventPublisher.publishEvent(event);
+            this.auditCaller(applicationEventPublisher, this, Action.INSERT, categoryDTO, 1);
 
             return categoryDTO;
 
@@ -60,14 +52,7 @@ public class CategoryServiceImpl implements CategoryService {
 
             categoryDTO = categoryRepositoryImpl.update(categoryDTO);
 
-            AuditEvent event = AuditEvent.builder()
-                    .source(this)
-                    .action(Action.UPDATE)
-                    .categoryDTO(categoryDTO)
-                    .userId(1)
-                    .id(categoryDTO.getCategoryId())
-                    .build();
-            applicationEventPublisher.publishEvent(event);
+            this.auditCaller(applicationEventPublisher, this, Action.UPDATE, categoryDTO, 1);
 
             return categoryDTO;
 

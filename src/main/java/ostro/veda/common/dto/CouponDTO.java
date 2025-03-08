@@ -10,15 +10,17 @@ import java.util.StringJoiner;
 
 @Getter
 @AllArgsConstructor
-@Auditable(tableName = TableNames.CATEGORY)
-public class CategoryDTO {
+@Auditable(tableName = TableNames.COUPON)
+public class CouponDTO {
 
-    private final int categoryId;
-    private final String name;
+    private final int couponId;
+    private final String code;
     private final String description;
-    private final boolean isActive;
+    private final String discountType;
+    private final double discountValue;
+    private final LocalDateTime expirationDate;
+    private final int usageLimit;
     private final LocalDateTime createdAt;
-    private final LocalDateTime updatedAt;
     private final int version;
 
     @Override
@@ -28,12 +30,14 @@ public class CategoryDTO {
 
     public String toJSON() {
         return new StringJoiner(", ", "{", "}")
-                .add("\"categoryId\":" + categoryId)
-                .add("\"name\":\"" + name + "\"")
+                .add("\"couponId\":" + couponId)
+                .add("\"code\":\"" + code + "\"")
                 .add("\"description\":\"" + description + "\"")
-                .add("\"isActive\":" + isActive)
+                .add("\"discountType\":\"" + discountType + "\"")
+                .add("\"discountValue\":" + discountValue)
+                .add("\"expirationDate\":\"" + expirationDate + "\"")
+                .add("\"usageLimit\":" + usageLimit)
                 .add("\"createdAt\":\"" + createdAt + "\"")
-                .add("\"updatedAt\":\"" + updatedAt + "\"")
                 .toString();
     }
 }

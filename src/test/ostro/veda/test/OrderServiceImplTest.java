@@ -5,7 +5,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import ostro.veda.common.dto.*;
 import ostro.veda.config.AppConfig;
-import ostro.veda.db.helpers.OrderStatus;
+import ostro.veda.common.validation.OrderStatus;
 import ostro.veda.service.OrderServiceImpl;
 import ostro.veda.service.ProductServiceImpl;
 import ostro.veda.service.UserServiceImpl;
@@ -58,7 +58,7 @@ public class OrderServiceImplTest {
 
         OrderDTO orderDTO = new OrderDTO(0, userId, null, 0,
                 OrderStatus.PENDING_PAYMENT.getStatus(), List.of(), addressDTO, addressDTO,
-                null, null, 0);
+                null, null, null, 0);
 
         OrderDetailDTO orderDetailDTO = new OrderDetailDTO(0, orderDTO, productDTO,
                 3, productDTO.getPrice(), 0);
@@ -116,7 +116,7 @@ public class OrderServiceImplTest {
         orderDTO = orderService.add(orderDTO);
         orderDTO = orderService.update(new OrderDTO(orderDTO.getOrderId(), orderDTO.getUserId(),
                 null, 0, OrderStatus.PROCESSING.getStatus(), null, null,
-                null, null, null, 0));
+                null, null, null, null, 0));
         assertNotNull(orderDTO);
 
         // close context (container)
@@ -174,7 +174,7 @@ public class OrderServiceImplTest {
         OrderDetailDTO orderDetailDTO = getOrderDetail(orderDTO, productDTO);
         orderDTO = orderService.update(new OrderDTO(orderDTO.getOrderId(), orderDTO.getUserId(),
                 null, 0, OrderStatus.DELIVERED.getStatus(), null, null,
-                null, null, null, 0));
+                null, null, null, null, 0));
         orderDTO = orderService.returnItem(orderDetailDTO);
         assertNotNull(orderDTO);
 

@@ -7,11 +7,10 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import ostro.veda.common.dto.UserDTO;
 import ostro.veda.common.error.ErrorHandling;
+import ostro.veda.common.util.Action;
 import ostro.veda.common.validation.SanitizeUtil;
 import ostro.veda.common.validation.ValidateUtil;
 import ostro.veda.db.UserRepository;
-import ostro.veda.db.helpers.database.Action;
-import ostro.veda.service.events.AuditEvent;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -21,14 +20,31 @@ import java.util.Base64;
 @Slf4j
 @Component
 public class UserServiceImpl implements UserService {
-
     private final ApplicationEventPublisher applicationEventPublisher;
+
     private final UserRepository userRepositoryImpl;
 
     @Autowired
     public UserServiceImpl(ApplicationEventPublisher applicationEventPublisher, UserRepository userRepositoryImpl) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.userRepositoryImpl = userRepositoryImpl;
+    }
+
+    @Override
+    public UserDTO add(UserDTO userDTO) {
+        log.info("add() -> add() new User");
+        try {
+            if (userDTO.getSalt().isBlank()) return null;
+            return userRepositoryImpl.add(userDTO);
+        } catch (Exception e) {
+            log.warn(e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public UserDTO update(UserDTO userDTO) {
+        return null;
     }
 
     @Override
@@ -39,18 +55,11 @@ public class UserServiceImpl implements UserService {
             userDTO = SanitizeUtil.sanitizeUser(userDTO);
             UserDTO user = getUserWithSaltAndHash(userDTO, password);
 
-            UserDTO userReturned = userRepositoryImpl.add(user);
+            userDTO = add(user);
 
-            AuditEvent event = AuditEvent.builder()
-                    .source(this)
-                    .action(Action.INSERT)
-                    .userDTO(userReturned)
-                    .userId(user.getUserId())
-                    .id(user.getUserId())
-                    .build();
-            applicationEventPublisher.publishEvent(event);
+            this.auditCaller(applicationEventPublisher, this, Action.INSERT, userDTO, 1);
 
-            return userReturned;
+            return userDTO;
 
         } catch (ErrorHandling.InvalidInputException e) {
             log.warn(e.getMessage());
@@ -65,18 +74,11 @@ public class UserServiceImpl implements UserService {
             ValidateUtil.validateUser(userDTO, password);
             UserDTO user = getUserWithSaltAndHash(userDTO, password);
 
-            UserDTO userReturned = userRepositoryImpl.update(user);
+            userDTO = userRepositoryImpl.update(user);
 
-            AuditEvent event = AuditEvent.builder()
-                    .source(this)
-                    .action(Action.UPDATE)
-                    .userDTO(userReturned)
-                    .userId(user.getUserId())
-                    .id(user.getUserId())
-                    .build();
-            applicationEventPublisher.publishEvent(event);
+            this.auditCaller(applicationEventPublisher, this, Action.UPDATE, userDTO, 1);
 
-            return userReturned;
+            return userDTO;
 
         } catch (ErrorHandling.InvalidInputException e) {
             log.warn(e.getMessage());

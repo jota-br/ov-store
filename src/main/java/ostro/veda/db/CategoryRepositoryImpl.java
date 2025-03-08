@@ -5,7 +5,7 @@ import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
 import ostro.veda.common.dto.CategoryDTO;
 import ostro.veda.db.helpers.EntityManagerHelper;
-import ostro.veda.db.helpers.database.CategoryColumns;
+import ostro.veda.db.helpers.enums.CategoryColumns;
 import ostro.veda.db.jpa.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

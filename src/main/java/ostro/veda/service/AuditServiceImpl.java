@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import ostro.veda.common.dto.AuditDTO;
 import ostro.veda.common.dto.AuditDataDTO;
 import ostro.veda.common.error.ErrorHandling;
-import ostro.veda.common.validation.SanitizeUtil;
 import ostro.veda.common.validation.ValidateUtil;
 import ostro.veda.db.AuditRepository;
 
@@ -26,10 +25,10 @@ public class AuditServiceImpl implements AuditService {
     public AuditDTO add(@NonNull AuditDataDTO auditDataDTO) {
 
         try {
-
+            log.info("add() new Audit = {} -> {}", auditDataDTO.action(), auditDataDTO.table());
             AuditDTO auditDTO = buildAuditDTO(auditDataDTO);
             ValidateUtil.validateAudit(auditDTO);
-            auditDTO = SanitizeUtil.sanitizeAudit(auditDTO);
+//            auditDTO = SanitizeUtil.sanitizeAudit(auditDTO);
             return auditRepository.add(auditDTO);
 
         } catch (ErrorHandling.InvalidInputException e) {
@@ -43,28 +42,13 @@ public class AuditServiceImpl implements AuditService {
     @Override
     public AuditDTO buildAuditDTO(AuditDataDTO auditDataDTO) {
 
-        StringBuilder sb = new StringBuilder();
-
+        log.info("buildAuditDTO()");
         String tableName = auditDataDTO.table();
         String action = auditDataDTO.action();
         String string = auditDataDTO.string();
-        int id = auditDataDTO.id();
         int userId = auditDataDTO.userId();
 
-        sb.append("Action = ")
-                .append(action)
-                .append(" -> Table = ")
-                .append(tableName)
-                .append(" : ID -> ")
-                .append(id)
-                .append(" : Changed by -> ")
-                .append(userId)
-                .append("\n")
-                .append("\t")
-                .append(string);
-
-
-        return new AuditDTO(0, action, tableName, sb.toString(),
+        return new AuditDTO(0, action, tableName, string,
                 null, null, userId);
     }
 
