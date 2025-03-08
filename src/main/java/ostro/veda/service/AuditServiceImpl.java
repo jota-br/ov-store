@@ -4,11 +4,12 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ostro.veda.common.dto.AuditDTO;
-import ostro.veda.common.dto.AuditDataDTO;
-import ostro.veda.common.error.ErrorHandling;
-import ostro.veda.common.validation.ValidateUtil;
-import ostro.veda.db.AuditRepository;
+import ostro.veda.service.interfaces.AuditService;
+import ostro.veda.model.dto.AuditDto;
+import ostro.veda.model.dto.AuditDataDto;
+import ostro.veda.util.exception.InputException;
+import ostro.veda.util.validation.ValidateUtil;
+import ostro.veda.repository.interfaces.AuditRepository;
 
 @Slf4j
 @Component
@@ -22,16 +23,16 @@ public class AuditServiceImpl implements AuditService {
     }
 
     @Override
-    public AuditDTO add(@NonNull AuditDataDTO auditDataDTO) {
+    public AuditDto add(@NonNull AuditDataDto auditDataDTO) {
 
         try {
             log.info("add() new Audit = {} -> {}", auditDataDTO.action(), auditDataDTO.table());
-            AuditDTO auditDTO = buildAuditDTO(auditDataDTO);
+            AuditDto auditDTO = buildAuditDTO(auditDataDTO);
             ValidateUtil.validateAudit(auditDTO);
 //            auditDTO = SanitizeUtil.sanitizeAudit(auditDTO);
             return auditRepository.add(auditDTO);
 
-        } catch (ErrorHandling.InvalidInputException e) {
+        } catch (InputException.InvalidInputException e) {
 
             log.warn(e.getMessage());
             return null;
@@ -40,7 +41,7 @@ public class AuditServiceImpl implements AuditService {
     }
 
     @Override
-    public AuditDTO buildAuditDTO(AuditDataDTO auditDataDTO) {
+    public AuditDto buildAuditDTO(AuditDataDto auditDataDTO) {
 
         log.info("buildAuditDTO()");
         String tableName = auditDataDTO.table();
@@ -48,7 +49,7 @@ public class AuditServiceImpl implements AuditService {
         String string = auditDataDTO.string();
         int userId = auditDataDTO.userId();
 
-        return new AuditDTO(0, action, tableName, string,
+        return new AuditDto(0, action, tableName, string,
                 null, null, userId);
     }
 

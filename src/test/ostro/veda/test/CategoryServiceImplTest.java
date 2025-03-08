@@ -3,7 +3,7 @@ package ostro.veda.test;
 import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import ostro.veda.common.dto.CategoryDTO;
+import ostro.veda.model.dto.CategoryDto;
 import ostro.veda.config.AppConfig;
 import ostro.veda.service.CategoryServiceImpl;
 
@@ -11,25 +11,16 @@ import static org.junit.Assert.assertNotNull;
 
 public class CategoryServiceImplTest {
 
-    private CategoryDTO getCategoryDTO() {
-        return new CategoryDTO(0, "Category Name", "Category Description",
-                true, null, null, 0);
-    }
-
-    private CategoryDTO getCategoryDTOWithId(int id) {
-        return new CategoryDTO(id, "Furniture", "Furniture Hand Made Products",
-                true, null, null, 0);
-    }
+    private static Helper helper = new Helper();
 
     @Test
     public void add() {
 
-        ResetTables.resetTables();
         ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 
         CategoryServiceImpl categoryService = context.getBean(CategoryServiceImpl.class);
 
-        CategoryDTO categoryDTO = categoryService.add(getCategoryDTO());
+        CategoryDto categoryDTO = categoryService.add(helper.getCategoryDTO());
         assertNotNull(categoryDTO);
 
         context.close();
@@ -43,8 +34,8 @@ public class CategoryServiceImplTest {
 
         CategoryServiceImpl categoryService = context.getBean(CategoryServiceImpl.class);
 
-        CategoryDTO categoryDTO = categoryService.add(getCategoryDTO());
-        categoryDTO = categoryService.update(getCategoryDTOWithId(categoryDTO.getCategoryId()));
+        CategoryDto categoryDTO = categoryService.add(helper.getCategoryDTO());
+        categoryDTO = categoryService.update(helper.getCategoryDTOWithId(categoryDTO.getCategoryId()));
         assertNotNull(categoryDTO);
 
         context.close();

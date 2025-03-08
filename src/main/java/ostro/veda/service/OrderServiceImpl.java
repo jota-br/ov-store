@@ -4,12 +4,15 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-import ostro.veda.common.dto.OrderDTO;
-import ostro.veda.common.dto.OrderDetailDTO;
-import ostro.veda.common.error.ErrorHandling;
-import ostro.veda.common.util.Action;
-import ostro.veda.common.validation.ValidateUtil;
-import ostro.veda.db.OrderRepository;
+import ostro.veda.service.interfaces.OrderService;
+import ostro.veda.model.dto.OrderDto;
+import ostro.veda.model.dto.OrderDetailDto;
+import ostro.veda.util.exception.InputException;
+import ostro.veda.util.enums.Action;
+import ostro.veda.util.constant.MainServicesMethodsNames;
+import ostro.veda.util.validation.ValidateUtil;
+import ostro.veda.repository.interfaces.OrderRepository;
+import ostro.veda.service.events.EventPayload;
 
 @Slf4j
 @Component
@@ -24,7 +27,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDTO add(@NonNull OrderDTO orderDTO) {
+    public OrderDto add(@NonNull OrderDto orderDTO) {
         try {
             log.info("add() new Order for User = {}", orderDTO.getUserId());
             ValidateUtil.validateOrder(orderDTO);
@@ -32,6 +35,11 @@ public class OrderServiceImpl implements OrderService {
             orderDTO = orderRepositoryImpl.add(orderDTO);
 
             this.auditCaller(applicationEventPublisher, this, Action.INSERT, orderDTO, 1);
+
+            if (orderDTO.getCoupon() != null)
+                this.applicationEventPublisher.publishEvent(
+                        new EventPayload(this, orderDTO.getCoupon(), MainServicesMethodsNames.UPDATE)
+                );
 
             return orderDTO;
 
@@ -42,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDTO update(@NonNull OrderDTO orderDTO) {
+    public OrderDto update(@NonNull OrderDto orderDTO) {
         try {
             log.info("update() OrderStatus for Order = {}", orderDTO.getOrderId());
             ValidateUtil.validateOrderIdAndStatus(orderDTO.getOrderId(), orderDTO.getStatus());
@@ -53,36 +61,36 @@ public class OrderServiceImpl implements OrderService {
 
             return orderDTO;
 
-        } catch (ErrorHandling.InvalidInputException e) {
+        } catch (InputException.InvalidInputException e) {
             log.warn(e.getMessage());
             return null;
         }
     }
 
     @Override
-    public OrderDTO cancelOrder(int orderId) {
+    public OrderDto cancelOrder(int orderId) {
         try {
             log.info("cancelOrder() Order = {}", orderId);
             ValidateUtil.validateId(orderId);
 
-            OrderDTO orderDTO = orderRepositoryImpl.cancelOrder(orderId);
+            OrderDto orderDTO = orderRepositoryImpl.cancelOrder(orderId);
 
             this.auditCaller(applicationEventPublisher, this, Action.UPDATE, orderDTO, 1);
 
             return orderDTO;
 
-        } catch (UnsupportedOperationException | ErrorHandling.InvalidInputException e) {
+        } catch (UnsupportedOperationException | InputException.InvalidInputException e) {
             log.warn(e.getMessage());
             return null;
         }
     }
 
     @Override
-    public OrderDTO returnItem(@NonNull OrderDetailDTO returningItem) {
+    public OrderDto returnItem(@NonNull OrderDetailDto returningItem) {
         try {
             log.info("returnItem() Product = {}", returningItem.getProduct().getProductId());
 
-            OrderDTO orderDTO = orderRepositoryImpl.returnItem(returningItem);
+            OrderDto orderDTO = orderRepositoryImpl.returnItem(returningItem);
 
             this.auditCaller(applicationEventPublisher, this, Action.UPDATE, orderDTO, 1);
 

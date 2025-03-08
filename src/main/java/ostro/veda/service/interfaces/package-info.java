@@ -1,0 +1,1 @@
+package ostro.veda.service.interfaces;

@@ -11,7 +11,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import ostro.veda.db.helpers.EntityManagerHelper;
+import ostro.veda.repository.helpers.EntityManagerHelper;
 
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -36,7 +36,7 @@ public class AppConfig {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
         factoryBean.setDataSource(dataSource);
-        factoryBean.setPersistenceUnitName("ostro.veda.db");
+        factoryBean.setPersistenceUnitName("ostro.veda.repository");
         factoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         factoryBean.setJpaProperties(jpaProperties());
         return factoryBean;
