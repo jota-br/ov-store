@@ -66,6 +66,8 @@ public class ValidateUtil {
         hasValidZeroOrHigherPrice(orderDTO.getTotalAmount());
         hasValidOrderStatus(orderDTO.getStatus());
 
+        if (orderDTO.getCoupon() != null) validateCoupon(orderDTO.getCoupon());
+
         validateOrderDetail(orderDTO.getOrderDetails());
     }
 
@@ -286,7 +288,7 @@ public class ValidateUtil {
     }
 
     private static void hasValidCode(String input) throws ErrorHandling.InvalidInputException {
-        Pattern pattern = Pattern.compile("[a-zA-Z0-9]{0,36}");
+        Pattern pattern = Pattern.compile("[a-zA-Z0-9\\-]{0,36}");
         Matcher matcher = pattern.matcher(input);
 
         if (matcher.matches()) return;

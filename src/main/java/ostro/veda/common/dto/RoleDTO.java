@@ -32,9 +32,9 @@ public class RoleDTO {
                 .add("\"roleId\":" + roleId)
                 .add("\"name\":\"" + name + "\"")
                 .add("\"description\":\"" + description + "\"")
-                .add("\"permissions\":" + permissions)
-                .add("\"createdAt\":" + createdAt)
-                .add("\"updatedAt\":" + updatedAt)
+//                .add("\"permissions\":" + permissions)
+                .add("\"createdAt\":\"" + createdAt + "\"")
+                .add("\"updatedAt\":\"" + updatedAt + "\"")
                 .toString();
     }
 

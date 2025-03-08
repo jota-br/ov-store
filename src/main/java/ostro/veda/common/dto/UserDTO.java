@@ -38,16 +38,17 @@ public class UserDTO {
         return new StringJoiner(", ", "{", "}")
                 .add("\"userId\":" + userId)
                 .add("\"username\":\"" + username + "\"")
-                .add("\"salt\":\"*\"")
-                .add("\"hash\":\"*\"")
+                .add("\"salt\":\"" + salt + "\"")
+                .add("\"hash\":\"" + hash + "\"")
                 .add("\"email\":\"" + email + "\"")
                 .add("\"firstName\":\"" + firstName + "\"")
                 .add("\"lastName\":\"" + lastName + "\"")
                 .add("\"phone\":\"" + phone + "\"")
                 .add("\"isActive\":" + isActive)
+                .add("\"role\":" + role)
                 .add("\"addresses\":" + addresses)
-                .add("\"createdAt\":" + createdAt)
-                .add("\"updatedAt\":" + updatedAt)
+                .add("\"createdAt\":\"" + createdAt + "\"")
+                .add("\"updatedAt\":\"" + updatedAt + "\"")
                 .toString();
     }
 }

@@ -27,7 +27,7 @@ public class OrderStatusHistoryDTO {
     public String toJSON() {
         return new StringJoiner(", ", "{", "}")
                 .add("\"orderStatusHistoryId\":" + orderStatusHistoryId)
-                .add("\"order\":" + order.getOrderId())
+//                .add("\"order\":" + order.getOrderId())
                 .add("\"status\":\"" + status + "\"")
                 .add("\"changedAt\":\"" + changedAt + "\"")
                 .toString();

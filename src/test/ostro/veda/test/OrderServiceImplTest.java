@@ -6,10 +6,12 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import ostro.veda.common.dto.*;
 import ostro.veda.config.AppConfig;
 import ostro.veda.common.validation.OrderStatus;
+import ostro.veda.service.CouponServiceImpl;
 import ostro.veda.service.OrderServiceImpl;
 import ostro.veda.service.ProductServiceImpl;
 import ostro.veda.service.UserServiceImpl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +70,26 @@ public class OrderServiceImplTest {
         return orderDTO;
     }
 
+    private OrderDTO getOrderWithCoupon(ProductDTO productDTO, AddressDTO addressDTO, int userId, CouponDTO couponDTO) {
+
+        OrderDTO orderDTO = new OrderDTO(0, userId, null, 0,
+                OrderStatus.PENDING_PAYMENT.getStatus(), List.of(), addressDTO, addressDTO,
+                null, couponDTO, null, 0);
+
+        OrderDetailDTO orderDetailDTO = new OrderDetailDTO(0, orderDTO, productDTO,
+                3, productDTO.getPrice(), 0);
+
+        orderDTO.setOrderDetails(List.of(orderDetailDTO));
+
+        return orderDTO;
+    }
+
+    public CouponDTO getCouponDTO() {
+        return new CouponDTO(0, "SALES2025", "Sales 2025",
+                "percentage", 15, LocalDateTime.now().plusDays(1),
+                10, null, 0);
+    }
+
     @Test
     public void add() {
 
@@ -77,6 +99,7 @@ public class OrderServiceImplTest {
         UserServiceImpl userService = context.getBean(UserServiceImpl.class);
         ProductServiceImpl productService = context.getBean(ProductServiceImpl.class);
         OrderServiceImpl orderService = context.getBean(OrderServiceImpl.class);
+        CouponServiceImpl couponService = context.getBean(CouponServiceImpl.class);
 
         UserDTO userDTO = getUserDTO();
         userDTO = userService.add(userDTO, "password123*@");
@@ -88,6 +111,10 @@ public class OrderServiceImplTest {
 
         OrderDTO orderDTO = getOrder(productDTO, userDTO.getAddresses().get(0), userDTO.getUserId());
         orderDTO = orderService.add(orderDTO);
+        assertNotNull(orderDTO);
+
+        CouponDTO couponDTO = couponService.add(getCouponDTO());
+        orderDTO = orderService.add(getOrderWithCoupon(productDTO, userDTO.getAddresses().get(0), userDTO.getUserId(), couponDTO));
         assertNotNull(orderDTO);
 
         // close context (container)
