@@ -21,7 +21,7 @@ public interface CouponService extends Service<CouponDto> {
         String code = generateCode(couponDTO.getCode());
         couponDTO = new CouponDto(couponDTO.getCouponId(), code, couponDTO.getDescription(),
                 couponDTO.getDiscountType(), couponDTO.getDiscountValue(), couponDTO.getExpirationDate(),
-                couponDTO.getUsageLimit(), couponDTO.getCreatedAt(), couponDTO.getVersion());
+                couponDTO.getUsageLimit(), couponDTO.getCreatedAt(), couponDTO.getUpdatedAt(), couponDTO.getVersion());
         return couponDTO;
     }
 }

@@ -419,7 +419,13 @@ public class Helper {
     public CouponDto getCouponDTO() {
         return new CouponDto(0, getRandomCouponCode(), getRandomCouponDescription(),
                 getRandomDiscountType(), getRandomInt(100), getRandomDateTime(),
-                getRandomInt(999999), null, 0);
+                getRandomInt(999999), null, null, 0);
+    }
+
+    public CouponDto getCouponDTOWithId(CouponDto couponDto) {
+        return new CouponDto(couponDto.getCouponId(), couponDto.getCode(), couponDto.getDescription(),
+                couponDto.getDiscountType(), couponDto.getDiscountValue(), couponDto.getExpirationDate(),
+                couponDto.getUsageLimit(), couponDto.getCreatedAt(), couponDto.getUpdatedAt(), 0);
     }
 
     public ProductDto getProductDTO() {

@@ -181,7 +181,8 @@ Create Table If Not Exists coupons (
   expiration_date Date Not Null,
   usage_limit Int Not Null,
   version int Default 0,
-  created_at Timestamp Default Current_Timestamp
+  created_at Timestamp Default Current_Timestamp,
+  updated_at Timestamp Default Current_Timestamp
 );
 
 Create Table If Not Exists order_coupons (

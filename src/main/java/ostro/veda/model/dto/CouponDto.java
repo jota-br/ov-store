@@ -45,6 +45,7 @@ public class CouponDto implements Dto {
     private final int usageLimit;
 
     private final LocalDateTime createdAt;
+    private final LocalDateTime updatedAt;
     private final int version;
 
     @Override
@@ -52,16 +53,18 @@ public class CouponDto implements Dto {
         return toJSON();
     }
 
+    @Override
     public String toJSON() {
         return new StringJoiner(", ", "{", "}")
                 .add("\"couponId\":" + couponId)
                 .add("\"code\":\"" + code + "\"")
                 .add("\"description\":\"" + description + "\"")
-                .add("\"discountType\":\"" + discountType.getDiscountType() + "\"")
+                .add("\"discountType\":" + discountType)
                 .add("\"discountValue\":" + discountValue)
                 .add("\"expirationDate\":\"" + expirationDate + "\"")
                 .add("\"usageLimit\":" + usageLimit)
                 .add("\"createdAt\":\"" + createdAt + "\"")
+                .add("\"updatedAt\":\"" + updatedAt + "\"")
                 .toString();
     }
 }
