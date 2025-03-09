@@ -44,7 +44,6 @@ public class UserDto implements Dto {
     private final String phone;
 
     private final boolean isActive;
-
     private final RoleDto role;
 
     @Valid

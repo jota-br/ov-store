@@ -13,7 +13,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import ostro.veda.repository.helpers.EntityManagerHelper;
 
-import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
@@ -23,7 +22,7 @@ import java.util.Properties;
 public class AppConfig {
 
     @Bean
-    public DataSource dataSource() {
+    public HikariDataSource dataSource() {
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setDriverClassName("org.mariadb.jdbc.Driver");
         dataSource.setJdbcUrl(System.getenv().getOrDefault("DB_URL", "jdbc:mariadb://localhost:3306/ov_store"));
@@ -33,7 +32,7 @@ public class AppConfig {
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(HikariDataSource dataSource) {
         LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
         factoryBean.setDataSource(dataSource);
         factoryBean.setPersistenceUnitName("ostro.veda.repository");
