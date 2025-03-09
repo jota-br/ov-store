@@ -1,6 +1,8 @@
 package ostro.veda.service;
 
-import lombok.NonNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -9,9 +11,9 @@ import ostro.veda.model.dto.UserDto;
 import ostro.veda.repository.interfaces.UserRepository;
 import ostro.veda.service.interfaces.UserService;
 import ostro.veda.util.enums.Action;
-import ostro.veda.util.exception.InputException;
 import ostro.veda.util.validation.SanitizeUtil;
 import ostro.veda.util.validation.ValidatorUtil;
+import ostro.veda.util.validation.annotation.ValidPassword;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -34,7 +36,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto add(@NonNull UserDto userDTO) {
+    public UserDto add(@NotNull @Valid UserDto userDTO) {
 
         log.info("add() -> add() new User");
 
@@ -52,7 +54,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto update(UserDto userDTO) {
+    public UserDto update(@NotNull @Valid UserDto userDTO) {
 
         log.info("update() -> update() User");
 
@@ -69,14 +71,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
-    public UserDto add(@NonNull UserDto userDTO, @NonNull String password) {
+    public UserDto add(UserDto userDTO, @NotBlank @ValidPassword String password) {
 
         log.info("add() new User = [{}, {}]", userDTO.getUsername(), userDTO.getEmail());
 
         try {
 
-            validatorUtil.validate(userDTO);
             userDTO = SanitizeUtil.sanitizeUser(userDTO);
             UserDto user = getUserWithSaltAndHash(userDTO, password);
 
@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
 
             return userDTO;
 
-        } catch (InputException.InvalidInputException e) {
+        } catch (Exception e) {
 
             log.warn(e.getMessage());
             return null;
@@ -95,13 +95,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto update(@NonNull UserDto userDTO, @NonNull String password) {
+    public UserDto update(UserDto userDTO, @NotBlank @ValidPassword String password) {
 
         log.info("update() User = [{}, {}, {}]", userDTO.getUserId(), userDTO.getUsername(), userDTO.getEmail());
 
         try {
 
-            validatorUtil.validate(userDTO);
             UserDto user = getUserWithSaltAndHash(userDTO, password);
 
             userDTO = update(user);
@@ -110,7 +109,7 @@ public class UserServiceImpl implements UserService {
 
             return userDTO;
 
-        } catch (InputException.InvalidInputException e) {
+        } catch (Exception e) {
 
             log.warn(e.getMessage());
             return null;
@@ -118,7 +117,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private UserDto getUserWithSaltAndHash(@NonNull UserDto userDTO, @NonNull String password) {
+    private UserDto getUserWithSaltAndHash(UserDto userDTO, String password) {
 
         log.info("getUserWithSaltAndHash() -> generating salt and hash");
 
@@ -155,7 +154,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private String getHash(@NonNull String password, byte[] salt) {
+    private String getHash(String password, byte[] salt) {
 
         log.info("getHash()");
 
