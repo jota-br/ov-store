@@ -4,18 +4,16 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import ostro.veda.repository.interfaces.OrderRepository;
-import ostro.veda.model.dto.OrderDto;
 import ostro.veda.model.dto.OrderDetailDto;
+import ostro.veda.model.dto.OrderDto;
 import ostro.veda.model.dto.OrderStatusHistoryDto;
-import ostro.veda.util.exception.InputException;
+import ostro.veda.repository.dao.*;
+import ostro.veda.repository.interfaces.OrderRepository;
 import ostro.veda.util.enums.DiscountType;
 import ostro.veda.util.enums.OrderStatus;
-import ostro.veda.repository.helpers.EntityManagerHelper;
-import ostro.veda.repository.dao.*;
+import ostro.veda.util.exception.InputException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,13 +26,6 @@ public class OrderRepositoryImpl implements OrderRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private final EntityManagerHelper entityManagerHelper;
-
-    @Autowired
-    public OrderRepositoryImpl(EntityManagerHelper entityManagerHelper) {
-        this.entityManagerHelper = entityManagerHelper;
-    }
-
     enum OrderOperation {
         INCREASE,
         DECREASE;
@@ -44,7 +35,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Transactional
     public OrderDto add(@NonNull OrderDto orderDTO) {
 
-        log.info("add() new Order = {}", orderDTO.getOrderId());
+        log.info("add() new Order = {} for User = {}", orderDTO.getOrderDate(), orderDTO.getUserId());
         Order order = buildOrder(orderDTO);
         if (order == null) return null;
 
@@ -65,7 +56,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Transactional
     public OrderDto update(@NonNull OrderDto orderDTO) {
 
-        log.info("update() Order = {}", orderDTO.getOrderId());
+        log.info("update() Order = {} for User = {}", orderDTO.getOrderDate(), orderDTO.getUserId());
         Order order = this.entityManager.find(Order.class, orderDTO.getOrderId());
         if (order == null) return null;
         order.updateOrderStatus(orderDTO.getStatus());
@@ -90,6 +81,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     public OrderDto cancelOrder(int orderId) {
 
         log.info("cancelOrder() Order = {}", orderId);
+
         Order order = this.entityManager.find(Order.class, orderId);
         if (order == null) return null;
 
@@ -106,7 +98,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
         orderDetailList.addAll(newOrderDetails);
         order.setOrderDetails(orderDetailList);
-        String status = OrderStatus.CANCELLED.getStatus();
+        OrderStatus status = OrderStatus.CANCELLED;
         order.updateOrderStatus(status);
         order = buildNewOrderStatusHistory(order);
 
@@ -133,8 +125,9 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Transactional
     public OrderDto returnItem(@NonNull OrderDetailDto orderDetailDTO) {
 
-        log.info("returnItem() Product and Quantity for Order = [{}, {}, {}]", orderDetailDTO.getProduct().getProductId(),
-                orderDetailDTO.getQuantity(), orderDetailDTO.getOrder().getOrderId());
+        log.info("returnItem() Product and Quantity in Order = [{}, {}, {}] for User = {}", orderDetailDTO.getProduct().getProductId(),
+                orderDetailDTO.getQuantity(), orderDetailDTO.getOrder().getOrderId(), orderDetailDTO.getOrder().getUserId());
+
         Order order = this.entityManager.find(Order.class, orderDetailDTO.getOrder().getOrderId());
         if (order == null) return null;
 
@@ -142,7 +135,7 @@ public class OrderRepositoryImpl implements OrderRepository {
             if (!isReturnAvailable(order.getUpdatedAt(), order.getStatus())) return null;
             if (!isReturningItemsCorrect(order, orderDetailDTO)) return null;
 
-            String status = OrderStatus.RETURN_REQUESTED.getStatus();
+            OrderStatus status = OrderStatus.RETURN_REQUESTED;
             order.updateOrderStatus(status);
             order = buildNewOrderStatusHistory(order);
 
@@ -161,6 +154,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     public Order buildOrder(@NonNull OrderDto orderDTO) {
 
         log.info("buildOrder() Order = {}", orderDTO.getOrderId());
+
         double totalAmount = 0.0;
 
         for (OrderDetailDto orderDetail : orderDTO.getOrderDetails()) {
@@ -186,10 +180,10 @@ public class OrderRepositoryImpl implements OrderRepository {
                 return null;
             }
 
-            String discountType = coupon.getDiscountType();
-            if (DiscountType.AMOUNT.getDiscountType().equals(discountType)) {
+            DiscountType discountType = coupon.getDiscountType();
+            if (DiscountType.AMOUNT.equals(discountType)) {
                 totalAmount -= coupon.getDiscountValue();
-            } else if (DiscountType.PERCENTAGE.getDiscountType().equals(discountType)) {
+            } else if (DiscountType.PERCENTAGE.equals(discountType)) {
                 totalAmount *= (100 - coupon.getDiscountValue()) / 100;
             }
         }
@@ -230,6 +224,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     public Order buildNewOrderStatusHistory(@NonNull Order order) {
 
         log.info("buildNewOrderStatusHistory() Order = {}", order.getOrderId());
+
         OrderStatusHistory orderStatusHistory = OrderStatusHistory
                 .builder()
                 .order(order)
@@ -257,6 +252,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     public OrderDetail buildOrderDetail(@NonNull Order order, @NonNull OrderDetailDto orderDetailDTO) {
 
         log.info("buildOrderDetail() Order = {}", order.getOrderId());
+
         Product product = this.entityManager.find(Product.class, orderDetailDTO.getProduct().getProductId());
         if (product == null) return null;
 
@@ -279,6 +275,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     public List<OrderStatusHistory> buildOrderStatusHistories(@NonNull Order order, List<OrderStatusHistoryDto> orderStatusHistoryDtos) {
 
         log.info("buildOrderStatusHistories() Order = {}", order.getOrderId());
+
         List<OrderStatusHistory> orderStatusHistoryList = new ArrayList<>();
 
         if (orderStatusHistoryDtos == null) return orderStatusHistoryList;
@@ -298,6 +295,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     public OrderStatusHistory buildOrderStatusHistory(@NonNull Order order, @NonNull OrderStatusHistoryDto orderStatusHistoryDTO) {
 
         log.info("buildOrderStatusHistory() Order = {}", order.getOrderId());
+
         return OrderStatusHistory
                 .builder()
                 .orderStatusHistoryId(orderStatusHistoryDTO.getOrderStatusHistoryId())
@@ -310,6 +308,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     private List<OrderDetail> updateProductInventory(@NonNull List<OrderDetailDto> orderDetailList, @NonNull OrderOperation orderOperation) {
 
         log.info("updateProductInventory() OrderDetail list size = {}", orderDetailList.size());
+
         List<OrderDetail> newOrderDetailList = new ArrayList<>();
         for (OrderDetailDto orderDetail : orderDetailList) {
 
@@ -346,26 +345,28 @@ public class OrderRepositoryImpl implements OrderRepository {
         return stock >= quantity;
     }
 
-    private boolean isCancellationAvailable(@NonNull String orderStatus) throws UnsupportedOperationException {
+    private boolean isCancellationAvailable(@NonNull OrderStatus orderStatus) throws UnsupportedOperationException {
 
         log.info("isCancellationAvailable() Order Status = {}", orderStatus);
+
         final int NO_CANCELLATION_ORDINAL = 4;
-        final int ordinal = OrderStatus.getOrdinal(orderStatus);
+        final int ordinal = orderStatus.ordinal();
         if (ordinal >= NO_CANCELLATION_ORDINAL) {
             throw new UnsupportedOperationException("Cancellation is unavailable, check product Order Status.");
         }
         return true;
     }
 
-    private boolean isReturnAvailable(@NonNull LocalDateTime orderDate, @NonNull String status)
+    private boolean isReturnAvailable(@NonNull LocalDateTime orderDate, @NonNull OrderStatus status)
             throws InputException.InvalidInputException {
 
         log.info("isReturnAvailable() Order Date and Status = [{}, {}]", orderDate, status);
+
         final int MAXIMUM_AMOUNT_OF_DAY_TO_RETURN = 30;
         LocalDateTime elapsedTime = LocalDateTime.now().minusDays(MAXIMUM_AMOUNT_OF_DAY_TO_RETURN);
         if (
                 elapsedTime.isAfter(orderDate) ||
-                        !OrderStatus.DELIVERED.getStatus().equals(status)
+                        !OrderStatus.DELIVERED.equals(status)
         ) {
             throw new InputException.InvalidInputException("Return is no longer available",
                     orderDate + ", status:" + status
@@ -377,6 +378,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     private boolean isReturningItemsCorrect(@NonNull Order order, @NonNull OrderDetailDto orderDetail) {
 
         log.info("isReturningItemsCorrect() Order and Product = [{}, {}]", order.getOrderId(), orderDetail.getOrderDetailId());
+
         int orderId = order.getOrderId();
         int orderDetailId = orderDetail.getOrder().getOrderId();
         if (orderId != orderDetailId) return false;

@@ -5,7 +5,7 @@
 
     <groupId>ostro.veda</groupId>
     <artifactId>ov-store</artifactId>
-    <version>0.22.0</version>
+    <version>0.22.1</version>
     <packaging>war</packaging>
 
     <name>Ostro Veda Store</name>
@@ -20,6 +20,7 @@
         <logback.version>1.5.11</logback.version>
         <lombok.version>1.18.34</lombok.version>
 
+        <!-- Spring -->
         <spring.version>6.1.14</spring.version>
         <spring.mvc.version>6.1.14</spring.mvc.version>
         <spring.tx.version>6.1.13</spring.tx.version>
@@ -32,9 +33,18 @@
         <hibernate.version>6.6.6.Final</hibernate.version>
         <commons.validator.version>1.9.0</commons.validator.version>
 
+        <!-- JAKARTA -->
         <jakarta.version>3.0.0</jakarta.version>
         <jakarta.servlet.version>6.1.0</jakarta.servlet.version>
         <jakarta.jsp.version>3.0.1</jakarta.jsp.version>
+        <!-- Validation -->
+        <!-- Jakarta -->
+        <jakarta.validation.version>3.1.0</jakarta.validation.version>
+        <jakarta.el.version>6.0.0</jakarta.el.version>
+        <!-- Hibernate -->
+        <hibernate.validator.version>8.0.1.Final</hibernate.validator.version>
+
+        <!-- Tomcat -->
         <tomcat.embed.jasper.version>10.1.29</tomcat.embed.jasper.version>
 
         <!-- Maven Plugins version -->
@@ -66,10 +76,16 @@
             <version>${spring.version}</version>
         </dependency>
 
+        <!-- Spring boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring.boot.web.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>${spring.boot.version}</version>
         </dependency>
 
         <!-- SPRING TX -->
@@ -77,13 +93,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
             <version>${spring.tx.version}</version>
-        </dependency>
-
-        <!-- SPRING BOOT -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <version>${spring.boot.version}</version>
         </dependency>
 
         <!-- APACHE EMAIL VALIDATOR -->
@@ -106,24 +115,47 @@
             <artifactId>mariadb-java-client</artifactId>
             <version>${mariadb.version}</version>
         </dependency>
+
+        <!-- JUnit -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
         </dependency>
 
-        <!-- JAKARTA ANNOTATION API -->
+        <!-- Jakarta -->
         <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
             <version>${jakarta.version}</version>
         </dependency>
-
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <version>${jakarta.servlet.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <!-- Validation -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>${jakarta.validation.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.validator.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.el</groupId>
+            <artifactId>jakarta.el-api</artifactId>
+            <version>${jakarta.el.version}</version>
+        </dependency>
+        <!-- JSP & JSTL -->
+        <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+            <version>${jakarta.jsp.version}</version>
         </dependency>
 
         <!-- JASPER -->
@@ -133,12 +165,6 @@
             <version>${tomcat.embed.jasper.version}</version>
         </dependency>
 
-        <!-- JSP & JSTL -->
-        <dependency>
-            <groupId>org.glassfish.web</groupId>
-            <artifactId>jakarta.servlet.jsp.jstl</artifactId>
-            <version>${jakarta.jsp.version}</version>
-        </dependency>
     </dependencies>
 
     <build>

@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 import ostro.veda.model.dto.AuditDto;
+import ostro.veda.util.enums.Action;
 
 import java.time.LocalDateTime;
 
@@ -25,8 +26,9 @@ public class Audit {
     @Column(name = "audit_id")
     private int auditId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "action", length = 50, nullable = false)
-    private String action;
+    private Action action;
 
     @Column(name = "changed_table", length = 50, nullable = false)
     private String changedTable;

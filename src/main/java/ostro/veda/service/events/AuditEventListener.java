@@ -39,7 +39,7 @@ public class AuditEventListener {
         String string = payload.toString();
         Action action = auditEvent.getAction();
 
-        AuditDataDto auditDataDTO = new AuditDataDto(string, action.getActionName(), table, auditEvent.getUserId());
+        AuditDataDto auditDataDTO = new AuditDataDto(string, action, table, auditEvent.getUserId());
         auditServiceImpl.add(auditDataDTO);
     }
 }

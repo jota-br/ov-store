@@ -3,13 +3,13 @@ package ostro.veda.test;
 import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import ostro.veda.model.dto.*;
-import ostro.veda.util.enums.OrderStatus;
 import ostro.veda.config.AppConfig;
+import ostro.veda.model.dto.*;
 import ostro.veda.service.CouponServiceImpl;
 import ostro.veda.service.OrderServiceImpl;
 import ostro.veda.service.ProductServiceImpl;
 import ostro.veda.service.UserServiceImpl;
+import ostro.veda.util.enums.OrderStatus;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -68,9 +68,8 @@ public class OrderServiceImplTest {
 
         OrderDto orderDTO = helper.getOrder(productDTO, userDTO.getAddresses().get(0), userDTO.getUserId());
         orderDTO = orderService.add(orderDTO);
-        orderDTO = orderService.update(new OrderDto(orderDTO.getOrderId(), orderDTO.getUserId(),
-                null, 0, OrderStatus.PROCESSING.getStatus(), null, null,
-                null, null, null, null, 0));
+        orderDTO = orderService.update(helper.getOrderWithId(orderDTO.getOrderId(),
+                orderDTO.getOrderDetails().get(0).getProduct(), orderDTO.getBillingAddress(), orderDTO.getUserId()));
         assertNotNull(orderDTO);
 
         // close context (container)
@@ -126,9 +125,9 @@ public class OrderServiceImplTest {
         orderDTO = orderService.add(orderDTO);
 
         OrderDetailDto orderDetailDTO = helper.getOrderDetail(orderDTO, productDTO);
-        orderDTO = orderService.update(new OrderDto(orderDTO.getOrderId(), orderDTO.getUserId(),
-                null, 0, OrderStatus.DELIVERED.getStatus(), null, null,
-                null, null, null, null, 0));
+        orderDTO = orderService.update(helper.getOrderWithIdAndStatus(orderDTO.getOrderId(),
+                orderDTO.getOrderDetails().get(0).getProduct(),
+                orderDTO.getBillingAddress(), OrderStatus.DELIVERED, orderDTO.getUserId()));
         orderDTO = orderService.returnItem(orderDetailDTO);
         assertNotNull(orderDTO);
 

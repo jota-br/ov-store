@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import ostro.veda.model.dto.OrderStatusHistoryDto;
+import ostro.veda.util.enums.OrderStatus;
 
 import java.time.LocalDateTime;
 
@@ -27,8 +28,9 @@ public class OrderStatusHistory {
     @JoinColumn(name = "order_id")
     private Order order;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String status;
+    private OrderStatus status;
 
     @CreationTimestamp
     @Column(name = "changed_at")

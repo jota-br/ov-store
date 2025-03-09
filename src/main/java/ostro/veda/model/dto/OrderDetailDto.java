@@ -1,23 +1,35 @@
 package ostro.veda.model.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import ostro.veda.model.dto.interfaces.Dto;
 import ostro.veda.util.annotation.Auditable;
-import ostro.veda.util.constant.TableNames;
+import ostro.veda.util.constant.TableName;
+import ostro.veda.util.validation.annotation.ValidNumber;
+import ostro.veda.util.validation.annotation.ValidPrice;
 
 import java.util.StringJoiner;
 
 @Getter
 @AllArgsConstructor
-@Auditable(tableName = TableNames.ORDER_DETAIL)
+@Auditable(tableName = TableName.ORDER_DETAIL)
 public class OrderDetailDto implements Dto {
 
     private final int orderDetailId;
+
+    @NotNull(message = "Order cannot be null")
     private final OrderDto order;
+
+    @NotNull(message = "Product cannot be null")
     private final ProductDto product;
+
+    @ValidNumber
     private final int quantity;
+
+    @ValidPrice
     private final double unitPrice;
+
     private final int version;
 
     @Override

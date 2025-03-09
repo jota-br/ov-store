@@ -40,7 +40,9 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     @Transactional
     public ProductDto add(@NonNull ProductDto productDTO) {
+
         log.info("add() new Product = {}", productDTO.getName());
+
         List<Product> result = this.entityManagerHelper.findByFields(this.entityManager, Product.class,
                 Map.of(ProductColumns.NAME.getColumnName(), productDTO.getName()));
         if (result != null && !result.isEmpty()) {
@@ -53,16 +55,21 @@ public class ProductRepositoryImpl implements ProductRepository {
 
             this.entityManager.persist(product);
             return product.transformToDto();
+
         } catch (Exception e) {
+
             log.warn(e.getMessage());
             return null;
+
         }
     }
 
     @Override
     @Transactional
     public ProductDto update(@NonNull ProductDto productDTO) {
+
         log.info("update() Product = [{}, {}]", productDTO.getProductId(), productDTO.getName());
+
         Product product = this.entityManager.find(Product.class, productDTO.getProductId());
 
         try {
@@ -80,7 +87,9 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public Product buildProduct(@NonNull ProductDto productDTO) {
+
         log.info("buildProduct() Product = [{}, {}]", productDTO.getProductId(), productDTO.getName());
+
         return Product
                 .builder()
                 .productId(productDTO.getProductId())
@@ -98,7 +107,9 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public List<Category> buildCategories(@NonNull List<CategoryDto> categoryDtos) {
+
         log.info("buildCategories() size = {}", categoryDtos.size());
+
         List<Category> categoriesList = new ArrayList<>();
         for (CategoryDto categoryDTO : categoryDtos) {
 
@@ -123,7 +134,9 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public Category buildCategory(@NonNull CategoryDto categoryDTO) {
+
         log.info("buildCategory() Category = [{}, {}]", categoryDTO.getCategoryId(), categoryDTO.getName());
+
         return Category
                 .builder()
                 .categoryId(categoryDTO.getCategoryId())
@@ -137,7 +150,9 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public List<ProductImage> buildImages(@NonNull List<ProductImageDto> productImageDtos) {
+
         log.info("buildImages() size = {}", productImageDtos.size());
+
         List<ProductImage> imagesList = new ArrayList<>();
         for (ProductImageDto productImageDTO : productImageDtos) {
 
@@ -162,7 +177,9 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public ProductImage buildImage(@NonNull ProductImageDto productImageDTO) {
+
         log.info("buildImage() ProductImage = [{}, {}]", productImageDTO.getProductImageId(), productImageDTO.getImageUrl());
+
         return ProductImage
                 .builder()
                 .productImageId(productImageDTO.getProductImageId())

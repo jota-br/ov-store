@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import ostro.veda.model.dto.CouponDto;
+import ostro.veda.util.enums.DiscountType;
 
 import java.time.LocalDateTime;
 
@@ -27,8 +29,9 @@ public class Coupon {
     @Column(name = "description")
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "discount_type", length = 50, nullable = false)
-    private String discountType;
+    private DiscountType discountType;
 
     @Column(name = "discount_value", nullable = false)
     private double discountValue;
@@ -42,6 +45,10 @@ public class Coupon {
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     @Version
     private int version;
@@ -57,6 +64,6 @@ public class Coupon {
     public CouponDto transformToDto() {
         return new CouponDto(this.getCouponId(), this.getCode(), this.getDescription(), this.getDiscountType(),
                 this.getDiscountValue(), this.getExpirationDate(), this.getUsageLimit(), this.getCreatedAt(),
-                this.getVersion());
+                this.getUpdatedAt(), this.getVersion());
     }
 }
