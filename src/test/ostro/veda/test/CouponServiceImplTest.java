@@ -34,5 +34,15 @@ public class CouponServiceImplTest {
     public void update() {
 
         ResetTables.resetTables();
+        try {
+            ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+            CouponServiceImpl couponService = context.getBean(CouponServiceImpl.class);
+
+            CouponDto couponDTO = couponService.add(helper.getCouponDTO());
+            couponDTO = couponService.update(helper.getCouponDTOWithId(couponDTO));
+            assertNotNull(couponDTO);
+        } catch (BeansException e) {
+            fail();
+        }
     }
 }

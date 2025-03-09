@@ -38,6 +38,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     @Transactional
     public UserDto add(@NonNull UserDto userDTO) {
+
         log.info("add() new User = [{}, {}]", userDTO.getUsername(), userDTO.getEmail());
 
         List<User> hasUser = this.entityManagerHelper.findByFields(this.entityManager, User.class,
@@ -53,14 +54,17 @@ public class UserRepositoryImpl implements UserRepository {
             return newUser.transformToDto();
 
         } catch (Exception e) {
+
             log.warn(e.getMessage());
             return null;
+
         }
     }
 
     @Override
     @Transactional
     public UserDto update(@NonNull UserDto userDTO) {
+
         log.info("update() User = [{}, {}, {}]", userDTO.getUserId(), userDTO.getUsername(), userDTO.getEmail());
 
         User user = this.entityManager.find(User.class, userDTO.getUserId());
@@ -76,13 +80,16 @@ public class UserRepositoryImpl implements UserRepository {
             return user.transformToDto();
 
         } catch (Exception e) {
+
             log.warn(e.getMessage());
             return null;
+
         }
     }
 
     @Override
     public User buildUser(@NonNull UserDto userDTO) throws InputException.InvalidInputException {
+
         log.info("buildUser() User = [{}, {}, {}]", userDTO.getUserId(), userDTO.getUsername(), userDTO.getEmail());
 
         List<Address> addressList = buildAddress(userDTO);
@@ -116,6 +123,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public List<Address> buildAddress(@NonNull UserDto userDTO) {
+
         log.info("buildAddress() Address for User = [{}, {}, {}]", userDTO.getUserId(), userDTO.getUsername(), userDTO.getEmail());
 
         User user = this.entityManager.find(User.class, userDTO.getUserId());

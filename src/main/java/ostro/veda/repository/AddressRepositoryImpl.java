@@ -33,11 +33,11 @@ public class AddressRepositoryImpl implements AddressRepository {
     @Transactional
     public AddressDto add(@NonNull AddressDto addressDTO) {
 
-        log.info("add() Address for User = {}", addressDTO.getUser().getUserId());
+        log.info("add() new Address = {} for User = {}", addressDTO.getAddressType() , addressDTO.getUser().getUserId());
+
         List<Address> result = this.entityManagerHelper.findByFields(this.entityManager, Address.class, Map.of(
                 AddressColumns.STREET_ADDRESS.getColumnName(), addressDTO.getStreetAddress(),
                 AddressColumns.ADDRESS_NUMBER.getColumnName(), addressDTO.getAddressNumber(),
-                AddressColumns.ADDRESS_TYPE.getColumnName(), addressDTO.getAddressType(),
                 AddressColumns.CITY.getColumnName(), addressDTO.getCity(),
                 AddressColumns.STATE.getColumnName(), addressDTO.getState(),
                 AddressColumns.ZIPCODE.getColumnName(), addressDTO.getZipCode(),
@@ -74,7 +74,7 @@ public class AddressRepositoryImpl implements AddressRepository {
     @Transactional
     public AddressDto update(@NonNull AddressDto addressDTO) {
 
-        log.info("update() Address for User = {}", addressDTO.getUser().getUserId());
+        log.info("update() Address = {} for User = {}", addressDTO.getAddressType() , addressDTO.getUser().getUserId());
         Address address = this.entityManager.find(Address.class, addressDTO.getAddressId());
         if (address == null) return null;
 
@@ -99,6 +99,7 @@ public class AddressRepositoryImpl implements AddressRepository {
     public Address buildAddress(@NonNull AddressDto addressDTO) {
 
         log.info("buildAddress() Address for User = {}", addressDTO.getUser().getUserId());
+
         User user = this.entityManager.find(User.class, addressDTO.getUser().getUserId());
         if (user == null) return null;
 

@@ -1,3 +1,5 @@
 package ostro.veda.model.dto;
 
-public record AuditDataDto(String string, String action, String table, int userId){}
+import ostro.veda.util.enums.Action;
+
+public record AuditDataDto(String string, Action action, String table, int userId){}

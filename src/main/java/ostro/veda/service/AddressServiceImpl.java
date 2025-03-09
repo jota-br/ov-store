@@ -5,23 +5,25 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-import ostro.veda.service.interfaces.AddressService;
 import ostro.veda.model.dto.AddressDto;
-import ostro.veda.util.exception.InputException;
-import ostro.veda.util.enums.Action;
-import ostro.veda.util.validation.SanitizeUtil;
-import ostro.veda.util.validation.ValidateUtil;
 import ostro.veda.repository.interfaces.AddressRepository;
+import ostro.veda.service.interfaces.AddressService;
+import ostro.veda.util.enums.Action;
+import ostro.veda.util.exception.InputException;
+import ostro.veda.util.validation.SanitizeUtil;
+import ostro.veda.util.validation.ValidatorUtil;
 
 @Slf4j
 @Component
 public class AddressServiceImpl implements AddressService {
 
+    private final ValidatorUtil validatorUtil;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final AddressRepository addressRepository;
 
     @Autowired
-    public AddressServiceImpl(ApplicationEventPublisher applicationEventPublisher, AddressRepository addressRepository) {
+    public AddressServiceImpl(ValidatorUtil validatorUtil, ApplicationEventPublisher applicationEventPublisher, AddressRepository addressRepository) {
+        this.validatorUtil = validatorUtil;
         this.applicationEventPublisher = applicationEventPublisher;
         this.addressRepository = addressRepository;
     }
@@ -30,7 +32,7 @@ public class AddressServiceImpl implements AddressService {
     public AddressDto add(@NonNull AddressDto addressDTO) {
         try {
             log.info("add() Address for User = {}", addressDTO.getUser().getUserId());
-            ValidateUtil.validateAddress(addressDTO);
+            validatorUtil.validate(addressDTO);
             addressDTO = SanitizeUtil.sanitizeAddress(addressDTO);
 
             addressDTO = addressRepository.add(addressDTO);
@@ -49,7 +51,7 @@ public class AddressServiceImpl implements AddressService {
     public AddressDto update(@NonNull AddressDto addressDTO) {
         try {
             log.info("update() Address for User = {}", addressDTO.getUser().getUserId());
-            ValidateUtil.validateAddress(addressDTO);
+            validatorUtil.validate(addressDTO);
             addressDTO = SanitizeUtil.sanitizeAddress(addressDTO);
 
             addressDTO = addressRepository.update(addressDTO);

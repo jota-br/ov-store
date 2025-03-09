@@ -1,8 +1,11 @@
 package ostro.veda.model.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import ostro.veda.model.dto.interfaces.Dto;
+import ostro.veda.util.validation.annotation.ValidDescription;
+import ostro.veda.util.validation.annotation.ValidName;
 
 import java.time.LocalDateTime;
 import java.util.StringJoiner;
@@ -12,8 +15,14 @@ import java.util.StringJoiner;
 public class PermissionDto implements Dto {
 
     private final int permissionId;
+
+    @NotBlank(message = "Name cannot be null")
+    @ValidName
     private final String name;
+
+    @ValidDescription
     private final String description;
+
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
     private final int version;

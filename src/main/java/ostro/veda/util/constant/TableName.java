@@ -3,7 +3,7 @@ package ostro.veda.util.constant;
 import java.util.HashSet;
 import java.util.List;
 
-public class TableNames {
+public class TableName {
 
     public static final String USER = "users";
     public static final String ADDRESS = "addresses";

@@ -1,6 +1,6 @@
 package ostro.veda.util.constant;
 
-public class MainServiceNames {
+public class ServiceName {
 
     private static final String MAIN_PACKAGE = "ostro.veda";
     private static final String SERVICE_PACKAGE = ".service";

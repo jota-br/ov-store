@@ -12,6 +12,7 @@ import ostro.veda.model.dto.CouponDto;
 import ostro.veda.model.dto.OrderDto;
 import ostro.veda.model.dto.OrderDetailDto;
 import ostro.veda.model.dto.OrderStatusHistoryDto;
+import ostro.veda.util.enums.OrderStatus;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,8 +41,9 @@ public class Order {
     @Column(name = "total_amount")
     private double totalAmount;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String status;
+    private OrderStatus status;
 
     @Setter
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = true)
@@ -73,7 +75,7 @@ public class Order {
     public Order() {
     }
 
-    public Order updateOrderStatus(String status) {
+    public Order updateOrderStatus(OrderStatus status) {
         this.status = status;
         return this;
     }
