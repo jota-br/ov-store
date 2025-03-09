@@ -17,14 +17,20 @@ public class ValidatorUtil {
     @Autowired
     private Validator validator;
 
-    public <T> void validation(@Valid T dto) throws InputException.InvalidInputException {
-        var violations = validator.validate(dto);
-        if (violations.isEmpty()) return;
+    public <T> void validate(@Valid T obj) throws InputException.InvalidInputException {
 
+        log.info("Validating = {}", obj.toString());
+        var violations = validator.validate(obj);
+        if (violations.isEmpty()) {
+            log.info("Object is valid");
+            return;
+        }
+
+        log.warn("Object is not valid");
         String violationsString = violations.stream()
                 .peek(violation -> log.info(violation.getMessage()))
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.joining(" : "));
-        throw new InputException.InvalidInputException(violationsString, dto.toString());
+        throw new InputException.InvalidInputException(violationsString, obj.toString());
     }
 }

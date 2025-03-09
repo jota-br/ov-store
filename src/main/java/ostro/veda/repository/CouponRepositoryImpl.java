@@ -34,7 +34,7 @@ public class CouponRepositoryImpl implements CouponRepository {
     @Transactional
     public CouponDto add(@NonNull CouponDto couponDTO) {
 
-        log.info("add() new Coupon code = {}", couponDTO.getCode());
+        log.info("add() new Coupon = {}", couponDTO.getCode());
         List<Coupon> coupons = entityManagerHelper.findByFields(entityManager, Coupon.class, Map.of(
                 CouponsColumns.CODE.getColumnName(), couponDTO.getCode())
         );

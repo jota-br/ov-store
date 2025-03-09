@@ -1,6 +1,7 @@
 package ostro.veda.util.validation;
 
 import ostro.veda.model.dto.*;
+import ostro.veda.util.enums.AddressType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,7 +93,7 @@ public class SanitizeUtil {
         UserDto userDTO = addressDTO.getUser();
         String streetAddress = sanitize(addressDTO.getStreetAddress());
         String addressNumber = sanitize(addressDTO.getAddressNumber());
-        String addressType = sanitize(addressDTO.getAddressType());
+        AddressType addressType = addressDTO.getAddressType();
         String city = sanitize(addressDTO.getCity());
         String state = sanitize(addressDTO.getState());
         String zipCode = sanitize(addressDTO.getZipCode());

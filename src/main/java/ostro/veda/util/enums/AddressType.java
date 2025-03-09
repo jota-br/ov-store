@@ -1,26 +1,25 @@
 package ostro.veda.util.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum AddressType {
 
-    HOME("Home"),
-    WORK("Work"),
-    BILLING("Billing"),
-    SHIPPING("Shipping"),
-    DELIVERY("Delivery"),
-    PICKUP("Pickup"),
-    OFFICE("Office"),
-    STORE("Store"),
-    PO_BOX("PO Box"),
-    WAREHOUSE("Warehouse"),
-    OTHER("Other");
+    HOME("HOME"),
+    WORK("WORK"),
+    BILLING("BILLING"),
+    SHIPPING("SHIPPING"),
+    DELIVERY("DELIVERY"),
+    PICKUP("PICKUP"),
+    OFFICE("OFFICE"),
+    STORE("STORE"),
+    PO_BOX("PO BOX"),
+    WAREHOUSE("WAREHOUSE"),
+    OTHER("OTHER");
 
-    private final String value;
+    private final String type;
 
-    AddressType(String value) {
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
+    AddressType(String type) {
+        this.type = type;
     }
 }

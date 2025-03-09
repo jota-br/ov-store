@@ -34,5 +34,6 @@ public class CouponServiceImplTest {
     public void update() {
 
         ResetTables.resetTables();
+
     }
 }

@@ -11,7 +11,6 @@ import ostro.veda.service.interfaces.UserService;
 import ostro.veda.util.enums.Action;
 import ostro.veda.util.exception.InputException;
 import ostro.veda.util.validation.SanitizeUtil;
-import ostro.veda.util.validation.ValidateUtil;
 import ostro.veda.util.validation.ValidatorUtil;
 
 import java.security.MessageDigest;
@@ -36,27 +35,48 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto add(@NonNull UserDto userDTO) {
+
         log.info("add() -> add() new User");
+
         try {
+
             if (userDTO.getSalt().isBlank()) return null;
             return userRepositoryImpl.add(userDTO);
+
         } catch (Exception e) {
+
             log.warn(e.getMessage());
             return null;
+
         }
     }
 
     @Override
     public UserDto update(UserDto userDTO) {
-        return null;
+
+        log.info("update() -> update() User");
+
+        try {
+
+            if (userDTO.getSalt().isBlank()) return null;
+            return userRepositoryImpl.update(userDTO);
+
+        } catch (Exception e) {
+
+            log.warn(e.getMessage());
+            return null;
+
+        }
     }
 
     @Override
     public UserDto add(@NonNull UserDto userDTO, @NonNull String password) {
+
         log.info("add() new User = [{}, {}]", userDTO.getUsername(), userDTO.getEmail());
+
         try {
-//            ValidateUtil.validateUser(userDTO, password);
-            validatorUtil.validation(userDTO);
+
+            validatorUtil.validate(userDTO);
             userDTO = SanitizeUtil.sanitizeUser(userDTO);
             UserDto user = getUserWithSaltAndHash(userDTO, password);
 
@@ -67,31 +87,40 @@ public class UserServiceImpl implements UserService {
             return userDTO;
 
         } catch (InputException.InvalidInputException e) {
+
             log.warn(e.getMessage());
             return null;
+
         }
     }
 
     @Override
     public UserDto update(@NonNull UserDto userDTO, @NonNull String password) {
+
         log.info("update() User = [{}, {}, {}]", userDTO.getUserId(), userDTO.getUsername(), userDTO.getEmail());
+
         try {
-            ValidateUtil.validateUser(userDTO, password);
+
+            validatorUtil.validate(userDTO);
             UserDto user = getUserWithSaltAndHash(userDTO, password);
 
-            userDTO = userRepositoryImpl.update(user);
+            userDTO = update(user);
 
             this.auditCaller(applicationEventPublisher, this, Action.UPDATE, userDTO, 1);
 
             return userDTO;
 
         } catch (InputException.InvalidInputException e) {
+
             log.warn(e.getMessage());
             return null;
+
         }
     }
 
     private UserDto getUserWithSaltAndHash(@NonNull UserDto userDTO, @NonNull String password) {
+
+        log.info("getUserWithSaltAndHash() -> generating salt and hash");
 
         byte[] salt = getSalt();
         String encodedSalt = getEncodedSalt(salt);
@@ -103,30 +132,45 @@ public class UserServiceImpl implements UserService {
     }
 
     private String getEncodedSalt(byte[] salt) {
+        log.info("getEncodedSalt()");
         return Base64.getEncoder().encodeToString(getSalt());
     }
 
     private byte[] getSalt() {
+
+        log.info("getSalt()");
+
         try {
+
             SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
             byte[] salt = new byte[32];
             sr.nextBytes(salt);
             return salt;
+
         } catch (NoSuchAlgorithmException e) {
+
             log.warn(e.getMessage());
             return null;
+
         }
     }
 
     private String getHash(@NonNull String password, byte[] salt) {
+
+        log.info("getHash()");
+
         try {
+
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(salt);
             byte[] hashedPassword = md.digest(password.getBytes());
             return Base64.getEncoder().encodeToString(hashedPassword);
+
         } catch (NoSuchAlgorithmException e) {
+
             log.warn(e.getMessage());
             return null;
+
         }
     }
 }

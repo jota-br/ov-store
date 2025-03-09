@@ -1,6 +1,8 @@
 package ostro.veda.test;
 
 import ostro.veda.model.dto.*;
+import ostro.veda.util.enums.AddressType;
+import ostro.veda.util.enums.DiscountType;
 import ostro.veda.util.enums.OrderStatus;
 
 import java.time.LocalDateTime;
@@ -249,9 +251,9 @@ public class Helper {
         return couponDescriptions.get(getRandomInt(couponDescriptions.size()));
     }
 
-    private String getRandomDiscountType() {
-        List<String> discountTypes = List.of(
-                "Percentage", "Amount"
+    private DiscountType getRandomDiscountType() {
+        List<DiscountType> discountTypes = List.of(
+                DiscountType.PERCENTAGE, DiscountType.AMOUNT
         );
 
         return discountTypes.get(getRandomInt(discountTypes.size()));
@@ -259,36 +261,36 @@ public class Helper {
 
     private LocalDateTime getRandomDateTime() {
         List<LocalDateTime> dateTimes = List.of(
-                LocalDateTime.of(2025, 4, 15, 23, 59),
-                LocalDateTime.of(2025, 5, 30, 23, 59),
-                LocalDateTime.of(2025, 6, 10, 23, 59),
-                LocalDateTime.of(2025, 7, 1, 23, 59),
-                LocalDateTime.of(2025, 8, 15, 23, 59),
-                LocalDateTime.of(2025, 9, 25, 23, 59),
-                LocalDateTime.of(2025, 10, 5, 23, 59),
-                LocalDateTime.of(2025, 11, 11, 23, 59),
-                LocalDateTime.of(2025, 12, 24, 23, 59),
-                LocalDateTime.of(2025, 1, 1, 23, 59),
-                LocalDateTime.of(2025, 2, 14, 23, 59),
-                LocalDateTime.of(2025, 3, 8, 23, 59),
-                LocalDateTime.of(2025, 6, 21, 23, 59),
-                LocalDateTime.of(2025, 7, 4, 23, 59),
-                LocalDateTime.of(2025, 9, 15, 23, 59),
-                LocalDateTime.of(2025, 10, 31, 23, 59),
-                LocalDateTime.of(2025, 11, 27, 23, 59),
-                LocalDateTime.of(2025, 12, 25, 23, 59),
-                LocalDateTime.of(2025, 4, 10, 23, 59),
-                LocalDateTime.of(2025, 5, 20, 23, 59),
-                LocalDateTime.of(2025, 6, 30, 23, 59),
-                LocalDateTime.of(2025, 7, 18, 23, 59),
-                LocalDateTime.of(2025, 8, 12, 23, 59),
-                LocalDateTime.of(2025, 9, 1, 23, 59),
-                LocalDateTime.of(2025, 10, 25, 23, 59),
-                LocalDateTime.of(2025, 11, 5, 23, 59),
-                LocalDateTime.of(2025, 12, 31, 23, 59),
-                LocalDateTime.of(2025, 1, 15, 23, 59),
-                LocalDateTime.of(2025, 2, 28, 23, 59),
-                LocalDateTime.of(2025, 3, 31, 23, 59)
+                LocalDateTime.of(2050, 4, 15, 23, 59),
+                LocalDateTime.of(2050, 5, 30, 23, 59),
+                LocalDateTime.of(2050, 6, 10, 23, 59),
+                LocalDateTime.of(2050, 7, 1, 23, 59),
+                LocalDateTime.of(2050, 8, 15, 23, 59),
+                LocalDateTime.of(2050, 9, 25, 23, 59),
+                LocalDateTime.of(2050, 10, 5, 23, 59),
+                LocalDateTime.of(2050, 11, 11, 23, 59),
+                LocalDateTime.of(2050, 12, 24, 23, 59),
+                LocalDateTime.of(2050, 1, 1, 23, 59),
+                LocalDateTime.of(2050, 2, 14, 23, 59),
+                LocalDateTime.of(2050, 3, 8, 23, 59),
+                LocalDateTime.of(2050, 6, 21, 23, 59),
+                LocalDateTime.of(2050, 7, 4, 23, 59),
+                LocalDateTime.of(2050, 9, 15, 23, 59),
+                LocalDateTime.of(2050, 10, 31, 23, 59),
+                LocalDateTime.of(2050, 11, 27, 23, 59),
+                LocalDateTime.of(2050, 12, 25, 23, 59),
+                LocalDateTime.of(2050, 4, 10, 23, 59),
+                LocalDateTime.of(2050, 5, 20, 23, 59),
+                LocalDateTime.of(2050, 6, 30, 23, 59),
+                LocalDateTime.of(2050, 7, 18, 23, 59),
+                LocalDateTime.of(2050, 8, 12, 23, 59),
+                LocalDateTime.of(2050, 9, 1, 23, 59),
+                LocalDateTime.of(2050, 10, 25, 23, 59),
+                LocalDateTime.of(2050, 11, 5, 23, 59),
+                LocalDateTime.of(2050, 12, 31, 23, 59),
+                LocalDateTime.of(2050, 1, 15, 23, 59),
+                LocalDateTime.of(2050, 2, 28, 23, 59),
+                LocalDateTime.of(2050, 3, 31, 23, 59)
         );
 
         return dateTimes.get(getRandomInt(dateTimes.size()));
@@ -365,7 +367,7 @@ public class Helper {
     public UserDto getUserDTO() {
 
         AddressDto addressDTO = new AddressDto(0, null, getRandomStreetAddress(),
-                getRandomNumberString(), "Home", getRandomCity(), getRandomState(),
+                getRandomNumberString(), AddressType.HOME, getRandomCity(), getRandomState(),
                 getRandomZipCode(), getRandomCountry(), true, null, null, 0);
 
         UserDto userDTO = new UserDto(0, getRandomUsername(), null, null,
@@ -379,7 +381,7 @@ public class Helper {
     public UserDto getUserDTOWithId(int id) {
 
         AddressDto addressDTO = new AddressDto(0, null, getRandomStreetAddress(),
-                getRandomNumberString(), "Home", getRandomCity(), getRandomState(),
+                getRandomNumberString(), AddressType.HOME, getRandomCity(), getRandomState(),
                 getRandomZipCode(), getRandomCountry(), true, null, null, 0);
 
         UserDto userDTO = new UserDto(id, getRandomUsername(), null, null,
@@ -393,14 +395,14 @@ public class Helper {
     public AddressDto getAddressDTO(UserDto userDTO) {
 
         return new AddressDto(0, userDTO, getRandomStreetAddress(),
-                getRandomNumberString(), "Home", getRandomCity(), getRandomState(),
+                getRandomNumberString(), AddressType.BILLING, getRandomCity(), getRandomState(),
                 getRandomZipCode(), getRandomCountry(), true, null, null, 0);
     }
 
     public AddressDto getAddressDTOWithId(UserDto userDTO, int id) {
 
         return new AddressDto(id, userDTO, getRandomStreetAddress(),
-                getRandomNumberString(), "Work", getRandomCity(), getRandomState(),
+                getRandomNumberString(), AddressType.OFFICE, getRandomCity(), getRandomState(),
                 getRandomZipCode(), getRandomCountry(), true, null, null, 0);
     }
 
@@ -453,7 +455,35 @@ public class Helper {
     public OrderDto getOrder(ProductDto productDTO, AddressDto addressDTO, int userId) {
 
         OrderDto orderDTO = new OrderDto(0, userId, null, 0,
-                OrderStatus.PENDING_PAYMENT.getStatus(), List.of(), addressDTO, addressDTO,
+                OrderStatus.PENDING_PAYMENT, List.of(), addressDTO, addressDTO,
+                null, null, null, 0);
+
+        OrderDetailDto orderDetailDTO = new OrderDetailDto(0, orderDTO, productDTO,
+                3, productDTO.getPrice(), 0);
+
+        orderDTO.setOrderDetails(List.of(orderDetailDTO));
+
+        return orderDTO;
+    }
+
+    public OrderDto getOrderWithId(int id, ProductDto productDTO, AddressDto addressDTO, int userId) {
+
+        OrderDto orderDTO = new OrderDto(id, userId, null, 0,
+                OrderStatus.PENDING_PAYMENT, List.of(), addressDTO, addressDTO,
+                null, null, null, 0);
+
+        OrderDetailDto orderDetailDTO = new OrderDetailDto(0, orderDTO, productDTO,
+                3, productDTO.getPrice(), 0);
+
+        orderDTO.setOrderDetails(List.of(orderDetailDTO));
+
+        return orderDTO;
+    }
+
+    public OrderDto getOrderWithIdAndStatus(int id, ProductDto productDTO, AddressDto addressDTO, OrderStatus status , int userId) {
+
+        OrderDto orderDTO = new OrderDto(id, userId, null, 0,
+                status, List.of(), addressDTO, addressDTO,
                 null, null, null, 0);
 
         OrderDetailDto orderDetailDTO = new OrderDetailDto(0, orderDTO, productDTO,
@@ -467,7 +497,7 @@ public class Helper {
     public OrderDto getOrderWithCoupon(ProductDto productDTO, AddressDto addressDTO, int userId, CouponDto couponDTO) {
 
         OrderDto orderDTO = new OrderDto(0, userId, null, 0,
-                OrderStatus.PENDING_PAYMENT.getStatus(), List.of(), addressDTO, addressDTO,
+                OrderStatus.PENDING_PAYMENT, List.of(), addressDTO, addressDTO,
                 null, couponDTO, null, 0);
 
         OrderDetailDto orderDetailDTO = new OrderDetailDto(0, orderDTO, productDTO,

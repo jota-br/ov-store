@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 import ostro.veda.model.dto.CouponDto;
+import ostro.veda.util.enums.DiscountType;
 
 import java.time.LocalDateTime;
 
@@ -27,8 +28,9 @@ public class Coupon {
     @Column(name = "description")
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "discount_type", length = 50, nullable = false)
-    private String discountType;
+    private DiscountType discountType;
 
     @Column(name = "discount_value", nullable = false)
     private double discountValue;

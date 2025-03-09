@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import ostro.veda.model.dto.AddressDto;
+import ostro.veda.util.enums.AddressType;
 
 import java.time.LocalDateTime;
 
@@ -36,8 +37,9 @@ public class Address {
     @Column(name = "address_number", nullable = false, length = 50)
     private String addressNumber;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "address_type", nullable = false, length = 50)
-    private String addressType;
+    private AddressType addressType;
 
     @Column(name = "city", nullable = false)
     private String city;

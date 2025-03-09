@@ -32,10 +32,10 @@ public class Product {
     @Column(name = "description", length = 510)
     private String description;
 
-    @Column(name = "price", nullable = false)
+    @Column(name = "price")
     private double price;
 
-    @Column(name = "stock", nullable = false)
+    @Column(name = "stock")
     private int stock;
 
     @Column(name = "is_active")

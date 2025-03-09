@@ -7,13 +7,14 @@ import ostro.veda.util.enums.DiscountType;
 import ostro.veda.util.enums.OrderStatus;
 import ostro.veda.util.exception.InputException;
 import ostro.veda.util.enums.Action;
-import ostro.veda.util.constant.TableNames;
+import ostro.veda.util.constant.TableName;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Deprecated
 public class ValidateUtil {
 
     public static void validateProduct(ProductDto productDTO) throws InputException.InvalidInputException {
@@ -82,7 +83,7 @@ public class ValidateUtil {
         }
     }
 
-    public static void validateOrderIdAndStatus(int id, String status) throws InputException.InvalidInputException {
+    public static void validateOrderIdAndStatus(int id, OrderStatus status) throws InputException.InvalidInputException {
         hasValidZeroOrHigherNumber(id);
         hasValidOrderStatus(status);
     }
@@ -91,6 +92,7 @@ public class ValidateUtil {
         hasValidZeroOrHigherNumber(id);
     }
 
+    @Deprecated
     public static void validateUser(UserDto userDTO, String password) throws InputException.InvalidInputException {
         hasValidZeroOrHigherNumber(userDTO.getUserId());
         hasValidUsername(userDTO.getUsername());
@@ -121,7 +123,7 @@ public class ValidateUtil {
 
     public static void validateAudit(AuditDto auditDTO) throws InputException.InvalidInputException {
         hasValidZeroOrHigherNumber(auditDTO.getAuditId());
-        hasValidAction(auditDTO.getAction());
+        hasValidAction(auditDTO.getAction().getActionName());
         hasValidChangedTable(auditDTO.getChangedTable());
     }
 
@@ -168,7 +170,7 @@ public class ValidateUtil {
 
     public static void hasValidZeroOrHigherPrice(double price) throws InputException.InvalidInputException {
         final double MINIMUM_VALID_PRICE = 0.0;
-        if (price >= 0.0) return;
+        if (price >= MINIMUM_VALID_PRICE) return;
 
         throw new InputException.InvalidInputException(
                 "Invalid Price",
@@ -189,16 +191,12 @@ public class ValidateUtil {
         );
     }
 
-    private static void hasValidOrderStatus(String status)
+    private static void hasValidOrderStatus(OrderStatus status)
             throws InputException.InvalidInputException {
-        for (OrderStatus orderStatus : OrderStatus.values()) {
-            if (orderStatus.getStatus().equals(status)) {
-                return;
-            }
-        }
+        if (status != null) return;
 
         throw new InputException.InvalidInputException(
-                "Invalid Order Status", "status:" + status
+                "Invalid Order Status", "status:null"
         );
     }
 
@@ -241,15 +239,11 @@ public class ValidateUtil {
         throw new InputException.InvalidInputException("Invalid Password", "password:*");
     }
 
-    private static void hasValidAddressType(String type) throws InputException.InvalidInputException {
-        for (AddressType addressType : AddressType.values()) {
-            if (addressType.getValue().equalsIgnoreCase(type)) {
-                return;
-            }
-        }
+    private static void hasValidAddressType(AddressType type) throws InputException.InvalidInputException {
+        if (type != null) return;
 
         throw new InputException.InvalidInputException(
-                "Invalid Address Type", "status:" + type
+                "Invalid Address Type", "status:null"
         );
     }
 
@@ -264,7 +258,7 @@ public class ValidateUtil {
     }
 
     private static void hasValidChangedTable(String input) throws InputException.InvalidInputException {
-        for (String table : TableNames.tableNameList) {
+        for (String table : TableName.tableNameList) {
             if (table.equals(input)) return;
         }
 
@@ -283,12 +277,10 @@ public class ValidateUtil {
         throw new InputException.InvalidInputException("Invalid Expiration Date", "expirationDate:" + input);
     }
 
-    private static void hasValidDiscountType(String input) throws InputException.InvalidInputException {
-        for (DiscountType discountType : DiscountType.values()) {
-            if (discountType.getDiscountType().equalsIgnoreCase(input)) return;
-        }
+    private static void hasValidDiscountType(DiscountType type) throws InputException.InvalidInputException {
+        if (type != null) return;
 
-        throw new InputException.InvalidInputException("Invalid Discount Type", "discountType:" + input);
+        throw new InputException.InvalidInputException("Invalid Discount Type", "discountType:null");
     }
 
     private static void hasValidCode(String input) throws InputException.InvalidInputException {

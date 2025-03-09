@@ -1,22 +1,29 @@
 package ostro.veda.model.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import ostro.veda.model.dto.interfaces.Dto;
 import ostro.veda.util.annotation.Auditable;
-import ostro.veda.util.constant.TableNames;
+import ostro.veda.util.constant.TableName;
+import ostro.veda.util.enums.OrderStatus;
 
 import java.time.LocalDateTime;
 import java.util.StringJoiner;
 
 @Getter
 @AllArgsConstructor
-@Auditable(tableName = TableNames.ORDER_STATUS_HISTORY)
+@Auditable(tableName = TableName.ORDER_STATUS_HISTORY)
 public class OrderStatusHistoryDto implements Dto {
 
     private final int orderStatusHistoryId;
+
+    @NotNull(message = "Order cannot be null")
     private final OrderDto order;
-    private final String status;
+
+    @NotNull(message = "Order Status cannot be null")
+    private final OrderStatus status;
+
     private final LocalDateTime changedAt;
     private final int version;
 
