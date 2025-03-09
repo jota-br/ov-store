@@ -4,7 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import ostro.veda.util.validation.annotation.ValidCountry;
 
-public class ValidateCountry implements ConstraintValidator<ValidCountry, String> {
+public class ValidateCountry extends Validate implements ConstraintValidator<ValidCountry, String> {
 
     @Override
     public void initialize(ValidCountry constraintAnnotation) {

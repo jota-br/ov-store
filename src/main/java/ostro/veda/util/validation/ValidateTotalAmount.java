@@ -4,7 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import ostro.veda.util.validation.annotation.ValidTotalAmount;
 
-public class ValidateTotalAmount implements ConstraintValidator<ValidTotalAmount, Double> {
+public class ValidateTotalAmount extends Validate implements ConstraintValidator<ValidTotalAmount, Double> {
 
     public static final double MINIMUM_VALID_TOTAL_AMOUNT = 0;
 

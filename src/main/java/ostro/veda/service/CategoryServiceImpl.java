@@ -8,21 +8,17 @@ import ostro.veda.model.dto.CategoryDto;
 import ostro.veda.repository.interfaces.CategoryRepository;
 import ostro.veda.service.interfaces.CategoryService;
 import ostro.veda.util.enums.Action;
-import ostro.veda.util.exception.InputException;
 import ostro.veda.util.validation.SanitizeUtil;
-import ostro.veda.util.validation.ValidatorUtil;
 
 @Slf4j
 @Component
 public class CategoryServiceImpl implements CategoryService {
 
-    private final ValidatorUtil validatorUtil;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final CategoryRepository categoryRepositoryImpl;
 
     @Autowired
-    public CategoryServiceImpl(ValidatorUtil validatorUtil, ApplicationEventPublisher applicationEventPublisher, CategoryRepository categoryRepositoryImpl) {
-        this.validatorUtil = validatorUtil;
+    public CategoryServiceImpl(ApplicationEventPublisher applicationEventPublisher, CategoryRepository categoryRepositoryImpl) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.categoryRepositoryImpl = categoryRepositoryImpl;
     }
@@ -34,7 +30,6 @@ public class CategoryServiceImpl implements CategoryService {
 
         try {
 
-            validatorUtil.validate(categoryDTO);
             categoryDTO = SanitizeUtil.sanitizeCategory(categoryDTO);
 
             categoryDTO = categoryRepositoryImpl.add(categoryDTO);
@@ -43,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
 
             return categoryDTO;
 
-        } catch (InputException.InvalidInputException e) {
+        } catch (Exception e) {
 
             log.warn(e.getMessage());
             return null;
@@ -58,7 +53,6 @@ public class CategoryServiceImpl implements CategoryService {
 
         try {
 
-            validatorUtil.validate(categoryDTO);
             categoryDTO = SanitizeUtil.sanitizeCategory(categoryDTO);
 
             categoryDTO = categoryRepositoryImpl.update(categoryDTO);
@@ -67,7 +61,7 @@ public class CategoryServiceImpl implements CategoryService {
 
             return categoryDTO;
 
-        } catch (InputException.InvalidInputException e) {
+        } catch (Exception e) {
 
             log.warn(e.getMessage());
             return null;

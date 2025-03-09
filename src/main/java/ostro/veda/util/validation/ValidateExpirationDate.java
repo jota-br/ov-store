@@ -6,7 +6,7 @@ import ostro.veda.util.validation.annotation.ValidExpirationDate;
 
 import java.time.LocalDateTime;
 
-public class ValidateExpirationDate implements ConstraintValidator<ValidExpirationDate, LocalDateTime> {
+public class ValidateExpirationDate extends Validate implements ConstraintValidator<ValidExpirationDate, LocalDateTime> {
 
     private static final int MINIMUM_NUMBER_OF_HOURS_TO_EXPIRATION = 1;
 

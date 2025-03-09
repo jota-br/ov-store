@@ -1,6 +1,5 @@
 package ostro.veda.service;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -9,7 +8,6 @@ import ostro.veda.model.dto.AddressDto;
 import ostro.veda.repository.interfaces.AddressRepository;
 import ostro.veda.service.interfaces.AddressService;
 import ostro.veda.util.enums.Action;
-import ostro.veda.util.exception.InputException;
 import ostro.veda.util.validation.SanitizeUtil;
 import ostro.veda.util.validation.ValidatorUtil;
 
@@ -29,10 +27,11 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public AddressDto add(@NonNull AddressDto addressDTO) {
+    public AddressDto add(AddressDto addressDTO) {
         try {
+
             log.info("add() Address for User = {}", addressDTO.getUser().getUserId());
-            validatorUtil.validate(addressDTO);
+
             addressDTO = SanitizeUtil.sanitizeAddress(addressDTO);
 
             addressDTO = addressRepository.add(addressDTO);
@@ -41,17 +40,18 @@ public class AddressServiceImpl implements AddressService {
 
             return addressDTO;
 
-        } catch (InputException.InvalidInputException e) {
+        } catch (Exception e) {
             log.warn(e.getMessage());
             return null;
         }
     }
 
     @Override
-    public AddressDto update(@NonNull AddressDto addressDTO) {
+    public AddressDto update(AddressDto addressDTO) {
         try {
+
             log.info("update() Address for User = {}", addressDTO.getUser().getUserId());
-            validatorUtil.validate(addressDTO);
+
             addressDTO = SanitizeUtil.sanitizeAddress(addressDTO);
 
             addressDTO = addressRepository.update(addressDTO);
@@ -60,7 +60,7 @@ public class AddressServiceImpl implements AddressService {
 
             return addressDTO;
 
-        } catch (InputException.InvalidInputException e) {
+        } catch (Exception e) {
             log.warn(e.getMessage());
             return null;
         }

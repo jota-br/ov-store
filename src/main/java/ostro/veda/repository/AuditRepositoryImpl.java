@@ -2,14 +2,14 @@ package ostro.veda.repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import ostro.veda.repository.interfaces.AuditRepository;
 import ostro.veda.model.dto.AuditDto;
 import ostro.veda.repository.dao.Audit;
 import ostro.veda.repository.dao.User;
+import ostro.veda.repository.interfaces.AuditRepository;
+import ostro.veda.util.validation.ValidateParameter;
 
 @Slf4j
 @Component
@@ -43,8 +43,9 @@ public class AuditRepositoryImpl implements AuditRepository {
         }
     }
 
-    @Override
-    public Audit buildAudit(@NonNull AuditDto auditDTO, @NonNull User user) {
+    private Audit buildAudit(AuditDto auditDTO, User user) {
+
+        ValidateParameter.isNull(this.getClass(), auditDTO, user);
 
         log.info("buildAudit()");
         int userId = user.getUserId();

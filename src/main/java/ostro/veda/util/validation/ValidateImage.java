@@ -6,7 +6,7 @@ import ostro.veda.util.validation.annotation.ValidImage;
 
 import java.util.regex.Pattern;
 
-public class ValidateImage implements ConstraintValidator<ValidImage, String> {
+public class ValidateImage extends Validate implements ConstraintValidator<ValidImage, String> {
 
     private static final String NAME_PATTERN = "^(https?://)?([\\w\\-]+\\.)+\\w+(/[\\w\\-.,@?^=%&:/~+#]*)?\\.(png)(\\?.*)?$";
     private static final Pattern PATTERN = Pattern.compile(NAME_PATTERN);

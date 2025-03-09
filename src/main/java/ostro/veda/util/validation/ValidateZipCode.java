@@ -4,7 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import ostro.veda.util.validation.annotation.ValidZipCode;
 
-public class ValidateZipCode implements ConstraintValidator<ValidZipCode, String> {
+public class ValidateZipCode extends Validate implements ConstraintValidator<ValidZipCode, String> {
 
     @Override
     public void initialize(ValidZipCode constraintAnnotation) {

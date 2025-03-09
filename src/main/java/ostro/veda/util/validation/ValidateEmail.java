@@ -5,7 +5,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import org.apache.commons.validator.routines.EmailValidator;
 import ostro.veda.util.validation.annotation.ValidEmail;
 
-public class ValidateEmail implements ConstraintValidator<ValidEmail, String> {
+public class ValidateEmail extends Validate implements ConstraintValidator<ValidEmail, String> {
 
     EmailValidator emailValidator = EmailValidator.getInstance();
 

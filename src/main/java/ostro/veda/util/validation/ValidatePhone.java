@@ -6,7 +6,7 @@ import ostro.veda.util.validation.annotation.ValidPhone;
 
 import java.util.regex.Pattern;
 
-public class ValidatePhone implements ConstraintValidator<ValidPhone, String> {
+public class ValidatePhone extends Validate implements ConstraintValidator<ValidPhone, String> {
 
     private static final String NAME_PATTERN = "\\+\\d{6,14}";
     private static final Pattern PATTERN = Pattern.compile(NAME_PATTERN);

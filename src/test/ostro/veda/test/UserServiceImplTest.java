@@ -35,7 +35,7 @@ public class UserServiceImplTest {
 
         UserServiceImpl userService = context.getBean(UserServiceImpl.class);
 
-        UserDto userDTO = userService.add(helper.getUserDTO(), "");
+        UserDto userDTO = userService.add(helper.getUserDTO(), "password90@&");
         userDTO = userService.update(helper.getUserDTOWithId(userDTO.getUserId()), "password90*");
         assertNotNull(userDTO);
 

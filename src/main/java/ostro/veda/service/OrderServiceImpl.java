@@ -1,6 +1,5 @@
 package ostro.veda.service;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -11,31 +10,25 @@ import ostro.veda.service.events.EventPayload;
 import ostro.veda.service.interfaces.OrderService;
 import ostro.veda.util.constant.ServiceMethodName;
 import ostro.veda.util.enums.Action;
-import ostro.veda.util.exception.InputException;
-import ostro.veda.util.validation.ValidatorUtil;
 
 @Slf4j
 @Component
 public class OrderServiceImpl implements OrderService {
 
-    private final ValidatorUtil validatorUtil;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final OrderRepository orderRepositoryImpl;
 
-    public OrderServiceImpl(ValidatorUtil validatorUtil, ApplicationEventPublisher applicationEventPublisher, OrderRepository orderRepositoryImpl) {
-        this.validatorUtil = validatorUtil;
+    public OrderServiceImpl(ApplicationEventPublisher applicationEventPublisher, OrderRepository orderRepositoryImpl) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.orderRepositoryImpl = orderRepositoryImpl;
     }
 
     @Override
-    public OrderDto add(@NonNull OrderDto orderDTO) {
+    public OrderDto add(OrderDto orderDTO) {
 
         try {
 
             log.info("add() new Order for User = {}", orderDTO.getUserId());
-
-            validatorUtil.validate(orderDTO);
 
             orderDTO = orderRepositoryImpl.add(orderDTO);
 
@@ -57,13 +50,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDto update(@NonNull OrderDto orderDTO) {
+    public OrderDto update(OrderDto orderDTO) {
 
         try {
 
             log.info("update() OrderStatus for Order = {}", orderDTO.getOrderId());
-
-            validatorUtil.validate(orderDTO);
 
             orderDTO = orderRepositoryImpl.update(orderDTO);
 
@@ -71,7 +62,7 @@ public class OrderServiceImpl implements OrderService {
 
             return orderDTO;
 
-        } catch (InputException.InvalidInputException e) {
+        } catch (Exception e) {
 
             log.warn(e.getMessage());
             return null;
@@ -101,7 +92,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDto returnItem(@NonNull OrderDetailDto returningItem) {
+    public OrderDto returnItem(OrderDetailDto returningItem) {
         try {
 
             log.info("returnItem() Product = {}", returningItem.getProduct().getProductId());
