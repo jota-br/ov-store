@@ -8,7 +8,7 @@ import ostro.veda.model.dto.UserDto;
 import ostro.veda.repository.interfaces.UserRepository;
 import ostro.veda.service.interfaces.UserService;
 import ostro.veda.util.enums.Action;
-import ostro.veda.util.validation.SanitizeUtil;
+import ostro.veda.util.sanitization.SanitizeUserDto;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
 
         try {
 
-            userDTO = SanitizeUtil.sanitizeUser(userDTO);
+            userDTO = new SanitizeUserDto().apply(userDTO);
             UserDto user = getUserWithSaltAndHash(userDTO, password);
 
             userDTO = add(user);
@@ -95,6 +95,7 @@ public class UserServiceImpl implements UserService {
 
         try {
 
+            userDTO = new SanitizeUserDto().apply(userDTO);
             UserDto user = getUserWithSaltAndHash(userDTO, password);
 
             userDTO = update(user);
