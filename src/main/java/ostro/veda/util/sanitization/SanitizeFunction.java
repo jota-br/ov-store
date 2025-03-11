@@ -1,5 +1,7 @@
 package ostro.veda.util.sanitization;
 
+import jakarta.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
 import ostro.veda.model.dto.CategoryDto;
 import ostro.veda.model.dto.ProductDto;
 import ostro.veda.model.dto.ProductImageDto;
@@ -9,9 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Validated
 public interface SanitizeFunction<T, R> {
 
-    R sanitize(T t);
+    R sanitize(@NotNull T t);
 
     default String sanitizeString(String input) {
 

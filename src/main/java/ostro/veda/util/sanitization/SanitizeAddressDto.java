@@ -1,13 +1,18 @@
 package ostro.veda.util.sanitization;
 
+import lombok.extern.slf4j.Slf4j;
 import ostro.veda.model.dto.AddressDto;
 import ostro.veda.model.dto.UserDto;
 import ostro.veda.util.enums.AddressType;
 
+@Slf4j
 public class SanitizeAddressDto implements SanitizeFunction<AddressDto, AddressDto> {
 
     @Override
     public AddressDto sanitize(AddressDto addressDto) {
+
+        log.info("Sanitizing = {}", addressDto.getClass().getSimpleName());
+
         int id = addressDto.getAddressId();
         UserDto userDTO = addressDto.getUser();
         String streetAddress = sanitizeString(addressDto.getStreetAddress());
