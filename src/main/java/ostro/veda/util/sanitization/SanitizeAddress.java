@@ -6,7 +6,7 @@ import ostro.veda.model.dto.UserDto;
 import ostro.veda.util.enums.AddressType;
 
 @Slf4j
-public class SanitizeAddressDto implements SanitizeFunction<AddressDto, AddressDto> {
+public class SanitizeAddress implements SanitizeFunction<AddressDto, AddressDto> {
 
     @Override
     public AddressDto sanitize(AddressDto addressDto) {

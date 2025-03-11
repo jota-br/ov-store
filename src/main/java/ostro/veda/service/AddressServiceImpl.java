@@ -8,7 +8,7 @@ import ostro.veda.model.dto.AddressDto;
 import ostro.veda.repository.interfaces.AddressRepository;
 import ostro.veda.service.interfaces.AddressService;
 import ostro.veda.util.enums.Action;
-import ostro.veda.util.validation.SanitizeUtil;
+import ostro.veda.util.sanitization.SanitizeAddress;
 import ostro.veda.util.validation.ValidatorUtil;
 
 @Slf4j
@@ -32,7 +32,7 @@ public class AddressServiceImpl implements AddressService {
 
             log.info("add() Address for User = {}", addressDTO.getUser().getUserId());
 
-            addressDTO = SanitizeUtil.sanitizeAddress(addressDTO);
+            addressDTO = new SanitizeAddress().sanitize(addressDTO);
 
             addressDTO = addressRepository.add(addressDTO);
 
@@ -52,7 +52,7 @@ public class AddressServiceImpl implements AddressService {
 
             log.info("update() Address for User = {}", addressDTO.getUser().getUserId());
 
-            addressDTO = SanitizeUtil.sanitizeAddress(addressDTO);
+            addressDTO = new SanitizeAddress().sanitize(addressDTO);
 
             addressDTO = addressRepository.update(addressDTO);
 

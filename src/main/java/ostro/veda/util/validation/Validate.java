@@ -10,6 +10,6 @@ public abstract class Validate {
     }
 
     protected <T> void log(T t) {
-        log.info("Validating = {}", t.getClass());
+        log.info("Validating = {}", t.getClass().getSimpleName());
     }
 }

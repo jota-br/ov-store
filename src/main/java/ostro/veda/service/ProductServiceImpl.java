@@ -8,7 +8,7 @@ import ostro.veda.model.dto.ProductDto;
 import ostro.veda.repository.interfaces.ProductRepository;
 import ostro.veda.service.interfaces.ProductService;
 import ostro.veda.util.enums.Action;
-import ostro.veda.util.validation.SanitizeUtil;
+import ostro.veda.util.sanitization.SanitizeProduct;
 
 @Slf4j
 @Component
@@ -30,7 +30,7 @@ public class ProductServiceImpl implements ProductService {
 
         try {
 
-            ProductDto productDTO = SanitizeUtil.sanitizeProduct(product);
+            ProductDto productDTO = new SanitizeProduct().sanitize(product);
 
             productDTO = this.productRepositoryImpl.add(productDTO);
 
@@ -53,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
 
         try {
 
-            ProductDto productDTO = SanitizeUtil.sanitizeProduct(product);
+            ProductDto productDTO = new SanitizeProduct().sanitize(product);
 
             productDTO = this.productRepositoryImpl.update(productDTO);
 

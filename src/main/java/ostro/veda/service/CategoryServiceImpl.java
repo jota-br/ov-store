@@ -8,7 +8,7 @@ import ostro.veda.model.dto.CategoryDto;
 import ostro.veda.repository.interfaces.CategoryRepository;
 import ostro.veda.service.interfaces.CategoryService;
 import ostro.veda.util.enums.Action;
-import ostro.veda.util.validation.SanitizeUtil;
+import ostro.veda.util.sanitization.SanitizeCategory;
 
 @Slf4j
 @Component
@@ -30,7 +30,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         try {
 
-            categoryDTO = SanitizeUtil.sanitizeCategory(categoryDTO);
+            categoryDTO = new SanitizeCategory().sanitize(categoryDTO);
 
             categoryDTO = categoryRepositoryImpl.add(categoryDTO);
 
@@ -53,7 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         try {
 
-            categoryDTO = SanitizeUtil.sanitizeCategory(categoryDTO);
+            categoryDTO = new SanitizeCategory().sanitize(categoryDTO);
 
             categoryDTO = categoryRepositoryImpl.update(categoryDTO);
 

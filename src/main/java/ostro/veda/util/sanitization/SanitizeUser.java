@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public class SanitizeUserDto implements SanitizeFunction<UserDto, UserDto> {
+public class SanitizeUser implements SanitizeFunction<UserDto, UserDto> {
 
     @Override
     public UserDto sanitize(UserDto userDto) {
@@ -22,9 +22,9 @@ public class SanitizeUserDto implements SanitizeFunction<UserDto, UserDto> {
 
         List<AddressDto> addressDtoList = new ArrayList<>();
 
-        SanitizeAddressDto sanitizeAddressDto = new SanitizeAddressDto();
+        SanitizeAddress sanitizeAddress = new SanitizeAddress();
         for (AddressDto addressDto : userDto.getAddresses()) {
-            addressDtoList.add(sanitizeAddressDto.sanitize(addressDto));
+            addressDtoList.add(sanitizeAddress.sanitize(addressDto));
         }
 
         return new UserDto(userDto.getUserId(), username, userDto.getSalt(), userDto.getHash(), email, firstName,
