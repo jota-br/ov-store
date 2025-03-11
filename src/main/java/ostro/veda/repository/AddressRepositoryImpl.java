@@ -2,16 +2,16 @@ package ostro.veda.repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import ostro.veda.repository.interfaces.AddressRepository;
-import ostro.veda.model.dto.AddressDto;
-import ostro.veda.repository.helpers.EntityManagerHelper;
-import ostro.veda.repository.helpers.enums.AddressColumns;
-import ostro.veda.repository.dao.Address;
-import ostro.veda.repository.dao.User;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import ostro.veda.model.dto.AddressDto;
+import ostro.veda.repository.dao.Address;
+import ostro.veda.repository.dao.User;
+import ostro.veda.repository.helpers.EntityManagerHelper;
+import ostro.veda.repository.helpers.enums.AddressColumns;
+import ostro.veda.repository.interfaces.AddressRepository;
+import ostro.veda.util.validation.ValidateParameter;
 
 import java.util.List;
 import java.util.Map;
@@ -31,7 +31,7 @@ public class AddressRepositoryImpl implements AddressRepository {
 
     @Override
     @Transactional
-    public AddressDto add(@NonNull AddressDto addressDTO) {
+    public AddressDto add(AddressDto addressDTO) {
 
         log.info("add() new Address = {} for User = {}", addressDTO.getAddressType() , addressDTO.getUser().getUserId());
 
@@ -72,7 +72,7 @@ public class AddressRepositoryImpl implements AddressRepository {
 
     @Override
     @Transactional
-    public AddressDto update(@NonNull AddressDto addressDTO) {
+    public AddressDto update(AddressDto addressDTO) {
 
         log.info("update() Address = {} for User = {}", addressDTO.getAddressType() , addressDTO.getUser().getUserId());
         Address address = this.entityManager.find(Address.class, addressDTO.getAddressId());
@@ -95,8 +95,9 @@ public class AddressRepositoryImpl implements AddressRepository {
         }
     }
 
-    @Override
-    public Address buildAddress(@NonNull AddressDto addressDTO) {
+    private Address buildAddress(AddressDto addressDTO) {
+
+        ValidateParameter.isNull(this.getClass(), addressDTO);
 
         log.info("buildAddress() Address for User = {}", addressDTO.getUser().getUserId());
 

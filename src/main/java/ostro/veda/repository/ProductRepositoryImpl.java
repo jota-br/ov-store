@@ -2,22 +2,22 @@ package ostro.veda.repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import ostro.veda.repository.interfaces.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ostro.veda.model.dto.CategoryDto;
 import ostro.veda.model.dto.ProductDto;
 import ostro.veda.model.dto.ProductImageDto;
+import ostro.veda.repository.dao.Category;
+import ostro.veda.repository.dao.Product;
+import ostro.veda.repository.dao.ProductImage;
 import ostro.veda.repository.helpers.EntityManagerHelper;
 import ostro.veda.repository.helpers.enums.CategoryColumns;
 import ostro.veda.repository.helpers.enums.ProductColumns;
 import ostro.veda.repository.helpers.enums.ProductImageColumns;
-import ostro.veda.repository.dao.Category;
-import ostro.veda.repository.dao.Product;
-import ostro.veda.repository.dao.ProductImage;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import ostro.veda.repository.interfaces.ProductRepository;
+import ostro.veda.util.validation.ValidateParameter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     @Transactional
-    public ProductDto add(@NonNull ProductDto productDTO) {
+    public ProductDto add(ProductDto productDTO) {
 
         log.info("add() new Product = {}", productDTO.getName());
 
@@ -66,7 +66,7 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     @Transactional
-    public ProductDto update(@NonNull ProductDto productDTO) {
+    public ProductDto update(ProductDto productDTO) {
 
         log.info("update() Product = [{}, {}]", productDTO.getProductId(), productDTO.getName());
 
@@ -85,8 +85,9 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
 
-    @Override
-    public Product buildProduct(@NonNull ProductDto productDTO) {
+    private Product buildProduct(ProductDto productDTO) {
+
+        ValidateParameter.isNull(this.getClass(), productDTO);
 
         log.info("buildProduct() Product = [{}, {}]", productDTO.getProductId(), productDTO.getName());
 
@@ -105,8 +106,9 @@ public class ProductRepositoryImpl implements ProductRepository {
                 .build();
     }
 
-    @Override
-    public List<Category> buildCategories(@NonNull List<CategoryDto> categoryDtos) {
+    private List<Category> buildCategories(List<CategoryDto> categoryDtos) {
+
+        ValidateParameter.isNull(this.getClass(), categoryDtos);
 
         log.info("buildCategories() size = {}", categoryDtos.size());
 
@@ -132,8 +134,9 @@ public class ProductRepositoryImpl implements ProductRepository {
         return categoriesList;
     }
 
-    @Override
-    public Category buildCategory(@NonNull CategoryDto categoryDTO) {
+    private Category buildCategory(CategoryDto categoryDTO) {
+
+        ValidateParameter.isNull(this.getClass(), categoryDTO);
 
         log.info("buildCategory() Category = [{}, {}]", categoryDTO.getCategoryId(), categoryDTO.getName());
 
@@ -148,8 +151,9 @@ public class ProductRepositoryImpl implements ProductRepository {
                 .build();
     }
 
-    @Override
-    public List<ProductImage> buildImages(@NonNull List<ProductImageDto> productImageDtos) {
+    private List<ProductImage> buildImages(List<ProductImageDto> productImageDtos) {
+
+        ValidateParameter.isNull(this.getClass(), productImageDtos);
 
         log.info("buildImages() size = {}", productImageDtos.size());
 
@@ -175,8 +179,9 @@ public class ProductRepositoryImpl implements ProductRepository {
         return imagesList;
     }
 
-    @Override
-    public ProductImage buildImage(@NonNull ProductImageDto productImageDTO) {
+    private ProductImage buildImage(ProductImageDto productImageDTO) {
+
+        ValidateParameter.isNull(this.getClass(), productImageDTO);
 
         log.info("buildImage() ProductImage = [{}, {}]", productImageDTO.getProductImageId(), productImageDTO.getImageUrl());
 

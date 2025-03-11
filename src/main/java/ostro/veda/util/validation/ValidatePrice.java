@@ -4,7 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import ostro.veda.util.validation.annotation.ValidPrice;
 
-public class ValidatePrice implements ConstraintValidator<ValidPrice, Double> {
+public class ValidatePrice extends Validate implements ConstraintValidator<ValidPrice, Double> {
 
     public static final double MINIMUM_VALID_PRICE = 0;
 

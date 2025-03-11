@@ -3,6 +3,7 @@ package ostro.veda.model.dto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import ostro.veda.model.dto.interfaces.Dto;
 import ostro.veda.util.annotation.Auditable;
@@ -18,6 +19,7 @@ import java.util.StringJoiner;
 
 @Getter
 @AllArgsConstructor
+@Builder
 @Auditable(tableName = TableName.USER)
 public class UserDto implements Dto {
 
@@ -44,7 +46,6 @@ public class UserDto implements Dto {
     private final String phone;
 
     private final boolean isActive;
-
     private final RoleDto role;
 
     @Valid

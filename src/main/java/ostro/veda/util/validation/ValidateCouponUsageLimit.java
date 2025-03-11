@@ -4,7 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import ostro.veda.util.validation.annotation.ValidCouponUsageLimit;
 
-public class ValidateCouponUsageLimit implements ConstraintValidator<ValidCouponUsageLimit, Integer> {
+public class ValidateCouponUsageLimit extends Validate implements ConstraintValidator<ValidCouponUsageLimit, Integer> {
 
     public static final int HAS_NO_LIMIT_VALUE = -1;
     public static final int HAS_LIMIT_MINIMUM_VALUE = 1;

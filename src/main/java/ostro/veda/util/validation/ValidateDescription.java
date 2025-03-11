@@ -6,7 +6,7 @@ import ostro.veda.util.validation.annotation.ValidDescription;
 
 import java.util.regex.Pattern;
 
-public class ValidateDescription implements ConstraintValidator<ValidDescription, String> {
+public class ValidateDescription extends Validate implements ConstraintValidator<ValidDescription, String> {
 
     private static final String NAME_PATTERN = "^[a-zA-Z\\s\\p{Punct}0-9\n]{0,510}$";
     private static final Pattern PATTERN = Pattern.compile(NAME_PATTERN);

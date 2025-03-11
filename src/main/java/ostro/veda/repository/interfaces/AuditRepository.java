@@ -1,12 +1,11 @@
 package ostro.veda.repository.interfaces;
 
+import jakarta.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
 import ostro.veda.model.dto.AuditDto;
-import ostro.veda.repository.dao.Audit;
-import ostro.veda.repository.dao.User;
 
+@Validated
 public interface AuditRepository {
 
-    AuditDto add(AuditDto auditDTO);
-
-    Audit buildAudit(AuditDto auditDTO, User user);
+    AuditDto add(@NotNull AuditDto auditDTO);
 }

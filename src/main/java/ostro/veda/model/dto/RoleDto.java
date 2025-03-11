@@ -34,6 +34,7 @@ public class RoleDto implements Dto {
 
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
+    private final int version;
 
     @Override
     public String toString() {
@@ -50,6 +51,4 @@ public class RoleDto implements Dto {
                 .add("\"updatedAt\":\"" + updatedAt + "\"")
                 .toString();
     }
-
-    private final int version;
 }

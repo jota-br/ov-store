@@ -5,7 +5,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import ostro.veda.model.dto.UserDto;
 import ostro.veda.util.validation.annotation.ValidUser;
 
-public class ValidateUser implements ConstraintValidator<ValidUser, UserDto> {
+public class ValidateUser extends Validate implements ConstraintValidator<ValidUser, UserDto> {
 
     @Override
     public void initialize(ValidUser constraintAnnotation) {

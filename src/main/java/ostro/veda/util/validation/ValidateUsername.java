@@ -6,7 +6,7 @@ import ostro.veda.util.validation.annotation.ValidUsername;
 
 import java.util.regex.Pattern;
 
-public class ValidateUsername implements ConstraintValidator<ValidUsername, String> {
+public class ValidateUsername extends Validate implements ConstraintValidator<ValidUsername, String> {
 
     private static final String NAME_PATTERN = "^[a-zA-Z0-9@_-]{8,20}$";
     private static final Pattern PATTERN = Pattern.compile(NAME_PATTERN);

@@ -4,7 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import ostro.veda.util.validation.annotation.ValidDiscountValue;
 
-public class ValidateDiscountValue implements ConstraintValidator<ValidDiscountValue, Double> {
+public class ValidateDiscountValue extends Validate implements ConstraintValidator<ValidDiscountValue, Double> {
 
     public static final double MINIMUM_VALID_VALUE = 1;
 
