@@ -7,19 +7,19 @@ import ostro.veda.util.enums.AddressType;
 public class SanitizeAddressDto implements SanitizeFunction<AddressDto, AddressDto> {
 
     @Override
-    public AddressDto apply(AddressDto AddressDto) {
-        int id = AddressDto.getAddressId();
-        UserDto userDTO = AddressDto.getUser();
-        String streetAddress = sanitize(AddressDto.getStreetAddress());
-        String addressNumber = sanitize(AddressDto.getAddressNumber());
-        AddressType addressType = AddressDto.getAddressType();
-        String city = sanitize(AddressDto.getCity());
-        String state = sanitize(AddressDto.getState());
-        String zipCode = sanitize(AddressDto.getZipCode());
-        String country = sanitize(AddressDto.getCountry());
-        boolean isActive = AddressDto.isActive();
+    public AddressDto sanitize(AddressDto addressDto) {
+        int id = addressDto.getAddressId();
+        UserDto userDTO = addressDto.getUser();
+        String streetAddress = sanitizeString(addressDto.getStreetAddress());
+        String addressNumber = sanitizeString(addressDto.getAddressNumber());
+        AddressType addressType = addressDto.getAddressType();
+        String city = sanitizeString(addressDto.getCity());
+        String state = sanitizeString(addressDto.getState());
+        String zipCode = sanitizeString(addressDto.getZipCode());
+        String country = sanitizeString(addressDto.getCountry());
+        boolean isActive = addressDto.isActive();
 
         return new AddressDto(id, userDTO, streetAddress, addressNumber, addressType, city, state, zipCode,
-                country, isActive, AddressDto.getCreatedAt(), AddressDto.getUpdatedAt(), AddressDto.getVersion());
+                country, isActive, addressDto.getCreatedAt(), addressDto.getUpdatedAt(), addressDto.getVersion());
     }
 }

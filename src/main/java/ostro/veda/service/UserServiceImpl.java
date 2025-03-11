@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
 
         try {
 
-            userDTO = new SanitizeUserDto().apply(userDTO);
+            userDTO = new SanitizeUserDto().sanitize(userDTO);
             UserDto user = getUserWithSaltAndHash(userDTO, password);
 
             userDTO = add(user);
@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
 
         try {
 
-            userDTO = new SanitizeUserDto().apply(userDTO);
+            userDTO = new SanitizeUserDto().sanitize(userDTO);
             UserDto user = getUserWithSaltAndHash(userDTO, password);
 
             userDTO = update(user);

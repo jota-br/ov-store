@@ -8,11 +8,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
-public interface SanitizeFunction<T, R> extends Function<T, R> {
+public interface SanitizeFunction<T, R> {
 
-    default String sanitize(String input) {
+    R sanitize(T t);
+
+    default String sanitizeString(String input) {
 
         Map<Character, String> sanitizeMap = getSanitizeMap();
 
@@ -44,8 +45,8 @@ public interface SanitizeFunction<T, R> extends Function<T, R> {
         double price = productDTO.getPrice();
         int stock = productDTO.getStock();
 
-        name = sanitize(name);
-        description = sanitize(description);
+        name = sanitizeString(name);
+        description = sanitizeString(description);
 
         List<CategoryDto> categories = sanitizeCategories(productDTO.getCategories());
         List<ProductImageDto> images = sanitizeImages(productDTO.getImages());
@@ -70,8 +71,8 @@ public interface SanitizeFunction<T, R> extends Function<T, R> {
         String categoryName = category.getName();
         String categoryDescription = category.getDescription();
 
-        categoryName = sanitize(categoryName);
-        categoryDescription = sanitize(categoryDescription);
+        categoryName = sanitizeString(categoryName);
+        categoryDescription = sanitizeString(categoryDescription);
 
         return new CategoryDto(categoryId, categoryName, categoryDescription, category.isActive(),
                 category.getCreatedAt(), category.getUpdatedAt(), category.getVersion());

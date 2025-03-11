@@ -9,17 +9,17 @@ import java.util.List;
 public class SanitizeUserDto implements SanitizeFunction<UserDto, UserDto> {
 
     @Override
-    public UserDto apply(UserDto userDto) {
-        String firstName = sanitize(userDto.getFirstName());
-        String lastName = sanitize(userDto.getLastName());
-        String username = sanitize(userDto.getUsername());
-        String email = sanitize(userDto.getEmail());
+    public UserDto sanitize(UserDto userDto) {
+        String firstName = sanitizeString(userDto.getFirstName());
+        String lastName = sanitizeString(userDto.getLastName());
+        String username = sanitizeString(userDto.getUsername());
+        String email = sanitizeString(userDto.getEmail());
 
         List<AddressDto> addressDtoList = new ArrayList<>();
 
         SanitizeAddressDto sanitizeAddressDto = new SanitizeAddressDto();
         for (AddressDto addressDto : userDto.getAddresses()) {
-            addressDtoList.add(sanitizeAddressDto.apply(addressDto));
+            addressDtoList.add(sanitizeAddressDto.sanitize(addressDto));
         }
 
         return new UserDto(userDto.getUserId(), username, userDto.getSalt(), userDto.getHash(), email, firstName,
