@@ -1,11 +1,12 @@
 package ostro.veda.service.interfaces;
 
 
-import ostro.veda.model.dto.AuditDto;
+import jakarta.validation.constraints.NotNull;
 import ostro.veda.model.dto.AuditDataDto;
+import ostro.veda.model.dto.AuditDto;
 
 public interface AuditService {
 
-    AuditDto add(AuditDataDto auditDataDTO);
-    AuditDto buildAuditDTO(AuditDataDto auditDataDTO);
+    AuditDto add(@NotNull AuditDataDto auditDataDTO);
+    AuditDto buildAuditDTO(@NotNull AuditDataDto auditDataDTO);
 }

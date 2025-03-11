@@ -4,7 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import ostro.veda.util.validation.annotation.ValidCity;
 
-public class ValidateCity implements ConstraintValidator<ValidCity, String> {
+public class ValidateCity extends Validate implements ConstraintValidator<ValidCity, String> {
 
     @Override
     public void initialize(ValidCity constraintAnnotation) {

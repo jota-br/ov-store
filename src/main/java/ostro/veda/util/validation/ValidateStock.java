@@ -4,7 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import ostro.veda.util.validation.annotation.ValidStock;
 
-public class ValidateStock implements ConstraintValidator<ValidStock, Integer> {
+public class ValidateStock extends Validate implements ConstraintValidator<ValidStock, Integer> {
 
     public static final int MINIMUM_VALID_NUMBER = 0;
 

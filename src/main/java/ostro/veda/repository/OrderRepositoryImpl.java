@@ -2,7 +2,6 @@ package ostro.veda.repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +13,7 @@ import ostro.veda.repository.interfaces.OrderRepository;
 import ostro.veda.util.enums.DiscountType;
 import ostro.veda.util.enums.OrderStatus;
 import ostro.veda.util.exception.InputException;
+import ostro.veda.util.validation.ValidateParameter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     @Transactional
-    public OrderDto add(@NonNull OrderDto orderDTO) {
+    public OrderDto add(OrderDto orderDTO) {
 
         log.info("add() new Order = {} for User = {}", orderDTO.getOrderDate(), orderDTO.getUserId());
         Order order = buildOrder(orderDTO);
@@ -54,14 +54,13 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     @Transactional
-    public OrderDto update(@NonNull OrderDto orderDTO) {
+    public OrderDto update(OrderDto orderDTO) {
 
         log.info("update() Order = {} for User = {}", orderDTO.getOrderDate(), orderDTO.getUserId());
         Order order = this.entityManager.find(Order.class, orderDTO.getOrderId());
         if (order == null) return null;
         order.updateOrderStatus(orderDTO.getStatus());
-        order = buildNewOrderStatusHistory(order);
-        if (order == null) return null;
+        buildNewOrderStatusHistory(order);
 
         try {
 
@@ -100,7 +99,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         order.setOrderDetails(orderDetailList);
         OrderStatus status = OrderStatus.CANCELLED;
         order.updateOrderStatus(status);
-        order = buildNewOrderStatusHistory(order);
+        buildNewOrderStatusHistory(order);
 
         try {
 
@@ -123,7 +122,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     @Transactional
-    public OrderDto returnItem(@NonNull OrderDetailDto orderDetailDTO) {
+    public OrderDto returnItem(OrderDetailDto orderDetailDTO) {
 
         log.info("returnItem() Product and Quantity in Order = [{}, {}, {}] for User = {}", orderDetailDTO.getProduct().getProductId(),
                 orderDetailDTO.getQuantity(), orderDetailDTO.getOrder().getOrderId(), orderDetailDTO.getOrder().getUserId());
@@ -137,7 +136,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
             OrderStatus status = OrderStatus.RETURN_REQUESTED;
             order.updateOrderStatus(status);
-            order = buildNewOrderStatusHistory(order);
+            buildNewOrderStatusHistory(order);
 
             this.entityManager.persist(order);
             return order.transformToDto();
@@ -150,8 +149,9 @@ public class OrderRepositoryImpl implements OrderRepository {
         }
     }
 
-    @Override
-    public Order buildOrder(@NonNull OrderDto orderDTO) {
+    private Order buildOrder(OrderDto orderDTO) {
+
+        ValidateParameter.isNull(this.getClass(), orderDTO);
 
         log.info("buildOrder() Order = {}", orderDTO.getOrderId());
 
@@ -207,7 +207,7 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .setOrderDetails(orderDetails)
                 .setOrderStatusHistory(orderStatusHistoryList);
 
-        order = buildNewOrderStatusHistory(order);
+        buildNewOrderStatusHistory(order);
 
         for (OrderDetail orderDetail : order.getOrderDetails()) {
             orderDetail.setOrder(order);
@@ -220,8 +220,9 @@ public class OrderRepositoryImpl implements OrderRepository {
         return order;
     }
 
-    @Override
-    public Order buildNewOrderStatusHistory(@NonNull Order order) {
+    private void buildNewOrderStatusHistory(Order order) {
+
+        ValidateParameter.isNull(this.getClass(), order);
 
         log.info("buildNewOrderStatusHistory() Order = {}", order.getOrderId());
 
@@ -231,11 +232,11 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .status(order.getStatus())
                 .build();
         order.getOrderStatusHistory().add(orderStatusHistory);
-        return order;
     }
 
-    @Override
-    public List<OrderDetail> buildOrderDetails(@NonNull Order order, List<OrderDetailDto> orderDetailDtos) {
+    private List<OrderDetail> buildOrderDetails(Order order, List<OrderDetailDto> orderDetailDtos) {
+
+        ValidateParameter.isNull(this.getClass(), order);
 
         log.info("buildOrderDetails() OrderDetail list size = {}", orderDetailDtos.size());
         List<OrderDetail> orderDetailList = new ArrayList<>();
@@ -248,8 +249,9 @@ public class OrderRepositoryImpl implements OrderRepository {
         return orderDetailList;
     }
 
-    @Override
-    public OrderDetail buildOrderDetail(@NonNull Order order, @NonNull OrderDetailDto orderDetailDTO) {
+    private OrderDetail buildOrderDetail(Order order, OrderDetailDto orderDetailDTO) {
+
+        ValidateParameter.isNull(this.getClass(), order, orderDetailDTO);
 
         log.info("buildOrderDetail() Order = {}", order.getOrderId());
 
@@ -271,8 +273,9 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .build();
     }
 
-    @Override
-    public List<OrderStatusHistory> buildOrderStatusHistories(@NonNull Order order, List<OrderStatusHistoryDto> orderStatusHistoryDtos) {
+    private List<OrderStatusHistory> buildOrderStatusHistories(Order order, List<OrderStatusHistoryDto> orderStatusHistoryDtos) {
+
+        ValidateParameter.isNull(this.getClass(), order);
 
         log.info("buildOrderStatusHistories() Order = {}", order.getOrderId());
 
@@ -291,8 +294,9 @@ public class OrderRepositoryImpl implements OrderRepository {
         }
     }
 
-    @Override
-    public OrderStatusHistory buildOrderStatusHistory(@NonNull Order order, @NonNull OrderStatusHistoryDto orderStatusHistoryDTO) {
+    private OrderStatusHistory buildOrderStatusHistory(Order order, OrderStatusHistoryDto orderStatusHistoryDTO) {
+
+        ValidateParameter.isNull(this.getClass(), order, orderStatusHistoryDTO);
 
         log.info("buildOrderStatusHistory() Order = {}", order.getOrderId());
 
@@ -305,7 +309,9 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .build();
     }
 
-    private List<OrderDetail> updateProductInventory(@NonNull List<OrderDetailDto> orderDetailList, @NonNull OrderOperation orderOperation) {
+    private List<OrderDetail> updateProductInventory(List<OrderDetailDto> orderDetailList, OrderOperation orderOperation) {
+
+        ValidateParameter.isNull(this.getClass(), orderDetailList, orderOperation);
 
         log.info("updateProductInventory() OrderDetail list size = {}", orderDetailList.size());
 
@@ -345,7 +351,9 @@ public class OrderRepositoryImpl implements OrderRepository {
         return stock >= quantity;
     }
 
-    private boolean isCancellationAvailable(@NonNull OrderStatus orderStatus) throws UnsupportedOperationException {
+    private boolean isCancellationAvailable(OrderStatus orderStatus) throws UnsupportedOperationException {
+
+        ValidateParameter.isNull(this.getClass(), orderStatus);
 
         log.info("isCancellationAvailable() Order Status = {}", orderStatus);
 
@@ -357,8 +365,10 @@ public class OrderRepositoryImpl implements OrderRepository {
         return true;
     }
 
-    private boolean isReturnAvailable(@NonNull LocalDateTime orderDate, @NonNull OrderStatus status)
+    private boolean isReturnAvailable(LocalDateTime orderDate, OrderStatus status)
             throws InputException.InvalidInputException {
+
+        ValidateParameter.isNull(this.getClass(), orderDate, status);
 
         log.info("isReturnAvailable() Order Date and Status = [{}, {}]", orderDate, status);
 
@@ -375,7 +385,9 @@ public class OrderRepositoryImpl implements OrderRepository {
         return true;
     }
 
-    private boolean isReturningItemsCorrect(@NonNull Order order, @NonNull OrderDetailDto orderDetail) {
+    private boolean isReturningItemsCorrect(Order order, OrderDetailDto orderDetail) {
+
+        ValidateParameter.isNull(this.getClass(), order, orderDetail);
 
         log.info("isReturningItemsCorrect() Order and Product = [{}, {}]", order.getOrderId(), orderDetail.getOrderDetailId());
 

@@ -6,7 +6,7 @@ import ostro.veda.util.validation.annotation.ValidPassword;
 
 import java.util.regex.Pattern;
 
-public class ValidatePassword implements ConstraintValidator<ValidPassword, String> {
+public class ValidatePassword extends Validate implements ConstraintValidator<ValidPassword, String> {
 
     private static final String NAME_PATTERN = "^[A-Za-z0-9!@#$%^&*()_+\\-={}\\[\\]:;\"'<>,.?/|\\\\]{8,20}$";
     private static final Pattern PATTERN = Pattern.compile(NAME_PATTERN);

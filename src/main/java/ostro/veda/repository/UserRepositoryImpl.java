@@ -2,20 +2,20 @@ package ostro.veda.repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import ostro.veda.repository.interfaces.UserRepository;
-import ostro.veda.model.dto.AddressDto;
-import ostro.veda.model.dto.UserDto;
-import ostro.veda.util.exception.InputException;
-import ostro.veda.repository.helpers.EntityManagerHelper;
-import ostro.veda.repository.helpers.enums.UserColumns;
-import ostro.veda.repository.dao.Address;
-import ostro.veda.repository.dao.Role;
-import ostro.veda.repository.dao.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import ostro.veda.model.dto.AddressDto;
+import ostro.veda.model.dto.UserDto;
+import ostro.veda.repository.dao.Address;
+import ostro.veda.repository.dao.Role;
+import ostro.veda.repository.dao.User;
+import ostro.veda.repository.helpers.EntityManagerHelper;
+import ostro.veda.repository.helpers.enums.UserColumns;
+import ostro.veda.repository.interfaces.UserRepository;
+import ostro.veda.util.exception.InputException;
+import ostro.veda.util.validation.ValidateParameter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     @Transactional
-    public UserDto add(@NonNull UserDto userDTO) {
+    public UserDto add(UserDto userDTO) {
 
         log.info("add() new User = [{}, {}]", userDTO.getUsername(), userDTO.getEmail());
 
@@ -63,7 +63,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     @Transactional
-    public UserDto update(@NonNull UserDto userDTO) {
+    public UserDto update(UserDto userDTO) {
 
         log.info("update() User = [{}, {}, {}]", userDTO.getUserId(), userDTO.getUsername(), userDTO.getEmail());
 
@@ -87,8 +87,9 @@ public class UserRepositoryImpl implements UserRepository {
         }
     }
 
-    @Override
-    public User buildUser(@NonNull UserDto userDTO) throws InputException.InvalidInputException {
+    private User buildUser(UserDto userDTO) throws InputException.InvalidInputException {
+
+        ValidateParameter.isNull(this.getClass(), userDTO);
 
         log.info("buildUser() User = [{}, {}, {}]", userDTO.getUserId(), userDTO.getUsername(), userDTO.getEmail());
 
@@ -121,8 +122,9 @@ public class UserRepositoryImpl implements UserRepository {
         return user;
     }
 
-    @Override
-    public List<Address> buildAddress(@NonNull UserDto userDTO) {
+    private List<Address> buildAddress(UserDto userDTO) {
+
+        ValidateParameter.isNull(this.getClass(), userDTO);
 
         log.info("buildAddress() Address for User = [{}, {}, {}]", userDTO.getUserId(), userDTO.getUsername(), userDTO.getEmail());
 

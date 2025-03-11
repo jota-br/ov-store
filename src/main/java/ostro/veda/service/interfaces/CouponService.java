@@ -1,13 +1,15 @@
 package ostro.veda.service.interfaces;
 
-import lombok.NonNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import ostro.veda.model.dto.CouponDto;
+import ostro.veda.util.validation.annotation.ValidCouponCode;
 
 import java.util.UUID;
 
 public interface CouponService extends Service<CouponDto> {
 
-    private String generateCode(@NonNull String code) {
+    private String generateCode(@NotNull @ValidCouponCode String code) {
         final int MAX_CODE_LENGTH = 16;
         int length = code.length();
         final int FINAL_SIZE = MAX_CODE_LENGTH - length;
@@ -17,7 +19,7 @@ public interface CouponService extends Service<CouponDto> {
         return sb.toString();
     }
 
-    default CouponDto buildValidCoupon(@NonNull CouponDto couponDTO) {
+    default CouponDto buildValidCoupon(@NotNull @Valid CouponDto couponDTO) {
         String code = generateCode(couponDTO.getCode());
         couponDTO = new CouponDto(couponDTO.getCouponId(), code, couponDTO.getDescription(),
                 couponDTO.getDiscountType(), couponDTO.getDiscountValue(), couponDTO.getExpirationDate(),

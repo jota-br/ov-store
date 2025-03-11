@@ -4,7 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import ostro.veda.util.validation.annotation.ValidAddressNumber;
 
-public class ValidateAddressNumber implements ConstraintValidator<ValidAddressNumber, String> {
+public class ValidateAddressNumber extends Validate implements ConstraintValidator<ValidAddressNumber, String> {
 
     @Override
     public void initialize(ValidAddressNumber constraintAnnotation) {

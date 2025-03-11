@@ -1,6 +1,5 @@
 package ostro.veda.service;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,7 +21,7 @@ public class AuditServiceImpl implements AuditService {
     }
 
     @Override
-    public AuditDto add(@NonNull AuditDataDto auditDataDTO) {
+    public AuditDto add(AuditDataDto auditDataDTO) {
 
         try {
 
