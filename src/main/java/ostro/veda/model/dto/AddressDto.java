@@ -57,6 +57,17 @@ public class AddressDto implements Dto {
     private final LocalDateTime updatedAt;
     private final int version;
 
+    public String getFullAddress() {
+        return "%s, %s, %s, %s, %s, %s".formatted(
+                this.getStreetAddress(),
+                this.getAddressNumber(),
+                this.getCity(),
+                this.getState(),
+                this.getCountry(),
+                this.getZipCode()
+        );
+    }
+
     @Override
     public String toString() {
         return toJSON();

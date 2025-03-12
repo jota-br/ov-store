@@ -13,7 +13,8 @@ public class SanitizeProductImage implements SanitizeFunction<ProductImageDto, P
 
         int productImageId = productImageDto.getProductImageId();
         String url = productImageDto.getImageUrl();
-        url = encodeUrl(url);
+        EncodeUrl encodeUrl = new EncodeUrl();
+        url = encodeUrl.encodeUrl(url);
 
         return new ProductImageDto(productImageId, url, productImageDto.isMain(), productImageDto.getVersion());
     }
