@@ -8,9 +8,7 @@ import ostro.veda.model.dto.AddressDto;
 import ostro.veda.repository.interfaces.AddressRepository;
 import ostro.veda.service.interfaces.AddressService;
 import ostro.veda.util.enums.Action;
-import ostro.veda.util.exception.InputException;
 import ostro.veda.util.sanitization.SanitizeAddress;
-import ostro.veda.util.validation.ValidateFullAddress;
 import ostro.veda.util.validation.ValidatorUtil;
 
 @Slf4j
@@ -33,10 +31,6 @@ public class AddressServiceImpl implements AddressService {
         try {
 
             log.info("add() Address for User = {}", addressDTO.getUser().getUserId());
-
-            ValidateFullAddress validateFullAddress = new ValidateFullAddress();
-            boolean isValid = validateFullAddress.isValid(addressDTO);
-            if (!isValid) throw new InputException.InvalidInputException("Invalid address", addressDTO.getFullAddress());
 
             addressDTO = new SanitizeAddress().sanitize(addressDTO);
 

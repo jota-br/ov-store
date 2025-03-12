@@ -1,11 +1,16 @@
 package ostro.veda.util.sanitization;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class EncodeUrl {
 
     public String encodeUrl(String input) {
+
+        log.info("encodeUrl() = {}", input);
 
         Map<Character, String> encodeMap = getEncodeMap();
 
